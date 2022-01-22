@@ -30,5 +30,38 @@ SOFTWARE.
 export module Utils;
 
 namespace vcl {
+    // Vectors
+    export template<typename TScalar, const int Ksize> class Vector;
+    export template<typename TScalar> class Vec2;   // 2 coordinates vectors
+    export template<typename TScalar> class Vec3;   // 3 coordinates vectors
+    export template<typename TScalar> class Vec4;   // 4 coordinates vectors
+
+    export class Vec2d;     // Vec2<double>         - 64 bits
+    export class Vec2f;     // Vec2<float>          - 32 bits
+    export class Vec2ui;    // Vec2<unsigned int>   - 32 bits
+    export class Vec2us;    // Vec2<unsigned short> - 16 bits
+    export class Vec2b;     // Vec2<unsigned char>  -  8 bits
+
+    export class Vec3d;     // Vec3<double>         - 64 bits
+    export class Vec3f;     // Vec3<float>          - 32 bits
+    export class Vec3ui;    // Vec3<unsigned int>   - 32 bits
+    export class Vec3us;    // Vec3<unsigned short> - 16 bits
+    export class Vec3b;     // Vec<unsigned char>   -  8 bits
+
+    export class Vec4d;     // Vec4<double>         - 64 bits
+    export class Vec4f;     // Vec4<float>          - 32 bits
+    export class Vec4ui;    // Vec4<unsigned int>   - 32 bits
+    export class Vec4us;    // Vec4<unsigned short> - 16 bits
+    export class Vec4b;     // Vec4<unsigned char>  -  8 bits
+
+    // Matrices
+    export template<typename TScalar> class Matrix;
+    export template<typename TScalar> class Mat2;   // 2 dimensions matrices
+
+    export class Mat2d;     // Mat2<double>         - 64 bits
+    export class Mat2f;     // Mat2<float>          - 32 bits
+    export class Mat2ui;    // Mat2<unsigned int>   - 32 bits
+    export class Mat2us;    // Mat2<unsigned short> - 16 bits
+    export class Mat2b;     // Mat2<unsigned char>  -  8 bits
 
 } // end of namespace vcl

@@ -27,7 +27,7 @@ SOFTWARE.
 *
 * Exports all utilities stuff.
 */
-export module Frames;
+export module Colors;
 
 namespace vcl {
 

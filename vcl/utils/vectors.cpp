@@ -483,7 +483,7 @@ namespace vcl {
         friend inline MyType operator* (MyType lhs, const TScalar buffer[Ksize])
         {
             MyType vec(lhs);
-            vec.mul(value);
+            vec.mul(buffer);
             return vec;
         }
 
@@ -495,6 +495,106 @@ namespace vcl {
             return vec;
         }
 
+        //---   operators /= and  /   ---------------------------------------
+        /** \brief /= operator (const reference) */
+        inline MyType& operator/= (const MyType& rhs)
+        {
+            div(rhs);
+            return *this;
+        }
+
+        /** \brief /= operator (reference) */
+        inline MyType& operator/= (MyType& rhs)
+        {
+            div(rhs);
+            return *this;
+        }
+
+        /** \brief /= operator (const TScalar) */
+        inline MyType& operator/= (const TScalar value)
+        {
+            div(value);
+            return *this;
+        }
+
+        ////** \brief /= operator (const std::vector) */
+        ///inline MyType& operator/= (const std::vector<TScalar>& rhs)
+        ///{
+        ///    div(rhs);
+        ///    return *this;
+        ///}
+        ///
+        ////** \brief /= operator (std::vector) */
+        ///inline MyType& operator/= (std::vector<TScalar>& rhs)
+        ///{
+        ///    div(rhs);
+        ///    return *this;
+        ///}
+
+        /** \brief /= operator (const buffer) */
+        inline MyType& operator/= (const TScalar buffer[Ksize])
+        {
+            div(buffer);
+            return *this;
+        }
+
+        /** \brief /= operator (buffer) */
+        inline MyType& operator/= (TScalar buffer[Ksize])
+        {
+            div(buffer);
+            return *this;
+        }
+
+        /** \brief / operator (const reference).
+        * Note: optimized for chained v1*v2*v3
+        */
+        friend inline MyType operator/ (MyType lhs, const MyType& rhs)
+        {
+            MyType vec(lhs);
+            vec.div(rhs);
+            return vec;
+        }
+
+        /** \brief / operator (reference).
+        * Note: optimized for chained v1*v2*v3
+        */
+        friend inline MyType operator/ (MyType lhs, MyType& rhs)
+        {
+            MyType vec(lhs);
+            vec.div(rhs);
+            return vec;
+        }
+
+        /** \brief / operator (const TScalar) */
+        friend inline MyType operator/ (MyType lhs, const TScalar value)
+        {
+            MyType vec(lhs);
+            vec.div(value);
+            return vec;
+        }
+
+        /** \brief / operator (const TScalar, vcl::Vector) */
+        friend inline MyType operator/ (const TScalar value, MyType rhs)
+        {
+            return rhs / value;
+        }
+
+        /** \brief / operator (const buffer) */
+        friend inline MyType operator/ (MyType lhs, const TScalar buffer[Ksize])
+        {
+            MyType vec(lhs);
+            vec.div(buffer);
+            return vec;
+        }
+
+        /** \brief / operator (const buffer, vcl::Vector) */
+        friend inline MyType operator/ (const TScalar buffer[Ksize], MyType rhs)
+        {
+            MyType vec(rhs);
+            vec.div(buffer);
+            return vec;
+        }
+
         //---   miscelaneous   ----------------------------------------------
         /** \brief Sets all components with value 0.
         * \sa method fill.
@@ -503,6 +603,7 @@ namespace vcl {
         {
             fill(TScalar(0));
         }
+
 
     protected:
         //---   add()   -----------------------------------------------------
@@ -605,8 +706,107 @@ namespace vcl {
                 *it++ -= *b++;
         }
 
-    };
+        //---   mul()   -----------------------------------------------------
+        /** \brief inplace mul operation (const reference) */
+        inline void mul(const MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
+                *it++ *= *rit++;
+        }
 
+        /** \brief inplace mul operation (reference) */
+        inline void mul(MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
+                *it++ *= *rit++;
+        }
+
+        /** \brief inplace mul operation (reference) */
+        inline void mul(const TScalar value)
+        {
+            for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
+                *it++ *= value;
+        }
+
+        ////** \brief inplace mul operation (const std::vector) */
+        ///inline void mul(const std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ *= *rit++;
+        ///}
+        ///
+        ////** \brief inplace mul operation (std::vector) */
+        ///inline void mul(std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ *= *rit++;
+        ///}
+
+        /** \brief inplace mul operation (const buffer) */
+        inline void mul(const TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ *= *b++;
+        }
+
+        /** \brief inplace mul operation (buffer) */
+        inline void mul(TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ *= *b++;
+        }
+
+        //---   div()   -----------------------------------------------------
+        /** \brief inplace div operation (const reference) */
+        inline void div(const MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
+                *it++ /= *rit++;
+        }
+
+        /** \brief inplace div operation (reference) */
+        inline void div(MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
+                *it++ /= *rit++;
+        }
+
+        /** \brief inplace div operation (reference) */
+        inline void div(const TScalar value)
+        {
+            for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
+                *it++ /= value;
+        }
+
+        ////** \brief inplace div operation (const std::vector) */
+        ///inline void div(const std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ /= *rit++;
+        ///}
+        ///
+        ////** \brief inplace div operation (std::vector) */
+        ///inline void div(std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ /= *rit++;
+        ///}
+
+        /** \brief inplace div operation (const buffer) */
+        inline void div(const TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ /= *b++;
+        }
+
+        /** \brief inplace div operation (buffer) */
+        inline void div(TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ /= *b++;
+        }
+
+    };
 
 
     //export template<typename TScalar> class Vec2;   // 2 coordinates vectors

@@ -298,10 +298,107 @@ namespace vcl {
             return vec;
         }
 
-         //---   miscelaneous   ----------------------------------------------
-         /** \brief Sets all components with value 0.
-         * \sa method fill.
-         */
+        //---   operators -= and  -   ---------------------------------------
+        /** \brief -= operator (const reference) */
+        inline MyType& operator-= (const MyType& rhs)
+        {
+            sub(rhs);
+            return *this;
+        }
+
+        /** \brief -= operator (reference) */
+        inline MyType& operator-= (MyType& rhs)
+        {
+            sub(rhs);
+            return *this;
+        }
+
+        /** \brief -= operator (const TScalar) */
+        inline MyType& operator-= (const TScalar value)
+        {
+            sub(value);
+            return *this;
+        }
+
+        ////** \brief -= operator (const std::vector) */
+        ///inline MyType& operator-= (const std::vector<TScalar>& rhs)
+        ///{
+        ///    sub(rhs);
+        ///    return *this;
+        ///}
+        ///
+        ////** \brief -= operator (std::vector) */
+        ///inline MyType& operator-= (std::vector<TScalar>& rhs)
+        ///{
+        ///    sub(rhs);
+        ///    return *this;
+        ///}
+
+        /** \brief -= operator (const buffer) */
+        inline MyType& operator-= (const TScalar buffer[Ksize])
+        {
+            sub(buffer);
+            return *this;
+        }
+
+        /** \brief -= operator (buffer) */
+        inline MyType& operator-= (TScalar buffer[Ksize])
+        {
+            sub(buffer);
+            return *this;
+        }
+
+        /** \brief - operator (const reference).
+        * Note: optimized for chained v1+v2+v3
+        */
+        friend inline MyType operator- (MyType lhs, const MyType& rhs)
+        {
+            lhs.sub(rhs);
+            return lhs;
+        }
+
+        /** \brief - operator (reference).
+        * Note: optimized for chained v1-v2-v3
+        */
+        friend inline MyType operator- (MyType lhs, MyType& rhs)
+        {
+            lhs.sub(rhs);
+            return lhs;
+        }
+
+        /** \brief - operator (const TScalar) */
+        friend inline MyType operator- (MyType lhs, const TScalar value)
+        {
+            MyType vec(lhs);
+            vec.sub(value);
+            return vec;
+        }
+
+        /** \brief - operator (const TScalar, vcl::Vector) */
+        friend inline MyType operator- (const TScalar value, MyType rhs)
+        {
+            return rhs - value;
+        }
+
+        /** \brief - operator (const buffer) */
+        friend inline MyType& operator- (MyType lhs, const TScalar buffer[Ksize])
+        {
+            lhs.sub(buffer);
+            return lhs;
+        }
+
+        /** \brief - operator (const buffer, vcl::Vector) */
+        friend inline MyType& operator- (const TScalar buffer[Ksize], MyType rhs)
+        {
+            MyType vec(rhs);
+            vec.sub(buffer);
+            return vec;
+        }
+
+        //---   miscelaneous   ----------------------------------------------
+        /** \brief Sets all components with value 0.
+        * \sa method fill.
+        */
         inline void zero()
         {
             fill(TScalar(0));
@@ -356,6 +453,56 @@ namespace vcl {
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ += *b++;
+        }
+
+        //---   sub()   -----------------------------------------------------
+        /** \brief inplace add operation (const reference) */
+        inline void sub(const MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
+                *it++ -= *rit++;
+        }
+
+        /** \brief inplace add operation (reference) */
+        inline void sub(MyType& rhs)
+        {
+            for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
+                *it++ -= *rit++;
+        }
+
+        /** \brief inplace add operation (reference) */
+        inline void sub(const TScalar value)
+        {
+            for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
+                *it++ -= value;
+        }
+
+        ////** \brief inplace add operation (const std::vector) */
+        ///inline void sub(const std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ -= *rit++;
+        ///}
+        ///
+        ////** \brief inplace add operation (std::vector) */
+        ///inline void sub(std::vector<TScalar>& rhs)
+        ///{
+        ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
+        ///        *it++ -= *rit++;
+        ///}
+
+        /** \brief inplace add operation (const buffer) */
+        inline void sub(const TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ -= *b++;
+        }
+
+        /** \brief inplace add operation (buffer) */
+        inline void sub(TScalar buffer[Ksize])
+        {
+            for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
+                *it++ -= *b++;
         }
 
     };

@@ -36,17 +36,6 @@ module Utils;
 namespace vcl {
 
     //-----------------------------------------------------------------------
-    // forward declarations.
-    template<typename TScalar, const size_t Ksize> class Vector;
-
-    /*
-    template<typename TScalar> class Vec2;   // 2 coordinates vectors
-    template<typename TScalar> class Vec3;   // 3 coordinates vectors
-    template<typename TScalar> class Vec4;   // 4 coordinates vectors
-    */
-
-
-    //-----------------------------------------------------------------------
     /** \brief the generic class for vectors.
     */
     template<typename TScalar, const size_t Ksize>
@@ -111,26 +100,26 @@ namespace vcl {
         }
 
         //---  Destructor   -------------------------------------------------
-        inline ~Vector<TScalar, Ksize>()
+        virtual inline ~Vector<TScalar, Ksize>()
         {}
 
         //---   copy()   ----------------------------------------------------
         /** \brief Copies a const vcl::Vector. */
-        inline void copy(const MyType& other)
+        virtual inline void copy(const MyType& other)
         {
             for (TScalar* it = this->begin(), ot = other.cbegin(); it != this->end(); )
                 *it++ = *ot++;
         }
 
         /** \brief Copies a vcl::Vector. */
-        inline void copy(MyType& other)
+        virtual inline void copy(MyType& other)
         {
             for (TScalar* it = this->begin(), ot = other.begin(); it != this->end(); )
                 *it++ = *ot++;
         }
 
         ////** \brief Copies a const std::vector. */
-        ///inline void copy(const std::vector<TScalar>& other)
+        ///virtual inline void copy(const std::vector<TScalar>& other)
         ///{
         ///    TScalar* it = this->begin();
         ///    for (TScalar** ot = other.cbegin(); it != this->end && ot != other.end(); )
@@ -141,7 +130,7 @@ namespace vcl {
         ///}
         ///
         ////** \brief Copies a std::vector. */
-        ///inline void copy(std::vector<TScalar>& other)
+        ///virtual inline void copy(std::vector<TScalar>& other)
         ///{
         ///    TScalar* it = this->begin();
         ///    for (TScalar** ot = other.begin(); it != this->end && ot != other.end(); )
@@ -152,14 +141,14 @@ namespace vcl {
         ///}
 
         /** \brief Copies a const buffer. */
-        inline void copy(const TScalar buffer[Ksize])
+        virtual inline void copy(const TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ = *b++;
         }
 
         /** \brief Copies a buffer. */
-        inline void copy(TScalar buffer[Ksize])
+        virtual inline void copy(TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ = *b++;
@@ -167,35 +156,35 @@ namespace vcl {
 
         //---   assignment operator   ---------------------------------------
         /** \brief assign operator with specified value */
-        inline MyType& operator= (const TScalar value)
+        virtual inline MyType& operator= (const TScalar value)
         {
             fill(value);
             return *this;
         }
 
         /** \brief assign operator (const vcl::Vector). */
-        inline MyType& operator= (const MyType& other)
+        virtual inline MyType& operator= (const MyType& other)
         {
             copy(other);
             return *this;
         }
 
         /** \brief assign operator (vcl::Vector). */
-        inline MyType& operator= (MyType& other)
+        virtual inline MyType& operator= (MyType& other)
         {
             copy(other);
             return *this;
         }
 
         /** \brief assign operator (const buffer). */
-        inline MyType& operator= (const TScalar buffer[Ksize])
+        virtual inline MyType& operator= (const TScalar buffer[Ksize])
         {
             copy(buffer);
             return *this;
         }
 
         /** \brief assign operator (buffer). */
-        inline MyType& operator= (TScalar buffer[Ksize])
+        virtual inline MyType& operator= (TScalar buffer[Ksize])
         {
             copy(buffer);
             return *this;
@@ -203,49 +192,49 @@ namespace vcl {
 
         //---   operators += and  +   ---------------------------------------
         /** \brief += operator (const reference) */
-        inline MyType& operator+= (const MyType& rhs)
+        virtual inline MyType& operator+= (const MyType& rhs)
         {
             add(rhs);
             return *this;
         }
 
         /** \brief += operator (reference) */
-        inline MyType& operator+= (MyType& rhs)
+        virtual inline MyType& operator+= (MyType& rhs)
         {
             add(rhs);
             return *this;
         }
 
         /** \brief += operator (const TScalar) */
-        inline MyType& operator+= (const TScalar value)
+        virtual inline MyType& operator+= (const TScalar value)
         {
             add(value);
             return *this;
         }
 
         ////** \brief += operator (const std::vector) */
-        ///inline MyType& operator+= (const std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator+= (const std::vector<TScalar>& rhs)
         ///{
         ///    add(rhs);
         ///    return *this;
         ///}
         ///
         ////** \brief += operator (std::vector) */
-        ///inline MyType& operator+= (std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator+= (std::vector<TScalar>& rhs)
         ///{
         ///    add(rhs);
         ///    return *this;
         ///}
 
         /** \brief += operator (const buffer) */
-        inline MyType& operator+= (const TScalar buffer[Ksize])
+        virtual inline MyType& operator+= (const TScalar buffer[Ksize])
         {
             add(buffer);
             return *this;
         }
 
         /** \brief += operator (buffer) */
-        inline MyType& operator+= (TScalar buffer[Ksize])
+        virtual inline MyType& operator+= (TScalar buffer[Ksize])
         {
             add(buffer);
             return *this;
@@ -256,8 +245,7 @@ namespace vcl {
         */
         friend inline MyType operator+ (MyType lhs, const MyType& rhs)
         {
-            lhs.add(rhs);
-            return lhs;
+            return (lhs += rhs);
         }
 
         /** \brief + operator (reference).
@@ -265,84 +253,78 @@ namespace vcl {
         */
         friend inline MyType operator+ (MyType lhs, MyType& rhs)
         {
-            lhs.add(rhs);
-            return lhs;
+            return (lhs += rhs);
         }
 
         /** \brief + operator (const TScalar) */
         friend inline MyType operator+ (MyType lhs, const TScalar value)
         {
-            MyType vec(lhs);
-            vec.add(value);
-            return vec;
+            return (lhs += value);
         }
 
         /** \brief + operator (const TScalar, vcl::Vector) */
         friend inline MyType operator+ (const TScalar value, MyType rhs)
         {
-            return rhs + value;
+            return (rhs += value);
         }
 
         /** \brief + operator (const buffer) */
         friend inline MyType& operator+ (MyType lhs, const TScalar buffer[Ksize])
         {
-            lhs.add(buffer);
-            return lhs;
+            return (lhs += buffer);
         }
 
         /** \brief + operator (const buffer, vcl::Vector) */
         friend inline MyType& operator+ (const TScalar buffer[Ksize], MyType rhs)
         {
-            MyType vec(rhs);
-            vec.add(buffer);
-            return vec;
+            return (rhs += buffer);
         }
 
         //---   operators -= and  -   ---------------------------------------
         /** \brief -= operator (const reference) */
-        inline MyType& operator-= (const MyType& rhs)
+        virtual inline MyType& operator-= (const MyType& rhs)
         {
             sub(rhs);
             return *this;
         }
 
         /** \brief -= operator (reference) */
-        inline MyType& operator-= (MyType& rhs)
+        virtual inline MyType& operator-= (MyType& rhs)
         {
             sub(rhs);
             return *this;
         }
 
         /** \brief -= operator (const TScalar) */
-        inline MyType& operator-= (const TScalar value)
+        virtual inline MyType& operator-= (const TScalar value)
         {
             sub(value);
             return *this;
         }
 
         ////** \brief -= operator (const std::vector) */
-        ///inline MyType& operator-= (const std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator-= (const std::vector<TScalar>& rhs)
         ///{
         ///    sub(rhs);
         ///    return *this;
         ///}
         ///
         ////** \brief -= operator (std::vector) */
-        ///inline MyType& operator-= (std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator-= (std::vector<TScalar>& rhs)
         ///{
         ///    sub(rhs);
         ///    return *this;
         ///}
 
         /** \brief -= operator (const buffer) */
-        inline MyType& operator-= (const TScalar buffer[Ksize])
+        virtual inline MyType& operator-= (const TScalar buffer[Ksize])
         {
             sub(buffer);
             return *this;
         }
 
         /** \brief -= operator (buffer) */
-        inline MyType& operator-= (TScalar buffer[Ksize])
+        virtual inline MyType& operator-= (TScalar buffer[Ksize])
         {
             sub(buffer);
             return *this;
@@ -353,8 +335,7 @@ namespace vcl {
         */
         friend inline MyType operator- (MyType lhs, const MyType& rhs)
         {
-            lhs.sub(rhs);
-            return lhs;
+            return (lhs -= rhs);
         }
 
         /** \brief - operator (reference).
@@ -362,84 +343,78 @@ namespace vcl {
         */
         friend inline MyType operator- (MyType lhs, MyType& rhs)
         {
-            lhs.sub(rhs);
-            return lhs;
+            return (lhs -= rhs);
         }
 
         /** \brief - operator (const TScalar) */
         friend inline MyType operator- (MyType lhs, const TScalar value)
         {
-            MyType vec(lhs);
-            vec.sub(value);
-            return vec;
+            return (lhs -= value);
         }
 
         /** \brief - operator (const TScalar, vcl::Vector) */
         friend inline MyType operator- (const TScalar value, MyType rhs)
         {
-            return rhs - value;
+            return (MyType(value) -= rhs);
         }
 
         /** \brief - operator (const buffer) */
         friend inline MyType& operator- (MyType lhs, const TScalar buffer[Ksize])
         {
-            lhs.sub(buffer);
-            return lhs;
+            return (lhs -= buffer);
         }
 
         /** \brief - operator (const buffer, vcl::Vector) */
         friend inline MyType& operator- (const TScalar buffer[Ksize], MyType rhs)
         {
-            MyType vec(rhs);
-            vec.sub(buffer);
-            return vec;
+            return (MyType(buffer) -= rhs);
         }
 
         //---   operators *= and  *   ---------------------------------------
         /** \brief *= operator (const reference) */
-        inline MyType& operator*= (const MyType& rhs)
+        virtual inline MyType& operator*= (const MyType& rhs)
         {
             mul(rhs);
             return *this;
         }
 
         /** \brief *= operator (reference) */
-        inline MyType& operator*= (MyType& rhs)
+        virtual inline MyType& operator*= (MyType& rhs)
         {
             mul(rhs);
             return *this;
         }
 
         /** \brief *= operator (const TScalar) */
-        inline MyType& operator*= (const TScalar value)
+        virtual inline MyType& operator*= (const TScalar value)
         {
             mul(value);
             return *this;
         }
 
         ////** \brief *= operator (const std::vector) */
-        ///inline MyType& operator*= (const std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator*= (const std::vector<TScalar>& rhs)
         ///{
         ///    mul(rhs);
         ///    return *this;
         ///}
         ///
         ////** \brief *= operator (std::vector) */
-        ///inline MyType& operator*= (std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator*= (std::vector<TScalar>& rhs)
         ///{
         ///    mul(rhs);
         ///    return *this;
         ///}
 
         /** \brief *= operator (const buffer) */
-        inline MyType& operator*= (const TScalar buffer[Ksize])
+        virtual inline MyType& operator*= (const TScalar buffer[Ksize])
         {
             mul(buffer);
             return *this;
         }
 
         /** \brief *= operator (buffer) */
-        inline MyType& operator*= (TScalar buffer[Ksize])
+        virtual inline MyType& operator*= (TScalar buffer[Ksize])
         {
             mul(buffer);
             return *this;
@@ -450,9 +425,7 @@ namespace vcl {
         */
         friend inline MyType operator*(MyType lhs, const MyType& rhs)
         {
-            MyType vec(lhs);
-            vec.mul(rhs);
-            return vec;
+            return (lhs *= rhs);
         }
 
         /** \brief * operator (reference).
@@ -460,86 +433,78 @@ namespace vcl {
         */
         friend inline MyType operator* (MyType lhs, MyType& rhs)
         {
-            MyType vec(lhs);
-            vec.mul(rhs);
-            return vec;
+            return (lhs *= rhs);
         }
 
         /** \brief * operator (const TScalar) */
         friend inline MyType operator* (MyType lhs, const TScalar value)
         {
-            MyType vec(lhs);
-            vec.mul(value);
-            return vec;
+            return (lhs *= value);
         }
 
         /** \brief * operator (const TScalar, vcl::Vector) */
         friend inline MyType operator* (const TScalar value, MyType rhs)
         {
-            return rhs * value;
+            return (rhs *= value);
         }
 
         /** \brief * operator (const buffer) */
         friend inline MyType operator* (MyType lhs, const TScalar buffer[Ksize])
         {
-            MyType vec(lhs);
-            vec.mul(buffer);
-            return vec;
+            return (lhs *= buffer);
         }
 
         /** \brief * operator (const buffer, vcl::Vector) */
         friend inline MyType operator* (const TScalar buffer[Ksize], MyType rhs)
         {
-            MyType vec(rhs);
-            vec.mul(buffer);
-            return vec;
+            return (rhs *= buffer);
         }
 
         //---   operators /= and  /   ---------------------------------------
         /** \brief /= operator (const reference) */
-        inline MyType& operator/= (const MyType& rhs)
+        virtual inline MyType& operator/= (const MyType& rhs)
         {
             div(rhs);
             return *this;
         }
 
         /** \brief /= operator (reference) */
-        inline MyType& operator/= (MyType& rhs)
+        virtual inline MyType& operator/= (MyType& rhs)
         {
             div(rhs);
             return *this;
         }
 
         /** \brief /= operator (const TScalar) */
-        inline MyType& operator/= (const TScalar value)
+        virtual inline MyType& operator/= (const TScalar value)
         {
             div(value);
             return *this;
         }
 
         ////** \brief /= operator (const std::vector) */
-        ///inline MyType& operator/= (const std::vector<TScalar>& rhs)
+        ///virtual inline MyType& operator/= (const std::vector<TScalar>& rhs)
         ///{
         ///    div(rhs);
         ///    return *this;
         ///}
         ///
         ////** \brief /= operator (std::vector) */
-        ///inline MyType& operator/= (std::vector<TScalar>& rhs)
+        //virtual /inline MyType& operator/= (std::vector<TScalar>& rhs)
         ///{
         ///    div(rhs);
         ///    return *this;
         ///}
 
         /** \brief /= operator (const buffer) */
-        inline MyType& operator/= (const TScalar buffer[Ksize])
+        virtual inline MyType& operator/= (const TScalar buffer[Ksize])
         {
             div(buffer);
             return *this;
         }
 
         /** \brief /= operator (buffer) */
-        inline MyType& operator/= (TScalar buffer[Ksize])
+        virtual inline MyType& operator/= (TScalar buffer[Ksize])
         {
             div(buffer);
             return *this;
@@ -550,9 +515,7 @@ namespace vcl {
         */
         friend inline MyType operator/ (MyType lhs, const MyType& rhs)
         {
-            MyType vec(lhs);
-            vec.div(rhs);
-            return vec;
+            return (lhs /= rhs);
         }
 
         /** \brief / operator (reference).
@@ -560,39 +523,31 @@ namespace vcl {
         */
         friend inline MyType operator/ (MyType lhs, MyType& rhs)
         {
-            MyType vec(lhs);
-            vec.div(rhs);
-            return vec;
+            return (lhs /= rhs);
         }
 
         /** \brief / operator (const TScalar) */
         friend inline MyType operator/ (MyType lhs, const TScalar value)
         {
-            MyType vec(lhs);
-            vec.div(value);
-            return vec;
+            return (lhs /= value);
         }
 
         /** \brief / operator (const TScalar, vcl::Vector) */
         friend inline MyType operator/ (const TScalar value, MyType rhs)
         {
-            return rhs / value;
+            return (MyType(value) /= rhs);
         }
 
         /** \brief / operator (const buffer) */
         friend inline MyType operator/ (MyType lhs, const TScalar buffer[Ksize])
         {
-            MyType vec(lhs);
-            vec.div(buffer);
-            return vec;
+            return (lhs /= buffer);
         }
 
         /** \brief / operator (const buffer, vcl::Vector) */
         friend inline MyType operator/ (const TScalar buffer[Ksize], MyType rhs)
         {
-            MyType vec(rhs);
-            vec.div(buffer);
-            return vec;
+            return (MyType(buffer) /= rhs);
         }
 
         //---   miscelaneous   ----------------------------------------------
@@ -608,49 +563,49 @@ namespace vcl {
     protected:
         //---   add()   -----------------------------------------------------
         /** \brief inplace add operation (const reference) */
-        inline void add(const MyType& rhs)
+        virtual inline void add(const MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
                 *it++ += *rit++;
         }
 
         /** \brief inplace add operation (reference) */
-        inline void add(MyType& rhs)
+        virtual inline void add(MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
                 *it++ += *rit++;
         }
 
         /** \brief inplace add operation (reference) */
-        inline void add(const TScalar value)
+        virtual inline void add(const TScalar value)
         {
             for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
                 *it++ += value;
         }
 
         ////** \brief inplace add operation (const std::vector) */
-        ///inline void add(const std::vector<TScalar>& rhs)
+        ///virtual inline void add(const std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ += *rit++;
         ///}
         ///
         ////** \brief inplace add operation (std::vector) */
-        ///inline void add(std::vector<TScalar>& rhs)
+        ///virtual inline void add(std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ += *rit++;
         ///}
 
         /** \brief inplace add operation (const buffer) */
-        inline void add(const TScalar buffer[Ksize])
+        virtual inline void add(const TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ += *b++;
         }
 
         /** \brief inplace add operation (buffer) */
-        inline void add(TScalar buffer[Ksize])
+        virtual inline void add(TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ += *b++;
@@ -658,49 +613,49 @@ namespace vcl {
 
         //---   sub()   -----------------------------------------------------
         /** \brief inplace add operation (const reference) */
-        inline void sub(const MyType& rhs)
+        virtual inline void sub(const MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
                 *it++ -= *rit++;
         }
 
         /** \brief inplace add operation (reference) */
-        inline void sub(MyType& rhs)
+        virtual inline void sub(MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
                 *it++ -= *rit++;
         }
 
         /** \brief inplace add operation (reference) */
-        inline void sub(const TScalar value)
+        virtual inline void sub(const TScalar value)
         {
             for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
                 *it++ -= value;
         }
 
         ////** \brief inplace add operation (const std::vector) */
-        ///inline void sub(const std::vector<TScalar>& rhs)
+        ///virtual inline void sub(const std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ -= *rit++;
         ///}
         ///
         ////** \brief inplace add operation (std::vector) */
-        ///inline void sub(std::vector<TScalar>& rhs)
+        ///virtual inline void sub(std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ -= *rit++;
         ///}
 
         /** \brief inplace add operation (const buffer) */
-        inline void sub(const TScalar buffer[Ksize])
+        virtual inline void sub(const TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ -= *b++;
         }
 
         /** \brief inplace add operation (buffer) */
-        inline void sub(TScalar buffer[Ksize])
+        virtual inline void sub(TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ -= *b++;
@@ -708,49 +663,49 @@ namespace vcl {
 
         //---   mul()   -----------------------------------------------------
         /** \brief inplace mul operation (const reference) */
-        inline void mul(const MyType& rhs)
+        virtual inline void mul(const MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
                 *it++ *= *rit++;
         }
 
         /** \brief inplace mul operation (reference) */
-        inline void mul(MyType& rhs)
+        virtual inline void mul(MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
                 *it++ *= *rit++;
         }
 
         /** \brief inplace mul operation (reference) */
-        inline void mul(const TScalar value)
+        virtual inline void mul(const TScalar value)
         {
             for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
                 *it++ *= value;
         }
 
         ////** \brief inplace mul operation (const std::vector) */
-        ///inline void mul(const std::vector<TScalar>& rhs)
+        ///virtual inline void mul(const std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ *= *rit++;
         ///}
         ///
         ////** \brief inplace mul operation (std::vector) */
-        ///inline void mul(std::vector<TScalar>& rhs)
+        ///virtual inline void mul(std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ *= *rit++;
         ///}
 
         /** \brief inplace mul operation (const buffer) */
-        inline void mul(const TScalar buffer[Ksize])
+        virtual inline void mul(const TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ *= *b++;
         }
 
         /** \brief inplace mul operation (buffer) */
-        inline void mul(TScalar buffer[Ksize])
+        virtual inline void mul(TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ *= *b++;
@@ -758,59 +713,54 @@ namespace vcl {
 
         //---   div()   -----------------------------------------------------
         /** \brief inplace div operation (const reference) */
-        inline void div(const MyType& rhs)
+        virtual inline void div(const MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end(); )
                 *it++ /= *rit++;
         }
 
         /** \brief inplace div operation (reference) */
-        inline void div(MyType& rhs)
+        virtual inline void div(MyType& rhs)
         {
             for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end(); )
                 *it++ /= *rit++;
         }
 
         /** \brief inplace div operation (reference) */
-        inline void div(const TScalar value)
+        virtual inline void div(const TScalar value)
         {
             for (TScalar* it = this->begin(), rhs = rhs.begin(); it != this->end(); )
                 *it++ /= value;
         }
 
         ////** \brief inplace div operation (const std::vector) */
-        ///inline void div(const std::vector<TScalar>& rhs)
+        ///virtual inline void div(const std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.cbegin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ /= *rit++;
         ///}
         ///
         ////** \brief inplace div operation (std::vector) */
-        ///inline void div(std::vector<TScalar>& rhs)
+        ///virtual inline void div(std::vector<TScalar>& rhs)
         ///{
         ///    for (TScalar* it = this->begin(), rit = rhs.begin(); it != this->end() && rit != rhs.end(); )
         ///        *it++ /= *rit++;
         ///}
 
         /** \brief inplace div operation (const buffer) */
-        inline void div(const TScalar buffer[Ksize])
+        virtual inline void div(const TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ /= *b++;
         }
 
         /** \brief inplace div operation (buffer) */
-        inline void div(TScalar buffer[Ksize])
+        virtual inline void div(TScalar buffer[Ksize])
         {
             for (TScalar* it = this->begin(), b = buffer; it != this->end(); )
                 *it++ /= *b++;
         }
 
     };
-
-
-    //export template<typename TScalar> class Vec2;   // 2 coordinates vectors
-    //export template<typename TScalar> class Vec3;   // 3 coordinates vectors
-    //export template<typename TScalar> class Vec4;   // 4 coordinates vectors
 
 } // end of namespace vcl

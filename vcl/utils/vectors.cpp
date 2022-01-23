@@ -349,7 +349,7 @@ namespace vcl {
         }
 
         /** \brief - operator (const reference).
-        * Note: optimized for chained v1+v2+v3
+        * Note: optimized for chained v1-v2-v3
         */
         friend inline MyType operator- (MyType lhs, const MyType& rhs)
         {
@@ -392,6 +392,106 @@ namespace vcl {
         {
             MyType vec(rhs);
             vec.sub(buffer);
+            return vec;
+        }
+
+        //---   operators *= and  *   ---------------------------------------
+        /** \brief *= operator (const reference) */
+        inline MyType& operator*= (const MyType& rhs)
+        {
+            mul(rhs);
+            return *this;
+        }
+
+        /** \brief *= operator (reference) */
+        inline MyType& operator*= (MyType& rhs)
+        {
+            mul(rhs);
+            return *this;
+        }
+
+        /** \brief *= operator (const TScalar) */
+        inline MyType& operator*= (const TScalar value)
+        {
+            mul(value);
+            return *this;
+        }
+
+        ////** \brief *= operator (const std::vector) */
+        ///inline MyType& operator*= (const std::vector<TScalar>& rhs)
+        ///{
+        ///    mul(rhs);
+        ///    return *this;
+        ///}
+        ///
+        ////** \brief *= operator (std::vector) */
+        ///inline MyType& operator*= (std::vector<TScalar>& rhs)
+        ///{
+        ///    mul(rhs);
+        ///    return *this;
+        ///}
+
+        /** \brief *= operator (const buffer) */
+        inline MyType& operator*= (const TScalar buffer[Ksize])
+        {
+            mul(buffer);
+            return *this;
+        }
+
+        /** \brief *= operator (buffer) */
+        inline MyType& operator*= (TScalar buffer[Ksize])
+        {
+            mul(buffer);
+            return *this;
+        }
+
+        /** \brief * operator (const reference).
+        * Note: optimized for chained v1*v2*v3
+        */
+        friend inline MyType operator*(MyType lhs, const MyType& rhs)
+        {
+            MyType vec(lhs);
+            vec.mul(rhs);
+            return vec;
+        }
+
+        /** \brief * operator (reference).
+        * Note: optimized for chained v1*v2*v3
+        */
+        friend inline MyType operator* (MyType lhs, MyType& rhs)
+        {
+            MyType vec(lhs);
+            vec.mul(rhs);
+            return vec;
+        }
+
+        /** \brief * operator (const TScalar) */
+        friend inline MyType operator* (MyType lhs, const TScalar value)
+        {
+            MyType vec(lhs);
+            vec.mul(value);
+            return vec;
+        }
+
+        /** \brief * operator (const TScalar, vcl::Vector) */
+        friend inline MyType operator* (const TScalar value, MyType rhs)
+        {
+            return rhs * value;
+        }
+
+        /** \brief * operator (const buffer) */
+        friend inline MyType operator* (MyType lhs, const TScalar buffer[Ksize])
+        {
+            MyType vec(lhs);
+            vec.mul(value);
+            return vec;
+        }
+
+        /** \brief * operator (const buffer, vcl::Vector) */
+        friend inline MyType operator* (const TScalar buffer[Ksize], MyType rhs)
+        {
+            MyType vec(rhs);
+            vec.mul(buffer);
             return vec;
         }
 

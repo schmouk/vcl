@@ -1,4 +1,4 @@
-/**
+/*
 MIT License
 
 Copyright (c) 2022 Philippe Schmouker, ph.schmouker (at) gmail.com
@@ -23,45 +23,45 @@ SOFTWARE.
 */
 
 //===========================================================================
-/** \brief module Utils
+/** \brief interface module Utils.
 *
 * Exports all utilities stuff.
 */
 export module Utils;
 
 namespace vcl {
+
+    /*
+    // Matrices
+    export template<typename T> class Matrix;
+    */
+
     // Vectors
-    export template<typename TScalar, const int Ksize> class Vector;
+    export template<typename TScalar, const size_t Ksize> class Vector;
+    /*
+    export template<typename TScalar, const int Ksize> class ClippedVector;
+
     export template<typename TScalar> class Vec2;   // 2 coordinates vectors
     export template<typename TScalar> class Vec3;   // 3 coordinates vectors
     export template<typename TScalar> class Vec4;   // 4 coordinates vectors
 
-    export class Vec2d;     // Vec2<double>         - 64 bits
-    export class Vec2f;     // Vec2<float>          - 32 bits
-    export class Vec2ui;    // Vec2<unsigned int>   - 32 bits
-    export class Vec2us;    // Vec2<unsigned short> - 16 bits
-    export class Vec2b;     // Vec2<unsigned char>  -  8 bits
+    export typedef Vec2<double>             Vec2d;  //!< 2D vectors, 64 bits components
+    export typedef Vec2<float>              Vec2f;  //!< 2D vectors, 32 bits components
+    export typedef Vec2<unsigned int>       Vec2i;  //!< 2D vectors, 32 bits components
+    export typedef Vec2<unsigned short>     Vec2s;  //!< 2D vectors, 16 bits components
+    export typedef Vec2<unsigned char>      Vec2b;  //!< 2D vectors,  8 bits components
 
-    export class Vec3d;     // Vec3<double>         - 64 bits
-    export class Vec3f;     // Vec3<float>          - 32 bits
-    export class Vec3ui;    // Vec3<unsigned int>   - 32 bits
-    export class Vec3us;    // Vec3<unsigned short> - 16 bits
-    export class Vec3b;     // Vec<unsigned char>   -  8 bits
+    export typedef Vec3<double>             Vec3d;  //!< 3D vectors, 64 bits components
+    export typedef Vec3<float>              Vec3f;  //!< 3D vectors, 32 bits components
+    export typedef Vec3<unsigned int>       Vec3i;  //!< 3D vectors, 32 bits components
+    export typedef Vec3<unsigned short>     Vec3s;  //!< 3D vectors, 16 bits components
+    export typedef Vec3<unsigned char>      Vec3b;  //!< 3D vectors,  8 bits components
 
-    export class Vec4d;     // Vec4<double>         - 64 bits
-    export class Vec4f;     // Vec4<float>          - 32 bits
-    export class Vec4ui;    // Vec4<unsigned int>   - 32 bits
-    export class Vec4us;    // Vec4<unsigned short> - 16 bits
-    export class Vec4b;     // Vec4<unsigned char>  -  8 bits
-
-    // Matrices
-    export template<typename TScalar> class Matrix;
-    export template<typename TScalar> class Mat2;   // 2 dimensions matrices
-
-    export class Mat2d;     // Mat2<double>         - 64 bits
-    export class Mat2f;     // Mat2<float>          - 32 bits
-    export class Mat2ui;    // Mat2<unsigned int>   - 32 bits
-    export class Mat2us;    // Mat2<unsigned short> - 16 bits
-    export class Mat2b;     // Mat2<unsigned char>  -  8 bits
+    export typedef Vec4<double>             Vec4d;  //!< 4D vectors, 64 bits components
+    export typedef Vec4<float>              Vec4f;  //!< 4D vectors, 32 bits components
+    export typedef Vec4<unsigned int>       Vec4i;  //!< 4D vectors, 32 bits components
+    export typedef Vec4<unsigned short>     Vec4s;  //!< 4D vectors, 16 bits components
+    export typedef Vec4<unsigned char>      Vec4b;  //!< 4D vectors,  8 bits components
+    */
 
 } // end of namespace vcl

@@ -54,39 +54,39 @@ namespace vcl {
             this->fill(value);
         }
 
-        /** \brief Copy constructor (const).
+        /** \brief Copy constructor (const&).
         */
         inline Vector<TScalar, Ksize>(const MyType& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor.
+        /** \brief Copy constructor (&).
         */
         inline Vector<TScalar, Ksize>(MyType& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const std::array).
+        /** \brief Copy constructor (const std::array&).
         */
         inline Vector<TScalar, Ksize>(const MyBaseType& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (std::array).
+        /** \brief Copy constructor (std::array&).
         */
         inline Vector<TScalar, Ksize>(MyBaseType& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Constructor with specified const std::vector.
+        /** \brief Copy constructor (const std::vector&).
         */
         inline Vector<TScalar, Ksize>(const std::vector<TScalar>& vect)
             : MyBaseType()
         {
             copy(vect);
         }
-        
-        /** \brief Constructor with specified std::vector.
+
+        /** \brief Copy constructor (std::vector&).
         */
         inline Vector<TScalar, Ksize>(std::vector<TScalar>& vect)
             : MyBaseType()
@@ -94,7 +94,7 @@ namespace vcl {
             copy(vect);
         }
 
-        /** \brief Constructor with specified const buffer.
+        /** \brief Copy Constructor (const buffer).
         */
         inline Vector<TScalar, Ksize>(const TScalar buffer[Ksize])
             : MyBaseType()
@@ -102,7 +102,7 @@ namespace vcl {
             copy(buffer);
         }
 
-        /** \brief Constructor with specified buffer.
+        /** \brief Copy constructor (buffer).
         */
         inline Vector<TScalar, Ksize>(TScalar buffer[Ksize])
             : MyBaseType()
@@ -776,7 +776,7 @@ namespace vcl {
 
         //---   miscelaneous   ----------------------------------------------
         /** \brief Returns a string representation of this vector. */
-        string repr()
+        std::string repr()
         {
             std::ostringstream repr_ostr;
         

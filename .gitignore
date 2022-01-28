@@ -8,6 +8,10 @@ Debug
 Release
 x64
 x86
+tests
+vcl/tests
+vcl/tests/*
+vcl/.*
 
 # Prerequisites
 *.d

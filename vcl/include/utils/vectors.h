@@ -131,7 +131,7 @@ namespace vcl {
         }
 
         /** \brief Copies a const std::array. */
-        virtual inline void copy(const MyBaseType& other)
+        virtual inline void copy(const std::array<TScalar, Ksize>& other)
         {
             auto it = this->begin();
             for (auto ot = other.cbegin(); it != this->end(); )
@@ -139,7 +139,7 @@ namespace vcl {
         }
 
         /** \brief Copies an std::array. */
-        virtual inline void copy(MyBaseType& other)
+        virtual inline void copy(std::array<TScalar, Ksize>& other)
         {
             auto it = this->begin();
             for (auto ot = other.begin(); it != this->end(); )
@@ -207,14 +207,14 @@ namespace vcl {
         }
 
         /** \brief assign operator (const std::array). */
-        virtual inline MyType& operator= (const MyBaseType& other)
+        virtual inline MyType& operator= (const std::array<TScalar, Ksize>& other)
         {
             copy(other);
             return *this;
         }
 
         /** \brief assign operator (std::array). */
-        virtual inline MyType& operator= (MyBaseType& other)
+        virtual inline MyType& operator= (std::array<TScalar, Ksize>& other)
         {
             copy(other);
             return *this;
@@ -271,14 +271,14 @@ namespace vcl {
         }
 
         /** \brief += operator (const std::array) */
-        virtual inline MyType& operator+= (const MyBaseType& rhs)
+        virtual inline MyType& operator+= (const std::array<TScalar, Ksize>& rhs)
         {
             add(rhs);
             return *this;
         }
 
         /** \brief += operator (std::array) */
-        virtual inline MyType& operator+= (MyBaseType& rhs)
+        virtual inline MyType& operator+= (std::array<TScalar, Ksize>& rhs)
         {
             add(rhs);
             return *this;
@@ -341,13 +341,13 @@ namespace vcl {
         }
 
         /** \brief + operator (const std::array) */
-        friend inline MyType operator+ (MyType lhs, const MyBaseType& rhs)
+        friend inline MyType operator+ (MyType lhs, const std::array<TScalar, Ksize>& rhs)
         {
             return (lhs += rhs);
         }
 
         /** \brief + operator (const std::array, vcl::Vector) */
-        friend inline MyType operator+ (MyBaseType lhs, MyType rhs)
+        friend inline MyType operator+ (std::array<TScalar, Ksize> lhs, MyType rhs)
         {
             return (rhs += lhs);
         }
@@ -406,14 +406,14 @@ namespace vcl {
         }
 
         /** \brief -= operator (const std::array) */
-        virtual inline MyType& operator-= (const MyBaseType& rhs)
+        virtual inline MyType& operator-= (const std::array<TScalar, Ksize>& rhs)
         {
             sub(rhs);
             return *this;
         }
 
         /** \brief -= operator (std::array) */
-        virtual inline MyType& operator-= (MyBaseType& rhs)
+        virtual inline MyType& operator-= (std::array<TScalar, Ksize>& rhs)
         {
             sub(rhs);
             return *this;
@@ -476,13 +476,13 @@ namespace vcl {
         }
 
         /** \brief - operator (const std::array) */
-        friend inline MyType operator- (MyType lhs, const MyBaseType& rhs)
+        friend inline MyType operator- (MyType lhs, const std::array<TScalar, Ksize>& rhs)
         {
             return (lhs -= rhs);
         }
 
         /** \brief - operator (const std::array, vcl::Vector) */
-        friend inline MyType operator- (MyBaseType lhs, MyType rhs)
+        friend inline MyType operator- (std::array<TScalar, Ksize> lhs, MyType rhs)
         {
             return -(rhs -= lhs);
         }
@@ -540,14 +540,14 @@ namespace vcl {
         }
 
         /** \brief *= operator (const std::array) */
-        virtual inline MyType& operator*= (const MyBaseType& rhs)
+        virtual inline MyType& operator*= (const std::array<TScalar, Ksize>& rhs)
         {
             mul(rhs);
             return *this;
         }
 
         /** \brief *= operator (std::array) */
-        virtual inline MyType& operator*= (MyBaseType& rhs)
+        virtual inline MyType& operator*= (std::array<TScalar, Ksize>& rhs)
         {
             mul(rhs);
             return *this;
@@ -610,13 +610,13 @@ namespace vcl {
         }
 
         /** \brief * operator (const std::array) */
-        friend inline MyType operator* (MyType lhs, const MyBaseType& rhs)
+        friend inline MyType operator* (MyType lhs, const std::array<TScalar, Ksize>& rhs)
         {
             return (lhs *= rhs);
         }
 
         /** \brief * operator (const std::array, vcl::Vector) */
-        friend inline MyType operator* (MyBaseType lhs, MyType rhs)
+        friend inline MyType operator* (std::array<TScalar, Ksize> lhs, MyType rhs)
         {
             return (rhs *= lhs);
         }
@@ -668,14 +668,14 @@ namespace vcl {
         }
 
         /** \brief /= operator (const std::array) */
-        virtual inline MyType& operator/= (const MyBaseType& rhs)
+        virtual inline MyType& operator/= (const std::array<TScalar, Ksize>& rhs)
         {
             div(rhs);
             return *this;
         }
 
         /** \brief /= operator (std::array) */
-        virtual inline MyType& operator/= (MyBaseType& rhs)
+        virtual inline MyType& operator/= (std::array<TScalar, Ksize>& rhs)
         {
             div(rhs);
             return *this;
@@ -738,13 +738,13 @@ namespace vcl {
         }
 
         /** \brief / operator (const std::array) */
-        friend inline MyType operator/ (MyType lhs, const MyBaseType& rhs)
+        friend inline MyType operator/ (MyType lhs, const std::array<TScalar, Ksize>& rhs)
         {
             return (lhs /= rhs);
         }
 
         /** \brief / operator (const std::array, vcl::Vector) */
-        friend inline MyType operator/ (MyBaseType lhs, MyType rhs)
+        friend inline MyType operator/ (std::array<TScalar, Ksize> lhs, MyType rhs)
         {
 
             return (MyType(lhs) /= rhs);
@@ -823,7 +823,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (const std::array) */
-        virtual inline void add(const MyBaseType& rhs)
+        virtual inline void add(const std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -831,7 +831,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (std::array) */
-        virtual inline void add(MyBaseType& rhs)
+        virtual inline void add(std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -894,7 +894,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (const std::array) */
-        virtual inline void sub(const MyBaseType& rhs)
+        virtual inline void sub(const std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -902,7 +902,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (std::array) */
-        virtual inline void sub(MyBaseType& rhs)
+        virtual inline void sub(std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -965,7 +965,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (const std::array) */
-        virtual inline void mul(const MyBaseType& rhs)
+        virtual inline void mul(const std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -973,7 +973,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (std::array) */
-        virtual inline void mul(MyBaseType& rhs)
+        virtual inline void mul(std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); )
@@ -1037,7 +1037,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (const std::array) */
-        virtual inline void div(const MyBaseType& rhs)
+        virtual inline void div(const std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); rit++)
@@ -1045,7 +1045,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (std::array) */
-        virtual inline void div(MyBaseType& rhs)
+        virtual inline void div(std::array<TScalar, Ksize>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end(); rit++)

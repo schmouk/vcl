@@ -49,7 +49,7 @@ namespace vcl {
         typedef Vector<TScalar, 4> MyBaseType; //<! shortcut to this class inherited class naming.
         typedef Vect4<TScalar>     MyType;     //<! shortcut to this class naming.
 
-        inline static const size_t Ksize = 3;
+        inline static const size_t Ksize = 4;
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).

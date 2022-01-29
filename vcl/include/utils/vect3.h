@@ -38,29 +38,29 @@ SOFTWARE.
 namespace vcl {
 
     //-----------------------------------------------------------------------
-    /** \brief the generic class for 2-D vectors.
-    * 
-    * \sa its specializations Vect2d, Vect2f, Vect2b, Vect2s, Vect2us, Vect2i, and Vect2ui.
+    /** \brief the generic class for 3-D vectors.
+    *
+    * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
     */
     template<typename TScalar>
-    class Vect2 : public Vector<TScalar, 2>
+    class Vect3 : public Vector<TScalar, 3>
     {
     public:
-        typedef Vector<TScalar, 2> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef Vect2<TScalar>     MyType;     //<! shortcut to this class naming.
+        typedef Vector<TScalar, 3> MyBaseType; //<! shortcut to this class inherited class naming.
+        typedef Vect3<TScalar>     MyType;     //<! shortcut to this class naming.
 
-        inline static const size_t Ksize = 2;
+        inline static const size_t Ksize = 3;
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).
         */
-        inline Vect2<TScalar>(const TScalar value = TScalar(0))
+        inline Vect3<TScalar>(const TScalar value = TScalar(0))
             : MyBaseType(value)
         {}
 
         /** \brief Copy constructor (const&).
         */
-        inline Vect2<TScalar>(const MyType& other)
+        inline Vect3<TScalar>(const MyType& other)
             : MyBaseType()
         {
             copy(other);
@@ -68,7 +68,7 @@ namespace vcl {
 
         /** \brief Copy constructor (&).
         */
-        inline Vect2<TScalar>(MyType& other)
+        inline Vect3<TScalar>(MyType& other)
             : MyBaseType()
         {
             copy(other);
@@ -76,7 +76,7 @@ namespace vcl {
 
         /** \brief Copy constructor (const std::array&).
         */
-        inline Vect2<TScalar>(const MyBaseType& other)
+        inline Vect3<TScalar>(const MyBaseType& other)
             : MyBaseType()
         {
             copy(other);
@@ -84,7 +84,7 @@ namespace vcl {
 
         /** \brief Copy constructor (std::array&).
         */
-        inline Vect2<TScalar>(MyBaseType& other)
+        inline Vect3<TScalar>(MyBaseType& other)
             : MyBaseType()
         {
             copy(other);
@@ -92,7 +92,7 @@ namespace vcl {
 
         /** \brief Copy constructor (const std::vector&).
         */
-        inline Vect2<TScalar>(const std::vector<TScalar>& vect)
+        inline Vect3<TScalar>(const std::vector<TScalar>& vect)
             : MyBaseType()
         {
             copy(vect);
@@ -100,7 +100,7 @@ namespace vcl {
 
         /** \brief Copy constructor (std::vector&).
         */
-        inline Vect2<TScalar>(std::vector<TScalar>& vect)
+        inline Vect3<TScalar>(std::vector<TScalar>& vect)
             : MyBaseType()
         {
             copy(vect);
@@ -108,7 +108,7 @@ namespace vcl {
 
         /** \brief Copy Constructor (const buffer).
         */
-        inline Vect2<TScalar>(const TScalar buffer[Ksize])
+        inline Vect3<TScalar>(const TScalar buffer[Ksize])
             : MyBaseType()
         {
             copy(buffer);
@@ -116,14 +116,14 @@ namespace vcl {
 
         /** \brief Copy constructor (buffer).
         */
-        inline Vect2<TScalar>(TScalar buffer[Ksize])
+        inline Vect3<TScalar>(TScalar buffer[Ksize])
             : MyBaseType()
         {
             copy(buffer);
         }
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~Vect2<TScalar>()
+        virtual inline ~Vect3<TScalar>()
         {}
 
         //---   Components accessors   --------------------------------------
@@ -163,12 +163,31 @@ namespace vcl {
             return (*this)[1] = new_y;
         }
 
+        /** \brief component z getter */
+        inline TScalar z()
+        {
+            return (*this)[2];
+        }
+
+        /** \brief component z getter (const) */
+        inline const TScalar z() const
+        {
+            return (*this)[2];
+        }
+
+        /** \brief component z setter */
+        inline TScalar z(const TScalar new_z)
+        {
+            return (*this)[2] = new_z;
+        }
+
         //---   copy()   ----------------------------------------------------
         /** \brief Copies a const vcl::Vector. */
         virtual inline void copy(const MyType& other)
         {
             x(other.x());
             y(other.y());
+            z(other.z());
         }
 
         /** \brief Copies a vcl::Vector. */
@@ -176,6 +195,7 @@ namespace vcl {
         {
             x(other.x());
             y(other.y());
+            z(other.z());
         }
 
         /** \brief Copies a const std::array. */
@@ -183,6 +203,7 @@ namespace vcl {
         {
             x(other[0]);
             y(other[1]);
+            z(other[2]);
         }
 
         /** \brief Copies an std::array. */
@@ -190,6 +211,7 @@ namespace vcl {
         {
             x(other[0]);
             y(other[1]);
+            z(other[2]);
         }
 
         /** \brief Copies a const std::vector. */
@@ -197,6 +219,7 @@ namespace vcl {
         {
             x(other[0]);
             y(other.size() > 1 ? other[1] : TScalar(0));
+            z(other.size() > 2 ? other[2] : TScalar(0));
         }
 
         /** \brief Copies a std::vector. */
@@ -204,6 +227,7 @@ namespace vcl {
         {
             x(other[0]);
             y(other.size() > 1 ? other[1] : TScalar(0));
+            z(other.size() > 2 ? other[2] : TScalar(0));
         }
 
         /** \brief Copies a const buffer. */
@@ -211,6 +235,7 @@ namespace vcl {
         {
             x(buffer[0]);
             y(buffer[1]);
+            z(buffer[2]);
         }
 
         /** \brief Copies a buffer. */
@@ -218,6 +243,7 @@ namespace vcl {
         {
             x(buffer[0]);
             y(buffer[1]);
+            z(buffer[2]);
         }
 
         //---   assignment operator   ---------------------------------------
@@ -242,6 +268,7 @@ namespace vcl {
         {
             (*this)[0] += rhs[0];
             (*this)[1] += rhs[1];
+            (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (reference) */
@@ -249,6 +276,7 @@ namespace vcl {
         {
             (*this)[0] += rhs[0];
             (*this)[1] += rhs[1];
+            (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (reference) */
@@ -256,6 +284,7 @@ namespace vcl {
         {
             (*this)[0] += value;
             (*this)[1] += value;
+            (*this)[2] += value;
         }
 
         /** \brief inplace add operation (const std::array) */
@@ -263,6 +292,7 @@ namespace vcl {
         {
             (*this)[0] += rhs[0];
             (*this)[1] += rhs[1];
+            (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (std::array) */
@@ -270,6 +300,7 @@ namespace vcl {
         {
             (*this)[0] += rhs[0];
             (*this)[1] += rhs[1];
+            (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (const std::vector) */
@@ -278,6 +309,8 @@ namespace vcl {
             (*this)[0] += rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] += rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (std::vector) */
@@ -286,6 +319,8 @@ namespace vcl {
             (*this)[0] += rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] += rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] += rhs[2];
         }
 
         /** \brief inplace add operation (const buffer) */
@@ -293,6 +328,7 @@ namespace vcl {
         {
             (*this)[0] += buffer[0];
             (*this)[1] += buffer[1];
+            (*this)[2] += buffer[2];
         }
 
         /** \brief inplace add operation (buffer) */
@@ -300,6 +336,7 @@ namespace vcl {
         {
             (*this)[0] += buffer[0];
             (*this)[1] += buffer[1];
+            (*this)[2] += buffer[2];
         }
 
         //---   sub()   -----------------------------------------------------
@@ -308,6 +345,7 @@ namespace vcl {
         {
             (*this)[0] -= rhs[0];
             (*this)[1] -= rhs[1];
+            (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (reference) */
@@ -315,6 +353,7 @@ namespace vcl {
         {
             (*this)[0] -= rhs[0];
             (*this)[1] -= rhs[1];
+            (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (reference) */
@@ -322,6 +361,7 @@ namespace vcl {
         {
             (*this)[0] -= value;
             (*this)[1] -= value;
+            (*this)[2] -= value;
         }
 
         /** \brief inplace sub operation (const std::array) */
@@ -329,6 +369,7 @@ namespace vcl {
         {
             (*this)[0] -= rhs[0];
             (*this)[1] -= rhs[1];
+            (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (std::array) */
@@ -336,6 +377,7 @@ namespace vcl {
         {
             (*this)[0] -= rhs[0];
             (*this)[1] -= rhs[1];
+            (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (const std::vector) */
@@ -344,6 +386,8 @@ namespace vcl {
             (*this)[0] -= rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] -= rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (std::vector) */
@@ -352,6 +396,8 @@ namespace vcl {
             (*this)[0] -= rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] -= rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] -= rhs[2];
         }
 
         /** \brief inplace sub operation (const buffer) */
@@ -359,6 +405,7 @@ namespace vcl {
         {
             (*this)[0] -= buffer[0];
             (*this)[1] -= buffer[1];
+            (*this)[2] -= buffer[2];
         }
 
         /** \brief inplace sub operation (buffer) */
@@ -366,6 +413,7 @@ namespace vcl {
         {
             (*this)[0] -= buffer[0];
             (*this)[1] -= buffer[1];
+            (*this)[2] -= buffer[2];
         }
 
         //---   mul()   -----------------------------------------------------
@@ -374,6 +422,7 @@ namespace vcl {
         {
             (*this)[0] *= rhs[0];
             (*this)[1] *= rhs[1];
+            (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (reference) */
@@ -381,6 +430,7 @@ namespace vcl {
         {
             (*this)[0] *= rhs[0];
             (*this)[1] *= rhs[1];
+            (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (reference) */
@@ -388,6 +438,7 @@ namespace vcl {
         {
             (*this)[0] *= value;
             (*this)[1] *= value;
+            (*this)[2] *= value;
         }
 
         /** \brief inplace mul operation (const std::array) */
@@ -395,6 +446,7 @@ namespace vcl {
         {
             (*this)[0] *= rhs[0];
             (*this)[1] *= rhs[1];
+            (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (std::array) */
@@ -402,6 +454,7 @@ namespace vcl {
         {
             (*this)[0] *= rhs[0];
             (*this)[1] *= rhs[1];
+            (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (const std::vector) */
@@ -410,6 +463,8 @@ namespace vcl {
             (*this)[0] *= rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] *= rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (std::vector) */
@@ -418,6 +473,8 @@ namespace vcl {
             (*this)[0] *= rhs[0];
             if (rhs.size() > 1)
                 (*this)[1] *= rhs[1];
+            if (rhs.size() > 2)
+                (*this)[2] *= rhs[2];
         }
 
         /** \brief inplace mul operation (const buffer) */
@@ -425,6 +482,7 @@ namespace vcl {
         {
             (*this)[0] *= buffer[0];
             (*this)[1] *= buffer[1];
+            (*this)[2] *= buffer[2];
         }
 
         /** \brief inplace mul operation (buffer) */
@@ -432,6 +490,7 @@ namespace vcl {
         {
             (*this)[0] *= buffer[0];
             (*this)[1] *= buffer[1];
+            (*this)[2] *= buffer[2];
         }
 
         //---   div()   -----------------------------------------------------
@@ -442,6 +501,8 @@ namespace vcl {
                 (*this)[0] /= rhs[0];
             if (rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (reference) */
@@ -451,6 +512,8 @@ namespace vcl {
                 (*this)[0] /= rhs[0];
             if (rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (reference) */
@@ -459,6 +522,7 @@ namespace vcl {
             if (value != TScalar(0)) {
                 (*this)[0] /= value;
                 (*this)[1] /= value;
+                (*this)[2] /= value;
             }
         }
 
@@ -469,6 +533,8 @@ namespace vcl {
                 (*this)[0] /= rhs[0];
             if (rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (std::array) */
@@ -478,6 +544,8 @@ namespace vcl {
                 (*this)[0] /= rhs[0];
             if (rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (const std::vector) */
@@ -485,8 +553,10 @@ namespace vcl {
         {
             if (rhs[0] != TScalar(0))
                 (*this)[0] /= rhs[0];
-            if (rhs.size() > 1  &&  rhs[1] != TScalar(0))
+            if (rhs.size() > 1 && rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs.size() > 2 && rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (std::vector) */
@@ -494,8 +564,10 @@ namespace vcl {
         {
             if (rhs[0] != TScalar(0))
                 (*this)[0] /= rhs[0];
-            if (rhs.size() > 1  &&  rhs[1] != TScalar(0))
+            if (rhs.size() > 1 && rhs[1] != TScalar(0))
                 (*this)[1] /= rhs[1];
+            if (rhs.size() > 2 && rhs[2] != TScalar(0))
+                (*this)[2] /= rhs[2];
         }
 
         /** \brief inplace div operation (const buffer) */
@@ -505,6 +577,8 @@ namespace vcl {
                 (*this)[0] /= buffer[0];
             if (buffer[1] != TScalar(0))
                 (*this)[1] /= buffer[1];
+            if (buffer[2] != TScalar(0))
+                (*this)[2] /= buffer[2];
         }
 
         /** \brief inplace div operation (buffer) */
@@ -514,36 +588,38 @@ namespace vcl {
                 (*this)[0] /= buffer[0];
             if (buffer[1] != TScalar(0))
                 (*this)[1] /= buffer[1];
+            if (buffer[2] != TScalar(0))
+                (*this)[2] /= buffer[2];
         }
 
     };
 
 
-    /** \brief The class of 2D vectors with double components (64 bits). */
-    typedef Vect2<double> Vect2d;
-    
-
-    /** \brief The class of 2D vectors with float components (32 bits). */
-    typedef Vect2<float> Vect2f;
+    /** \brief The class of 3D vectors with double components (64 bits). */
+    typedef Vect3<double> Vect3d;
 
 
-    /** \brief The class of 2D vectors with bytes components (8 bits). */
-    typedef Vect2<unsigned char> Vect2b;
+    /** \brief The class of 3D vectors with float components (32 bits). */
+    typedef Vect3<float> Vect3f;
 
 
-    /** \brief The class of 2D vectors with short components (16 bits). */
-    typedef Vect2<short> Vect2s;
+    /** \brief The class of 3D vectors with bytes components (8 bits). */
+    typedef Vect3<unsigned char> Vect3b;
 
 
-    /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    typedef Vect2<unsigned short> Vect2us;
+    /** \brief The class of 3D vectors with short components (16 bits). */
+    typedef Vect3<short> Vect3s;
 
 
-    /** \brief The class of 2D vectors with int components (32 bits). */
-    typedef Vect2<int> Vect2i;
+    /** \brief The class of 3D vectors with unsigned short components (16 bits). */
+    typedef Vect3<unsigned short> Vect3us;
 
 
-    /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-    typedef Vect2<unsigned int> Vect2ui;
+    /** \brief The class of 3D vectors with int components (32 bits). */
+    typedef Vect3<int> Vect3i;
+
+
+    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
+    typedef Vect3<unsigned int> Vect3ui;
 
 } // end of namespace vcl

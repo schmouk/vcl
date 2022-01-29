@@ -42,8 +42,11 @@ namespace vcl {
     class Vector : public std::array<TScalar, Ksize>
     {
     public:
-        typedef std::array<TScalar, Ksize> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef Vector<TScalar, Ksize>     MyType;     //<! shortcut to this class naming.
+        typedef std::array<TScalar, Ksize> MyBaseType;  //<! wrapper to this class inherited class naming.
+        typedef Vector<TScalar, Ksize>     MyType;      //<! wrapper to this class naming.
+
+        inline static const size_t KSize = Ksize;       //<! wrapper to this class size
+
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).

@@ -31,7 +31,7 @@ SOFTWARE.
 #include <sstream>
 #include <vector>
 
-#include "utils/vectors.h"
+#include "utils/vector.h"
 
 
 //===========================================================================
@@ -49,7 +49,6 @@ namespace vcl {
         typedef Vector<TScalar, 3> MyBaseType; //<! shortcut to this class inherited class naming.
         typedef Vect3<TScalar>     MyType;     //<! shortcut to this class naming.
 
-        inline static const size_t Ksize = 3;
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).
@@ -108,7 +107,7 @@ namespace vcl {
 
         /** \brief Copy Constructor (const buffer).
         */
-        inline Vect3<TScalar>(const TScalar buffer[Ksize])
+        inline Vect3<TScalar>(const TScalar buffer[MyBaseType::KSize])
             : MyBaseType()
         {
             copy(buffer);
@@ -116,7 +115,7 @@ namespace vcl {
 
         /** \brief Copy constructor (buffer).
         */
-        inline Vect3<TScalar>(TScalar buffer[Ksize])
+        inline Vect3<TScalar>(TScalar buffer[MyBaseType::KSize])
             : MyBaseType()
         {
             copy(buffer);
@@ -248,14 +247,14 @@ namespace vcl {
 
         //---   assignment operator   ---------------------------------------
         /** \brief assign operator (const std::array). */
-        virtual inline MyType& operator= (const std::array<TScalar, Ksize>& other)
+        virtual inline MyType& operator= (const std::array<TScalar, MyBaseType::KSize>& other)
         {
             copy(other);
             return *this;
         }
 
         /** \brief assign operator (std::array). */
-        virtual inline MyType& operator= (std::array<TScalar, Ksize>& other)
+        virtual inline MyType& operator= (std::array<TScalar, MyBaseType::KSize>& other)
         {
             copy(other);
             return *this;
@@ -324,7 +323,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (const buffer) */
-        virtual inline void add(const TScalar buffer[MyType::Ksize])
+        virtual inline void add(const TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] += buffer[0];
             (*this)[1] += buffer[1];
@@ -332,7 +331,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (buffer) */
-        virtual inline void add(TScalar buffer[Ksize])
+        virtual inline void add(TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] += buffer[0];
             (*this)[1] += buffer[1];
@@ -401,7 +400,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (const buffer) */
-        virtual inline void sub(const TScalar buffer[Ksize])
+        virtual inline void sub(const TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] -= buffer[0];
             (*this)[1] -= buffer[1];
@@ -409,7 +408,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (buffer) */
-        virtual inline void sub(TScalar buffer[Ksize])
+        virtual inline void sub(TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] -= buffer[0];
             (*this)[1] -= buffer[1];
@@ -478,7 +477,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (const buffer) */
-        virtual inline void mul(const TScalar buffer[Ksize])
+        virtual inline void mul(const TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] *= buffer[0];
             (*this)[1] *= buffer[1];
@@ -486,7 +485,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (buffer) */
-        virtual inline void mul(TScalar buffer[Ksize])
+        virtual inline void mul(TScalar buffer[MyBaseType::KSize])
         {
             (*this)[0] *= buffer[0];
             (*this)[1] *= buffer[1];
@@ -571,7 +570,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (const buffer) */
-        virtual inline void div(const TScalar buffer[Ksize])
+        virtual inline void div(const TScalar buffer[MyBaseType::KSize])
         {
             if (buffer[0] != TScalar(0))
                 (*this)[0] /= buffer[0];
@@ -582,7 +581,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (buffer) */
-        virtual inline void div(TScalar buffer[Ksize])
+        virtual inline void div(TScalar buffer[MyBaseType::KSize])
         {
             if (buffer[0] != TScalar(0))
                 (*this)[0] /= buffer[0];

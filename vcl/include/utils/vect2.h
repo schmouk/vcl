@@ -49,6 +49,8 @@ namespace vcl {
         typedef Vector<TScalar, 2> MyBaseType; //<! wrapper to this class inherited class naming.
         typedef Vect2<TScalar>     MyType;     //<! wrapper to this class naming.
 
+        typedef TScalar MyScalarType; //!< wrapper to TScalar
+
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).
@@ -91,7 +93,7 @@ namespace vcl {
 
         /** \brief Copy constructor (const std::vector&).
         */
-        inline Vect2<TScalar>(const std::vector<TScalar>& vect)
+        inline Vect2<TScalar>(const std::vector<MyScalarType>& vect)
             : MyBaseType()
         {
             copy(vect);
@@ -99,7 +101,7 @@ namespace vcl {
 
         /** \brief Copy constructor (std::vector&).
         */
-        inline Vect2<TScalar>(std::vector<TScalar>& vect)
+        inline Vect2<TScalar>(std::vector<MyScalarType>& vect)
             : MyBaseType()
         {
             copy(vect);
@@ -107,7 +109,7 @@ namespace vcl {
 
         /** \brief Copy Constructor (const buffer).
         */
-        inline Vect2<TScalar>(const TScalar buffer[MyBaseType::KSize])
+        inline Vect2<TScalar>(const MyScalarType buffer[MyBaseType::KSize])
             : MyBaseType()
         {
             copy(buffer);
@@ -115,7 +117,7 @@ namespace vcl {
 
         /** \brief Copy constructor (buffer).
         */
-        inline Vect2<TScalar>(TScalar buffer[MyBaseType::KSize])
+        inline Vect2<TScalar>(MyScalarType buffer[MyBaseType::KSize])
             : MyBaseType()
         {
             copy(buffer);
@@ -127,39 +129,39 @@ namespace vcl {
 
         //---   Components accessors   --------------------------------------
         /** \brief component x getter */
-        virtual inline TScalar x()
+        inline TScalar x()
         {
             return (*this)[0];
         }
 
         /** \brief component x getter (const) */
-        virtual inline const TScalar x() const
+        inline const TScalar x() const
         {
             return (*this)[0];
         }
 
         /** \brief component x setter */
-        virtual inline TScalar x(const TScalar new_x)
+        inline TScalar x(const MyScalarType new_x)
         {
-            return (*this)[0] = new_x;
+            return (*this)[0] = TScalar(new_x);
         }
 
         /** \brief component y getter */
-        virtual inline TScalar y()
+        inline TScalar y()
         {
             return (*this)[1];
         }
 
         /** \brief component y getter (const) */
-        virtual inline const TScalar y() const
+        inline const TScalar y() const
         {
             return (*this)[1];
         }
 
         /** \brief component y setter */
-        virtual inline TScalar y(const TScalar new_y)
+        inline TScalar y(const MyScalarType new_y)
         {
-            return (*this)[1] = new_y;
+            return (*this)[1] = TScalar(new_y);
         }
 
         //---   copy()   ----------------------------------------------------
@@ -192,28 +194,28 @@ namespace vcl {
         }
 
         /** \brief Copies a const std::vector. */
-        virtual inline void copy(const std::vector<TScalar>& other)
+        virtual inline void copy(const std::vector<MyScalarType>& other)
         {
             x(other[0]);
             y(other.size() > 1 ? other[1] : TScalar(0));
         }
 
         /** \brief Copies a std::vector. */
-        virtual inline void copy(std::vector<TScalar>& other)
+        virtual inline void copy(std::vector<MyScalarType>& other)
         {
             x(other[0]);
             y(other.size() > 1 ? other[1] : TScalar(0));
         }
 
         /** \brief Copies a const buffer. */
-        virtual inline void copy(const TScalar buffer[2])
+        virtual inline void copy(const MyScalarType buffer[2])
         {
             x(buffer[0]);
             y(buffer[1]);
         }
 
         /** \brief Copies a buffer. */
-        virtual inline void copy(TScalar buffer[2])
+        virtual inline void copy(MyScalarType buffer[2])
         {
             x(buffer[0]);
             y(buffer[1]);
@@ -221,14 +223,14 @@ namespace vcl {
 
         //---   assignment operator   ---------------------------------------
         /** \brief assign operator (const std::array). */
-        virtual inline MyType& operator= (const std::array<TScalar, MyBaseType::KSize>& other)
+        virtual inline MyType& operator= (const std::array<MyScalarType, MyBaseType::KSize>& other)
         {
             copy(other);
             return *this;
         }
 
         /** \brief assign operator (std::array). */
-        virtual inline MyType& operator= (std::array<TScalar, MyBaseType::KSize>& other)
+        virtual inline MyType& operator= (std::array<MyScalarType, MyBaseType::KSize>& other)
         {
             copy(other);
             return *this;
@@ -251,7 +253,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (reference) */
-        virtual inline void add(const TScalar value)
+        virtual inline void add(const MyScalarType value)
         {
             x(x() + value);
             y(y() + value);
@@ -272,7 +274,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (const std::vector) */
-        virtual inline void add(const std::vector<TScalar>& rhs)
+        virtual inline void add(const std::vector<MyScalarType>& rhs)
         {
             x(x() + rhs[0]);
             if (rhs.size() > 1)
@@ -280,7 +282,7 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (std::vector) */
-        virtual inline void add(std::vector<TScalar>& rhs)
+        virtual inline void add(std::vector<MyScalarType>& rhs)
         {
             x(x() + rhs[0]);
             if (rhs.size() > 1)
@@ -288,14 +290,14 @@ namespace vcl {
         }
 
         /** \brief inplace add operation (const buffer) */
-        virtual inline void add(const TScalar buffer[MyBaseType::KSize])
+        virtual inline void add(const MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() + buffer[0]);
             y(y() + buffer[1]);
         }
 
         /** \brief inplace add operation (buffer) */
-        virtual inline void add(TScalar buffer[MyBaseType::KSize])
+        virtual inline void add(MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() + buffer[0]);
             y(y() + buffer[1]);
@@ -317,7 +319,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (reference) */
-        virtual inline void sub(const TScalar value)
+        virtual inline void sub(const MyScalarType value)
         {
             x(x() - value);
             y(y() - value);
@@ -338,7 +340,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (const std::vector) */
-        virtual inline void sub(const std::vector<TScalar>& rhs)
+        virtual inline void sub(const std::vector<MyScalarType>& rhs)
         {
             x(x() - rhs[0]);
             if (rhs.size() > 1)
@@ -346,7 +348,7 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (std::vector) */
-        virtual inline void sub(std::vector<TScalar>& rhs)
+        virtual inline void sub(std::vector<MyScalarType>& rhs)
         {
             x(x() - rhs[0]);
             if (rhs.size() > 1)
@@ -354,14 +356,14 @@ namespace vcl {
         }
 
         /** \brief inplace sub operation (const buffer) */
-        virtual inline void sub(const TScalar buffer[MyBaseType::KSize])
+        virtual inline void sub(const MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() - buffer[0]);
             y(y() - buffer[1]);
         }
 
         /** \brief inplace sub operation (buffer) */
-        virtual inline void sub(TScalar buffer[MyBaseType::KSize])
+        virtual inline void sub(MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() - buffer[0]);
             y(y() - buffer[1]);
@@ -383,7 +385,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (reference) */
-        virtual inline void mul(const TScalar value)
+        virtual inline void mul(const MyScalarType value)
         {
             x(x() * value);
             y(y() * value);
@@ -404,7 +406,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (const std::vector) */
-        virtual inline void mul(const std::vector<TScalar>& rhs)
+        virtual inline void mul(const std::vector<MyScalarType>& rhs)
         {
             x(x() * rhs[0]);
             if (rhs.size() > 1)
@@ -412,7 +414,7 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (std::vector) */
-        virtual inline void mul(std::vector<TScalar>& rhs)
+        virtual inline void mul(std::vector<MyScalarType>& rhs)
         {
             x(x() * rhs[0]);
             if (rhs.size() > 1)
@@ -420,14 +422,14 @@ namespace vcl {
         }
 
         /** \brief inplace mul operation (const buffer) */
-        virtual inline void mul(const TScalar buffer[MyBaseType::KSize])
+        virtual inline void mul(const MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() * buffer[0]);
             y(y() * buffer[1]);
         }
 
         /** \brief inplace mul operation (buffer) */
-        virtual inline void mul(TScalar buffer[MyBaseType::KSize])
+        virtual inline void mul(MyScalarType buffer[MyBaseType::KSize])
         {
             x(x() * buffer[0]);
             y(y() * buffer[1]);
@@ -453,7 +455,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (reference) */
-        virtual inline void div(const TScalar value)
+        virtual inline void div(const MyScalarType value)
         {
             if (value != TScalar(0)) {
                 x(x() / value);
@@ -480,7 +482,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (const std::vector) */
-        virtual inline void div(const std::vector<TScalar>& rhs)
+        virtual inline void div(const std::vector<MyScalarType>& rhs)
         {
             if (rhs[0] != TScalar(0))
                 x(x() / rhs[0]);
@@ -489,7 +491,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (std::vector) */
-        virtual inline void div(std::vector<TScalar>& rhs)
+        virtual inline void div(std::vector<MyScalarType>& rhs)
         {
             if (rhs[0] != TScalar(0))
                 x(x() / rhs[0]);
@@ -498,7 +500,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (const buffer) */
-        virtual inline void div(const TScalar buffer[MyBaseType::KSize])
+        virtual inline void div(const MyScalarType buffer[MyBaseType::KSize])
         {
             if (buffer[0] != TScalar(0))
                 x(x() / buffer[0]);
@@ -507,7 +509,7 @@ namespace vcl {
         }
 
         /** \brief inplace div operation (buffer) */
-        virtual inline void div(TScalar buffer[MyBaseType::KSize])
+        virtual inline void div(MyScalarType buffer[MyBaseType::KSize])
         {
             if (buffer[0] != TScalar(0))
                 x(x() / buffer[0]);
@@ -517,31 +519,38 @@ namespace vcl {
 
     };
 
-
+    
+    //===========================================================================
     /** \brief The class of 2D vectors with double components (64 bits). */
     typedef Vect2<double> Vect2d;
     
 
+    //===========================================================================
     /** \brief The class of 2D vectors with float components (32 bits). */
     typedef Vect2<float> Vect2f;
 
 
+    //===========================================================================
     /** \brief The class of 2D vectors with bytes components (8 bits). */
     typedef Vect2<unsigned char> Vect2b;
 
 
+    //===========================================================================
     /** \brief The class of 2D vectors with short components (16 bits). */
     typedef Vect2<short> Vect2s;
 
 
+    //===========================================================================
     /** \brief The class of 2D vectors with unsigned short components (16 bits). */
     typedef Vect2<unsigned short> Vect2us;
 
 
+    //===========================================================================
     /** \brief The class of 2D vectors with int components (32 bits). */
     typedef Vect2<int> Vect2i;
 
 
+    //===========================================================================
     /** \brief The class of 2D vectors with unsigned int components (32 bits). */
     typedef Vect2<unsigned int> Vect2ui;
 

@@ -8,6 +8,8 @@ Debug
 Release
 x64
 x86
+# vcl
+archive
 tests
 vcl/tests
 vcl/tests/*

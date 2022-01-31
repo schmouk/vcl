@@ -1401,69 +1401,69 @@ namespace vcl {
         }
 
         /** \brief / operator (const T Scalar, vcl::Vector) */
-        friend inline MyType operator/ (const char value, MyType rhs)
+        friend inline MyType operator/ (const char value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const unsigned char value, MyType rhs)
+        friend inline MyType operator/ (const unsigned char value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const short value, MyType rhs)
+        friend inline MyType operator/ (const short value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const unsigned short value, MyType rhs)
+        friend inline MyType operator/ (const unsigned short value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const int value, MyType rhs)
+        friend inline MyType operator/ (const int value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const unsigned int value, MyType rhs)
+        friend inline MyType operator/ (const unsigned int value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const long value, MyType rhs)
+        friend inline MyType operator/ (const long value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const unsigned long value, MyType rhs)
+        friend inline MyType operator/ (const unsigned long value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const  long long value, MyType rhs)
+        friend inline MyType operator/ (const  long long value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const unsigned  long long value, MyType rhs)
+        friend inline MyType operator/ (const unsigned  long long value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const float value, MyType rhs)
+        friend inline MyType operator/ (const float value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const double value, MyType rhs)
+        friend inline MyType operator/ (const double value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
-        friend inline MyType operator/ (const long double value, MyType rhs)
+        friend inline MyType operator/ (const long double value, MyType& rhs)
         {
-            return rhs /= value;
+            return MyType(value) /= rhs;
         }
 
         /** \brief / operator (const std::array) */
@@ -1911,9 +1911,9 @@ namespace vcl {
         inline void div(const vcl::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
-            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
+            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++, rit++)
                 if (*rit != TScalar(0))
-                    *it++ /= *rit;
+                    *it /= *rit;
         }
 
         /** \brief inplace div operation (scalar) */

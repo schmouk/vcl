@@ -59,9 +59,10 @@ namespace vcl {
     /** \brief The class of 4D vectors with int components (32 bits). */
     typedef Vect4<int> Vect4i;
 
-    //===========================================================================
     /** \brief The class of 4D vectors with unsigned int components (32 bits). */
     typedef Vect4<unsigned int> Vect4ui;
+
+
     //-----------------------------------------------------------------------
     /** \brief the generic class for 4-D vectors.
     *
@@ -146,6 +147,17 @@ namespace vcl {
         inline const TScalar& z() const
         {
             return (*this)[2];
+        }
+
+        /** \brief component w accessors */
+        inline TScalar& w()
+        {
+            return (*this)[3];
+        }
+
+        inline const TScalar& w() const
+        {
+            return (*this)[3];
         }
 
     };

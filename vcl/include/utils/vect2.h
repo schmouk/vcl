@@ -38,6 +38,32 @@ SOFTWARE.
 namespace vcl {
 
     //-----------------------------------------------------------------------
+    // Forward declaration and Specializations
+    template<typename TScalar> class Vect2;
+
+    /** \brief The class of 2D vectors with double components (64 bits). */
+    typedef Vect2<double> Vect2d;
+
+    /** \brief The class of 2D vectors with float components (32 bits). */
+    typedef Vect2<float> Vect2f;
+
+    /** \brief The class of 2D vectors with bytes components (8 bits). */
+    typedef Vect2<unsigned char> Vect2b;
+
+    /** \brief The class of 2D vectors with short components (16 bits). */
+    typedef Vect2<short> Vect2s;
+
+    /** \brief The class of 2D vectors with unsigned short components (16 bits). */
+    typedef Vect2<unsigned short> Vect2us;
+
+    /** \brief The class of 2D vectors with int components (32 bits). */
+    typedef Vect2<int> Vect2i;
+
+    /** \brief The class of 2D vectors with unsigned int components (32 bits). */
+    typedef Vect2<unsigned int> Vect2ui;
+
+
+    //-----------------------------------------------------------------------
     /** \brief the generic class for 2-D vectors.
     * 
     * \sa its specializations Vect2d, Vect2f, Vect2b, Vect2s, Vect2us, Vect2i, and Vect2ui.
@@ -113,40 +139,5 @@ namespace vcl {
         }
 
     };
-
-    
-    //===========================================================================
-    /** \brief The class of 2D vectors with double components (64 bits). */
-    typedef Vect2<double> Vect2d;
-    
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with float components (32 bits). */
-    typedef Vect2<float> Vect2f;
-
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with bytes components (8 bits). */
-    typedef Vect2<unsigned char> Vect2b;
-
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with short components (16 bits). */
-    typedef Vect2<short> Vect2s;
-
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    typedef Vect2<unsigned short> Vect2us;
-
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with int components (32 bits). */
-    typedef Vect2<int> Vect2i;
-
-
-    //===========================================================================
-    /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-    typedef Vect2<unsigned int> Vect2ui;
 
 } // end of namespace vcl

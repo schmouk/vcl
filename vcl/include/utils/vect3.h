@@ -38,6 +38,32 @@ SOFTWARE.
 namespace vcl {
 
     //-----------------------------------------------------------------------
+    // Forward declaration and Specializations
+    template<typename TScalar> class Vect3;
+
+    /** \brief The class of 3D vectors with double components (64 bits). */
+    typedef Vect3<double> Vect3d;
+
+    /** \brief The class of 3D vectors with float components (32 bits). */
+    typedef Vect3<float> Vect3f;
+
+    /** \brief The class of 3D vectors with bytes components (8 bits). */
+    typedef Vect3<unsigned char> Vect3b;
+
+    /** \brief The class of 3D vectors with short components (16 bits). */
+    typedef Vect3<short> Vect3s;
+
+    /** \brief The class of 3D vectors with unsigned short components (16 bits). */
+    typedef Vect3<unsigned short> Vect3us;
+
+    /** \brief The class of 3D vectors with int components (32 bits). */
+    typedef Vect3<int> Vect3i;
+
+    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
+    typedef Vect3<unsigned int> Vect3ui;
+
+
+    //-----------------------------------------------------------------------
     /** \brief the generic class for 3-D vectors.
     *
     * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
@@ -124,40 +150,5 @@ namespace vcl {
         }
 
     };
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with double components (64 bits). */
-    typedef Vect3<double> Vect3d;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with float components (32 bits). */
-    typedef Vect3<float> Vect3f;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with bytes components (8 bits). */
-    typedef Vect3<unsigned char> Vect3b;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with short components (16 bits). */
-    typedef Vect3<short> Vect3s;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with unsigned short components (16 bits). */
-    typedef Vect3<unsigned short> Vect3us;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with int components (32 bits). */
-    typedef Vect3<int> Vect3i;
-
-
-    //===========================================================================
-    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    typedef Vect3<unsigned int> Vect3ui;
 
 } // end of namespace vcl

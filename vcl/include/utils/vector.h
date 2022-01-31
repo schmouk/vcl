@@ -319,7 +319,7 @@ namespace vcl {
             return *this;
         }
 
-        //---   operators += and  +   ---------------------------------------
+        //---   operator +=   -----------------------------------------------
         /** \brief += operator (const reference) */
         template<typename T, size_t S>
         inline MyType& operator+= (const vcl::Vector<T,S>& rhs)
@@ -439,12 +439,14 @@ namespace vcl {
             return lhs;
         }
 
+        //---   operator +   ------------------------------------------------
         /** \brief + operator (const reference).
         * Note: optimized for chained v1+v2+v3
         */
-        inline MyType operator+ (const MyType& rhs)
+        template<typename T, size_t S>
+        friend inline MyType operator+ (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
-            return *this += rhs;
+            return lhs += rhs;
         }
 
         /** \brief + operator (const TScalar) */
@@ -614,7 +616,7 @@ namespace vcl {
         }
 
 
-        //---   operators -= and  -   ---------------------------------------
+        //---   operators -=   ----------------------------------------------
         /** \brief -= operator (const reference) */
         template<typename T, size_t S>
         inline MyType& operator-= (const vcl::Vector<T,S>& rhs)
@@ -734,10 +736,12 @@ namespace vcl {
             return lhs;
         }
 
-        /** \brief - operator (const reference).
+        //---   operator -   ------------------------------------------------
+        /** \brief + operator (const reference).
         * Note: optimized for chained v1-v2-v3
         */
-        friend inline MyType operator- (MyType lhs, const MyType& rhs)
+        template<typename T, size_t S>
+        friend inline MyType operator- (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs -= rhs;
         }
@@ -1028,10 +1032,12 @@ namespace vcl {
             return lhs;
         }
 
-        /** \brief * operator (const reference).
+        //---   operator *   ------------------------------------------------
+        /** \brief + operator (const reference).
         * Note: optimized for chained v1*v2*v3
         */
-        friend inline MyType operator* (MyType lhs, const MyType& rhs)
+        template<typename T, size_t S>
+        friend inline MyType operator* (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs *= rhs;
         }
@@ -1317,10 +1323,13 @@ namespace vcl {
             return lhs;
         }
 
+
+        //---   operator /   ------------------------------------------------
         /** \brief / operator (const reference).
         * Note: optimized for chained v1/v2/v3
         */
-        friend inline MyType operator/ (MyType lhs, const MyType& rhs)
+        template<typename T, size_t S>
+        friend inline MyType operator/ (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs /= rhs;
         }

@@ -37,6 +37,7 @@ SOFTWARE.
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
 
     //=======================================================================
     // Forward declaration and Specializations
@@ -166,10 +167,10 @@ namespace vcl {
             this->fill(this->clipped(value));
         }
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3<TScalar, Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -270,10 +271,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3c<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3c<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -325,10 +326,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3b<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3b<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -381,10 +382,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3s<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3s<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -437,10 +438,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3us<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3us<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -493,10 +494,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3i<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3i<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -549,10 +550,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3ui<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3ui<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -605,10 +606,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3f<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3f<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -661,10 +662,10 @@ namespace vcl {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::Vector&).
+        /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-        inline ClipVect3d<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+        inline ClipVect3d<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -687,4 +688,5 @@ namespace vcl {
         {}
     };
 
+  } // end of namespace vcl::vect::vect
 } // end of namespace vcl

@@ -1,4 +1,3 @@
-#pragma once
 /*
 MIT License
 
@@ -23,28 +22,28 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 //===========================================================================
+module;
+
 #include <array>
-#include <compare>
-#include <iostream>
 #include <sstream>
 #include <vector>
+
+export module vectors.vector;
 
 
 //===========================================================================
 namespace vcl {
-  namespace vect {
-
     //-----------------------------------------------------------------------
     /** \brief the generic class for vectors.
     */
+    export
     template<typename TScalar, const size_t Ksize>
     class Vector : public std::array<TScalar, Ksize>
     {
     public:
-        typedef std::array<TScalar, Ksize> MyBaseType; //<! wrapper to the inherited class naming.
-        typedef Vector<TScalar, Ksize>     MyType;     //<! wrapper to this class naming.
+        typedef std::array<TScalar, Ksize>  MyBaseType; //<! wrapper to the inherited class naming.
+        typedef vcl::Vector<TScalar, Ksize> MyType;     //<! wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Constructor with a filling value (defaults to 0).
@@ -136,7 +135,7 @@ namespace vcl {
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>
-        inline Vector<TScalar, Ksize>(const vcl::vect::Vector<T,S>& other)
+        inline Vector<TScalar, Ksize>(const vcl::Vector<T, S>& other)
             : MyBaseType()
         {
             zero();
@@ -170,12 +169,12 @@ namespace vcl {
 
 
         //---   copy()   ----------------------------------------------------
-        /** \brief Copies a const vcl::vect::Vector. */
+        /** \brief Copies a const vcl::Vector. */
         template<typename T, size_t S>
-        inline void copy(const vcl::vect::Vector<T,S>& other)
+        inline void copy(const vcl::Vector<T, S>& other)
         {
             auto ot = other.cbegin();
-            for (auto it = this->begin(); it != this->end() && ot !=  other.cend(); )
+            for (auto it = this->begin(); it != this->end() && ot != other.cend(); )
                 *it++ = clipped(*ot++);
         }
 
@@ -289,16 +288,16 @@ namespace vcl {
             this->fill(clipped(value));
             return *this;
         }
-        
+
         inline MyType& operator= (const long double value)
         {
             this->fill(clipped(value));
             return *this;
         }
 
-        /** \brief assign operator (const vcl::vect::Vector). */
+        /** \brief assign operator (const vcl::Vector). */
         template<typename T, size_t S>
-        inline MyType& operator= (const vcl::vect::Vector<T,S>& other)
+        inline MyType& operator= (const vcl::Vector<T, S>& other)
         {
             copy(other);
             return *this;
@@ -323,7 +322,7 @@ namespace vcl {
         //---   operator +=   -----------------------------------------------
         /** \brief += operator (const reference) */
         template<typename T, size_t S>
-        inline MyType& operator+= (const vcl::vect::Vector<T,S>& rhs)
+        inline MyType& operator+= (const vcl::Vector<T, S>& rhs)
         {
             add(rhs);
             return *this;
@@ -416,7 +415,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief += operator (std::array, vcl::vect::Vector) */
+        /** \brief += operator (std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S>& operator+= (std::array<T, S> lhs, const MyType& rhs)
         {
@@ -432,7 +431,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief += operator (std::vector, vcl::vect::Vector) */
+        /** \brief += operator (std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T>& operator+= (std::vector<T> lhs, const MyType& rhs)
         {
@@ -445,7 +444,7 @@ namespace vcl {
         * Note: optimized for chained v1+v2+v3
         */
         template<typename T, size_t S>
-        friend inline MyType operator+ (MyType lhs, const vcl::vect::Vector<T, S>& rhs)
+        friend inline MyType operator+ (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs += rhs;
         }
@@ -516,7 +515,7 @@ namespace vcl {
             return lhs += value;
         }
 
-        /** \brief + operator (const TScalar, vcl::vect::Vector) */
+        /** \brief + operator (const TScalar, vcl::Vector) */
         friend inline MyType operator+ (const char value, MyType rhs)
         {
             return rhs += value;
@@ -589,7 +588,7 @@ namespace vcl {
             return lhs += rhs;
         }
 
-        /** \brief + operator (const std::array, vcl::vect::Vector) */
+        /** \brief + operator (const std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S> operator+ (std::array<T, S> lhs, MyType rhs)
         {
@@ -603,7 +602,7 @@ namespace vcl {
             return lhs += rhs;
         }
 
-        /** \brief + operator (const std::vector, vcl::vect::Vector) */
+        /** \brief + operator (const std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T> operator+ (std::vector<T> lhs, MyType rhs)
         {
@@ -620,7 +619,7 @@ namespace vcl {
         //---   operators -=   ----------------------------------------------
         /** \brief -= operator (const reference) */
         template<typename T, size_t S>
-        inline MyType& operator-= (const vcl::vect::Vector<T,S>& rhs)
+        inline MyType& operator-= (const vcl::Vector<T, S>& rhs)
         {
             sub(rhs);
             return *this;
@@ -713,7 +712,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief -= operator (std::array, vcl::vect::Vector) */
+        /** \brief -= operator (std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S>& operator-= (std::array<T, S> lhs, const MyType& rhs)
         {
@@ -729,7 +728,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief -= operator (std::vector, vcl::vect::Vector) */
+        /** \brief -= operator (std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T>& operator-= (std::vector<T> lhs, const MyType& rhs)
         {
@@ -742,7 +741,7 @@ namespace vcl {
         * Note: optimized for chained v1-v2-v3
         */
         template<typename T, size_t S>
-        friend inline MyType operator- (MyType lhs, const vcl::vect::Vector<T, S>& rhs)
+        friend inline MyType operator- (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs -= rhs;
         }
@@ -813,7 +812,7 @@ namespace vcl {
             return lhs -= value;
         }
 
-        /** \brief - operator (const TScalar, vcl::vect::Vector) */
+        /** \brief - operator (const TScalar, vcl::Vector) */
         friend inline MyType operator- (const char value, MyType rhs)
         {
             return MyType(value) -= rhs;
@@ -886,7 +885,7 @@ namespace vcl {
             return lhs -= rhs;
         }
 
-        /** \brief - operator (const std::array, vcl::vect::Vector) */
+        /** \brief - operator (const std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S> operator- (std::array<T, S> lhs, MyType rhs)
         {
@@ -900,7 +899,7 @@ namespace vcl {
             return lhs -= rhs;
         }
 
-        /** \brief - operator (const std::vector, vcl::vect::Vector) */
+        /** \brief - operator (const std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T> operator- (const std::vector<T> lhs, MyType rhs)
         {
@@ -916,7 +915,7 @@ namespace vcl {
         //---   operators *= and  *   ---------------------------------------
         /** \brief *= operator (const reference) */
         template<typename T, size_t S>
-        inline MyType& operator*= (const vcl::vect::Vector<T,S>& rhs)
+        inline MyType& operator*= (const vcl::Vector<T, S>& rhs)
         {
             mul(rhs);
             return *this;
@@ -1009,7 +1008,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief *= operator (std::array, vcl::vect::Vector) */
+        /** \brief *= operator (std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S>& operator*= (std::array<T, S>& lhs, const MyType& rhs)
         {
@@ -1025,7 +1024,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief *= operator (std::vector, vcl::vect::Vector) */
+        /** \brief *= operator (std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T>& operator*= (std::vector<T>& lhs, const MyType& rhs)
         {
@@ -1038,12 +1037,12 @@ namespace vcl {
         * Note: optimized for chained v1*v2*v3
         */
         template<typename T, size_t S>
-        friend inline MyType operator* (MyType lhs, const vcl::vect::Vector<T, S>& rhs)
+        friend inline MyType operator* (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs *= rhs;
         }
 
-        /** \brief * operator (vcl::vect::Vector, const TScalar) */
+        /** \brief * operator (vcl::Vector, const TScalar) */
         friend inline MyType operator* (MyType lhs, const char value)
         {
             return lhs *= value;
@@ -1109,7 +1108,7 @@ namespace vcl {
             return lhs *= value;
         }
 
-        /** \brief * operator (const TScalar, vcl::vect::Vector) */
+        /** \brief * operator (const TScalar, vcl::Vector) */
         friend inline MyType operator* (const char value, MyType rhs)
         {
             return rhs *= value;
@@ -1182,7 +1181,7 @@ namespace vcl {
             return lhs *= rhs;
         }
 
-        /** \brief * operator (const std::array, vcl::vect::Vector) */
+        /** \brief * operator (const std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S> operator* (std::array<T, S> lhs, MyType rhs)
         {
@@ -1196,7 +1195,7 @@ namespace vcl {
             return lhs *= rhs;
         }
 
-        /** \brief * operator (const std::vector, vcl::vect::Vector) */
+        /** \brief * operator (const std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T> operator* (std::vector<T> lhs, MyType rhs)
         {
@@ -1207,7 +1206,7 @@ namespace vcl {
         //---   operators /= and  /   ---------------------------------------
         /** \brief /= operator (const reference) */
         template<typename T, size_t S>
-        inline MyType& operator/= (const vcl::vect::Vector<T, S>& rhs)
+        inline MyType& operator/= (const vcl::Vector<T, S>& rhs)
         {
             div(rhs);
             return *this;
@@ -1300,7 +1299,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief /= operator (std::array, vcl::vect::Vector) */
+        /** \brief /= operator (std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S>& operator/= (std::array<T, S> lhs, const MyType& rhs)
         {
@@ -1316,7 +1315,7 @@ namespace vcl {
             return *this;
         }
 
-        /** \brief /= operator (std::vector, vcl::vect::Vector) */
+        /** \brief /= operator (std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T>& operator/= (std::vector<T> lhs, const MyType& rhs)
         {
@@ -1330,12 +1329,12 @@ namespace vcl {
         * Note: optimized for chained v1/v2/v3
         */
         template<typename T, size_t S>
-        friend inline MyType operator/ (MyType lhs, const vcl::vect::Vector<T, S>& rhs)
+        friend inline MyType operator/ (MyType lhs, const vcl::Vector<T, S>& rhs)
         {
             return lhs /= rhs;
         }
 
-        /** \brief / operator (vcl::vect::Vector, const TScalar) */
+        /** \brief / operator (vcl::Vector, const TScalar) */
         friend inline MyType operator/ (MyType lhs, const char value)
         {
             return lhs /= value;
@@ -1401,7 +1400,7 @@ namespace vcl {
             return lhs /= value;
         }
 
-        /** \brief / operator (const T Scalar, vcl::vect::Vector) */
+        /** \brief / operator (const T Scalar, vcl::Vector) */
         friend inline MyType operator/ (const char value, MyType& rhs)
         {
             return MyType(value) /= rhs;
@@ -1474,7 +1473,7 @@ namespace vcl {
             return lhs /= rhs;
         }
 
-        /** \brief / operator (const std::array, vcl::vect::Vector) */
+        /** \brief / operator (const std::array, vcl::Vector) */
         template<typename T, size_t S>
         friend inline std::array<T, S> operator/ (std::array<T, S> lhs, MyType rhs)
         {
@@ -1488,7 +1487,7 @@ namespace vcl {
             return lhs /= rhs;
         }
 
-        /** \brief / operator (const std::vector, vcl::vect::Vector) */
+        /** \brief / operator (const std::vector, vcl::Vector) */
         template<typename T>
         friend inline std::vector<T> operator/ (const std::vector<T> lhs, MyType rhs)
         {
@@ -1508,13 +1507,13 @@ namespace vcl {
         std::string repr()
         {
             std::ostringstream repr_ostr;
-        
+
             repr_ostr << '(';
             auto it = this->begin();
             while (it != this->end() - 1)
                 repr_ostr << *it++ << ", ";
             repr_ostr << *it << ')';
-        
+
             return repr_ostr.str();
         }
 
@@ -1531,7 +1530,7 @@ namespace vcl {
         //---   add()   -----------------------------------------------------
         /** \brief inplace add operation (const reference) */
         template<typename T, size_t S>
-        inline void add(const vcl::vect::Vector<T, S>& rhs)
+        inline void add(const vcl::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
@@ -1626,7 +1625,7 @@ namespace vcl {
                 *it = clipped(*it + *rit++);
         }
 
-        /** \brief inplace add operation (std::array, const vcl::vect::Vector) */
+        /** \brief inplace add operation (std::array, const vcl::Vector) */
         template<typename T, size_t S>
         friend inline void add(std::array<T, S>& lhs, const MyType& rhs)
         {
@@ -1644,7 +1643,7 @@ namespace vcl {
                 *it = clipped(*it + *rit++);
         }
 
-        /** \brief inplace add operation (std::vector, const vcl::vect::Vector) */
+        /** \brief inplace add operation (std::vector, const vcl::Vector) */
         template<typename T>
         friend inline void add(std::vector<T>& lhs, const MyType& rhs)
         {
@@ -1657,7 +1656,7 @@ namespace vcl {
         //---   sub()   -----------------------------------------------------
         /** \brief inplace sub operation (const reference) */
         template<typename T, size_t S>
-        inline void sub(const vcl::vect::Vector<T, S>& rhs)
+        inline void sub(const vcl::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
@@ -1752,7 +1751,7 @@ namespace vcl {
                 *it = clipped(*it - *rit++);
         }
 
-        /** \brief inplace sub operation (std::array, const vcl::vect::Vector) */
+        /** \brief inplace sub operation (std::array, const vcl::Vector) */
         template<typename T, size_t S>
         friend inline void sub(std::array<T, S>& lhs, const MyType& rhs)
         {
@@ -1770,7 +1769,7 @@ namespace vcl {
                 *it = clipped(*it - *rit++);
         }
 
-        /** \brief inplace sub operation (std::vector, const vcl::vect::Vector) */
+        /** \brief inplace sub operation (std::vector, const vcl::Vector) */
         template<typename T>
         friend inline void sub(std::vector<T>& lhs, const MyType& rhs)
         {
@@ -1783,7 +1782,7 @@ namespace vcl {
         //---   mul()   -----------------------------------------------------
         /** \brief inplace mul operation (const reference) */
         template<typename T, size_t S>
-        inline void mul(const vcl::vect::Vector<T, S>& rhs)
+        inline void mul(const vcl::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
@@ -1878,7 +1877,7 @@ namespace vcl {
                 *it = clipped(*it * *rit++);
         }
 
-        /** \brief inplace mul operation (std::array, const vcl::vect::Vector) */
+        /** \brief inplace mul operation (std::array, const vcl::Vector) */
         template<typename T, size_t S>
         friend inline void mul(std::array<T, S>& lhs, const MyType& rhs)
         {
@@ -1896,7 +1895,7 @@ namespace vcl {
                 *it = clipped(*it * *rit++);
         }
 
-        /** \brief inplace mul operation (std::vector, const vcl::vect::Vector) */
+        /** \brief inplace mul operation (std::vector, const vcl::Vector) */
         template<typename T>
         friend inline void mul(std::vector<T>& lhs, const MyType& rhs)
         {
@@ -1909,7 +1908,7 @@ namespace vcl {
         //---   div()   -----------------------------------------------------
         /** \brief inplace div operation (const reference) */
         template<typename T, size_t S>
-        inline void div(const vcl::vect::Vector<T, S>& rhs)
+        inline void div(const vcl::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++, rit++)
@@ -2019,7 +2018,7 @@ namespace vcl {
                     *it = clipped(*it / *rit);
         }
 
-        /** \brief inplace div operation (std::array, const vcl::vect::Vector) */
+        /** \brief inplace div operation (std::array, const vcl::Vector) */
         template<typename T, size_t S>
         friend inline void div(std::array<T, S>& lhs, const MyType& rhs)
         {
@@ -2039,7 +2038,7 @@ namespace vcl {
                     *it = clipped(*it / *rit);
         }
 
-        /** \brief inplace div operation (std::vector, const vcl::vect::Vector) */
+        /** \brief inplace div operation (std::vector, const vcl::Vector) */
         template<typename T>
         friend inline void div(std::vector<T>& lhs, const MyType& rhs)
         {
@@ -2051,5 +2050,4 @@ namespace vcl {
 
     }; // end of class Vector<typename TScalar, const size_t Ksize>
 
-  } // end of namespace vcl::vect
 } // end of namespace vcl

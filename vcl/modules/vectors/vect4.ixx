@@ -1,4 +1,3 @@
-#pragma once
 /*
 MIT License
 
@@ -23,44 +22,45 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 //===========================================================================
+module;
+
 #include <array>
-#include <compare>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
-#include "utils/vector.h"
+export module vectors.vect4;
+
+import vectors.vector;
 
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
 
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
-    template<typename TScalar> class Vect4;
+    export template<typename TScalar> class Vect4;
 
     /** \brief The class of 4D vectors with double components (64 bits). */
-    typedef Vect4<double> Vect4d;
+    export typedef Vect4<double> Vect4d;
 
     /** \brief The class of 4D vectors with float components (32 bits). */
-    typedef Vect4<float> Vect4f;
+    export typedef Vect4<float> Vect4f;
 
     /** \brief The class of 4D vectors with bytes components (8 bits). */
-    typedef Vect4<unsigned char> Vect4b;
+    export typedef Vect4<unsigned char> Vect4b;
 
     /** \brief The class of 4D vectors with short components (16 bits). */
-    typedef Vect4<short> Vect4s;
+    export typedef Vect4<short> Vect4s;
 
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-    typedef Vect4<unsigned short> Vect4us;
+    export typedef Vect4<unsigned short> Vect4us;
 
     /** \brief The class of 4D vectors with int components (32 bits). */
-    typedef Vect4<int> Vect4i;
+    export typedef Vect4<int> Vect4i;
 
     /** \brief The class of 4D vectors with unsigned int components (32 bits). */
-    typedef Vect4<unsigned int> Vect4ui;
+    export typedef Vect4<unsigned int> Vect4ui;
 
 
     //-----------------------------------------------------------------------
@@ -69,11 +69,11 @@ namespace vcl {
     * \sa its specializations Vect4d, Vect4f, Vect4b, Vect4s, Vect4us, Vect4i, and Vect4ui.
     */
     template<typename TScalar>
-    class Vect4 : public Vector<TScalar, 4>
+    class Vect4 : public vcl::vect::Vector<TScalar, 4>
     {
     public:
-        typedef Vector<TScalar, 4> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef Vect4<TScalar>     MyType;     //<! shortcut to this class naming.
+        typedef vcl::vect::Vector<TScalar, 4> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef vcl::vect::Vect4<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
@@ -93,7 +93,7 @@ namespace vcl {
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>
-        inline Vect4<TScalar>(const vcl::Vector<T, S>& other)
+        inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -115,51 +115,59 @@ namespace vcl {
         virtual inline ~Vect4<TScalar>()
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief component x accessors */
-        inline TScalar& x()
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        inline const TScalar& x() const
+        /** \brief component x mutator */
+        template<typename T>
+        inline TScalar x(const T new_x)
         {
-            return (*this)[0];
+            return (*this)[0] = this->clipped(new_x);
         }
 
-        /** \brief component y accessors */
-        inline TScalar& y()
-        {
-            return (*this)[1];
-        }
-
-        inline const TScalar& y() const
+        /** \brief component y accessor */
+        inline const TScalar y() const
         {
             return (*this)[1];
         }
 
-        /** \brief component z accessors */
-        inline TScalar& z()
+        /** \brief component y mutator */
+        template<typename T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
+
+        /** \brief component z accessor */
+        inline const TScalar z() const
         {
             return (*this)[2];
         }
 
-        inline const TScalar& z() const
+        /** \brief component z mutator */
+        template<typename T>
+        inline TScalar z(const T new_z)
         {
-            return (*this)[2];
+            return (*this)[2] = this->clipped(new_z);
         }
 
-        /** \brief component w accessors */
-        inline TScalar& w()
-        {
-            return (*this)[3];
-        }
-
-        inline const TScalar& w() const
+        /** \brief component w accessor */
+        inline const TScalar w() const
         {
             return (*this)[3];
         }
 
+        /** \brief component w mutator */
+        template<typename T>
+        inline TScalar w(const T new_w)
+        {
+            return (*this)[3] = this->clipped(new_w);
+        }
     };
 
+  } // end of namespace vect
 } // end of namespace vcl

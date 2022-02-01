@@ -1,4 +1,3 @@
-#pragma once
 /*
 MIT License
 
@@ -23,121 +22,139 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 //===========================================================================
+module;
+
 #include <array>
-#include <compare>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
-#include "utils/vector.h"
+export module vectors.vect3;
+
+import vectors.vector;
 
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
 
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
-    template<typename TScalar> class Vect2;
+    export template<typename TScalar> class Vect3;
 
-    /** \brief The class of 2D vectors with double components (64 bits). */
-    typedef Vect2<double> Vect2d;
+    /** \brief The class of 3D vectors with double components (64 bits). */
+    export typedef Vect3<double> Vect3d;
 
-    /** \brief The class of 2D vectors with float components (32 bits). */
-    typedef Vect2<float> Vect2f;
+    /** \brief The class of 3D vectors with float components (32 bits). */
+    export typedef Vect3<float> Vect3f;
 
-    /** \brief The class of 2D vectors with bytes components (8 bits). */
-    typedef Vect2<unsigned char> Vect2b;
+    /** \brief The class of 3D vectors with bytes components (8 bits). */
+    export typedef Vect3<unsigned char> Vect3b;
 
-    /** \brief The class of 2D vectors with short components (16 bits). */
-    typedef Vect2<short> Vect2s;
+    /** \brief The class of 3D vectors with short components (16 bits). */
+    export typedef Vect3<short> Vect3s;
 
-    /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    typedef Vect2<unsigned short> Vect2us;
+    /** \brief The class of 3D vectors with unsigned short components (16 bits). */
+    export typedef Vect3<unsigned short> Vect3us;
 
-    /** \brief The class of 2D vectors with int components (32 bits). */
-    typedef Vect2<int> Vect2i;
+    /** \brief The class of 3D vectors with int components (32 bits). */
+    export typedef Vect3<int> Vect3i;
 
-    /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-    typedef Vect2<unsigned int> Vect2ui;
+    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
+    export typedef Vect3<unsigned int> Vect3ui;
 
 
     //-----------------------------------------------------------------------
-    /** \brief the generic class for 2-D vectors.
-    * 
-    * \sa its specializations Vect2d, Vect2f, Vect2b, Vect2s, Vect2us, Vect2i, and Vect2ui.
+    /** \brief the generic class for 3-D vectors.
+    *
+    * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
     */
     template<typename TScalar>
-    class Vect2 : public Vector<TScalar, 2>
+    class Vect3 : public vcl::vect::Vector<TScalar, 3>
     {
     public:
-        typedef Vector<TScalar, 2> MyBaseType; //<! wrapper to this class inherited class naming.
-        typedef Vect2<TScalar>     MyType;     //<! wrapper to this class naming.
+        typedef vcl::vect::Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef vcl::vect::Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor (components default to 0).
         */
-        inline Vect2<TScalar>()
+        inline Vect3<TScalar>()
             : MyBaseType()
         {}
 
         /** \brief Constructor with a filling value.
         */
         template<typename T>
-        inline Vect2<TScalar>(const T value)
+        inline Vect3<TScalar>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>
-        inline Vect2<TScalar>(const vcl::Vector<T, S>& other)
+        inline Vect3<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
-        inline Vect2<TScalar>(const std::array<T, S>& arr)
+        inline Vect3<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
 
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
-        inline Vect2<TScalar>(const std::vector<T>& vect)
+        inline Vect3<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~Vect2<TScalar>()
+        virtual inline ~Vect3<TScalar>()
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief component x accessors */
-        inline TScalar& x()
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        inline const TScalar& x() const
+        /** \brief component x mutator */
+        template<typename T>
+        inline TScalar x(const T new_x)
         {
-            return (*this)[0];
+            return (*this)[0] = this->clipped(new_x);
         }
 
-        /** \brief component y accessors */
-        inline TScalar& y()
-        {
-            return (*this)[1];
-        }
-
-        inline const TScalar& y() const
+        /** \brief component y accessor */
+        inline const TScalar y() const
         {
             return (*this)[1];
         }
 
+        /** \brief component y mutator */
+        template<typename T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
+
+        /** \brief component z accessor */
+        inline const TScalar z() const
+        {
+            return (*this)[2];
+        }
+
+        /** \brief component z mutator */
+        template<typename T>
+        inline TScalar z(const T new_z)
+        {
+            return (*this)[2] = this->clipped(new_z);
+        }
     };
 
+  } // end of namespace vect
 } // end of namespace vcl

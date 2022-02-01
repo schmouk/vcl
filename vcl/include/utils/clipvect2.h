@@ -25,6 +25,7 @@ SOFTWARE.
 
 
 //===========================================================================
+#include <algorithm>
 #include <array>
 #include <compare>
 #include <iostream>
@@ -37,7 +38,36 @@ SOFTWARE.
 //===========================================================================
 namespace vcl {
 
-    //-----------------------------------------------------------------------
+    //=======================================================================
+    // Forward declaration and Specializations
+    template<typename TScalar, const TScalar Kmin, const TScalar Kmax> class ClipVect2;
+
+    /** \brief The class of 2D vectors with bytes components (8 bits). * /
+    template<const char Kmin, const char Kmax> class ClipVect2c;
+
+    /** \brief The class of 2D vectors with bytes components (8 bits). * /
+    template<const unsigned char Kmin, const unsigned char Kmax> class ClipVect2b;
+
+    /** \brief The class of 2D vectors with short components (16 bits). * /
+    template<const short Kmin, const short Kmax> class ClipVect2s;
+
+    /** \brief The class of 2D vectors with unsigned short components (16 bits). * /
+    template<const unsigned short Kmin, const unsigned short Kmax> class ClipVect2us;
+
+    /** \brief The class of 2D vectors with int components (32 bits). * /
+    template<const int Kmin, const int Kmax> class ClipVect2i;
+
+    /** \brief The class of 2D vectors with unsigned int components (32 bits). * /
+    template<const unsigned int Kmin, const unsigned int Kmax> class ClipVect2ui;
+
+    /** \brief The class of 2D vectors with float components (32 bits). */
+    template<const float Kmin, const float Kmax> class ClipVect2f;
+
+    /** \brief The class of 2D vectors with double components (64 bits). */
+    template<const double Kmin, const double Kmax> class ClipVect2d;
+
+
+    //=======================================================================
     /** \brief the generic class for 2-D clipped vectors.
     *
     * \sa its specializations ClipVect2d, ClipVect2f, ClipVect2b, ClipVect2s, ClipVect2us, ClipVect2i, and ClipVect2ui.
@@ -52,408 +82,596 @@ namespace vcl {
         typedef TScalar MyScalarType; //!< wrapper to TScalar
 
         //---   constructors   ----------------------------------------------
-        /** \brief Constructor with a filling value (defaults to 0).
+        /** \brief Empty constructor.
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const TScalar value = TScalar(0))
-            : MyBaseType(TScalar(value <= Kmin ? Kmin : (value >= Kmax ? Kmax : value)))
-        {}
+        inline ClipVect2<TScalar, Kmin, Kmax>()
+            : MyBaseType()
+        {
+            this->fill(this->clipped(TScalar(0)));
+        }
 
-        /** \brief Copy constructor (const&).
+        /** \brief Constructor with value.
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const MyType& other)
-            : MyBaseType(other)
-        {}
+        inline ClipVect2<TScalar, Kmin, Kmax>(const char value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
 
-        /** \brief Copy constructor (&).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(MyType& other)
-            : MyBaseType(other)
-        {}
+        inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned char value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
 
-        /** \brief Copy constructor (const vcl::Vect2&).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const MyBaseType& other)
-            : MyBaseType(other)
-        {}
+        inline ClipVect2<TScalar, Kmin, Kmax>(const short value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
 
-        /** \brief Copy constructor (vcl::Vect2&).
+        inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned short value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+        inline ClipVect2<TScalar, Kmin, Kmax>(const int value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+
+        inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned int value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+        inline ClipVect2<TScalar, Kmin, Kmax>(const long value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+
+        inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned long value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+        inline ClipVect2<TScalar, Kmin, Kmax>(const long long value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+
+        inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned long long value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+        inline ClipVect2<TScalar, Kmin, Kmax>(const float value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+
+        inline ClipVect2<TScalar, Kmin, Kmax>(const double value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+        inline ClipVect2<TScalar, Kmin, Kmax>(const long double value)
+            : MyBaseType()
+        {
+            this->fill(this->clipped(value));
+        }
+
+        /** \brief Copy constructor (const vcl::Vector&).
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>(MyBaseType& other)
+        template<typename T, size_t S>
+        inline ClipVect2<TScalar, Kmin, Kmax>(const vcl::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::array&).
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const std::array<MyScalarType,2>& other)
-            : MyBaseType(other)
-        {}
-
-        /** \brief Copy constructor (std::array&).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(std::array<MyScalarType,2>& other)
+        template<typename T, size_t S>
+        inline ClipVect2<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::vector&).
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const std::vector<MyScalarType>& vect)
+        template<typename T>
+        inline ClipVect2<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
-        {}
-
-        /** \brief Copy constructor (std::vector&).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(std::vector<MyScalarType>& vect)
-            : MyBaseType(vect)
-        {}
-
-        /** \brief Copy Constructor (const buffer).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(const MyScalarType buffer[MyBaseType::KSize])
-            : MyBaseType(buffer)
-        {
-            //MyBaseType::copy(buffer);
-        }
-
-        /** \brief Copy constructor (buffer).
-        */
-        inline ClipVect2<TScalar, Kmin, Kmax>(MyScalarType buffer[MyBaseType::KSize])
-            : MyBaseType(buffer)
         {}
 
         //---  Destructor   -------------------------------------------------
         virtual inline ~ClipVect2<TScalar, Kmin, Kmax>()
         {}
 
+        //---   miscelaneous   ----------------------------------------------
+        /** \brief Returns the specified value clipped. */
+        template<typename T>
+        inline const TScalar clipped(const T value) const
+        {
+            return std::clamp(value, T(Kmin), T(Kmax)); // c++17
+        }
+
         //---   Components accessors   --------------------------------------
-        /** \brief clips value within valid range */
-        inline const TScalar clip_value(const MyScalarType value) const
-        {
-            return TScalar(value <= Kmin ? Kmin : (value >= Kmax ? Kmax : value));
-        }
-
         /** \brief component x getter */
-        inline TScalar x()
-        {
-            return (*this)[0];
-        }
-
-        /** \brief component x getter (const) */
         inline const TScalar x() const
         {
             return (*this)[0];
         }
 
         /** \brief component x setter */
-        inline TScalar x(const MyScalarType new_x)
+        template<typename T>
+        inline TScalar x(const T new_x)
         {
-            return (*this)[0] = clip_value(new_x);
+            return (*this)[0] = clipped(new_x);
         }
 
         /** \brief component y getter */
-        inline TScalar y()
-        {
-            return (*this)[1];
-        }
-
-        /** \brief component y getter (const) */
         inline const TScalar y() const
         {
             return (*this)[1];
         }
-        /** \brief component y setter */
-        inline TScalar y(const MyScalarType new_y)
-        {
-            return (*this)[1] = clip_value(new_y);
-        }
 
+        /** \brief component y setter */
+        template<typename T>
+        inline TScalar& y(const T new_y)
+        {
+            return (*this)[1] = clipped(new_y);
+        }
     };
 
-    //-----------------------------------------------------------------------
-    /** \brief the generic class for 2-D clipped vectors with integer components. */
-    template<typename TScalar, const long long Kmin, const long long Kmax>
-    class ClipVect2Int : public ClipVect2<TScalar, Kmin, Kmax>
+
+    //=======================================================================
+    /** \brief The class of 2D vectors with char components (8 bits). */
+    template<const char Kmin = -128, const char Kmax = 127>
+    class ClipVect2c : public ClipVect2<char, Kmin, Kmax>
     {
     public:
-        typedef ClipVect2<TScalar, Kmin, Kmax> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef ClipVect2Int<TScalar, Kmin, Kmax> MyType;  //<! shortcut to this class naming.
-
-        typedef long long MyScalarType;  //<! the internal casting type, used for clipping
+        typedef ClipVect2<char, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2c<Kmin, Kmax>      MyType;     //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
-        /** \brief Constructor with a filling value (defaults to 0).
+        /** \brief Empty constructor.
         */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const MyScalarType value = TScalar(0))
-            : MyBaseType(TScalar(value <= Kmin ? Kmin : (value >= Kmax ? Kmax : value)))
+        inline ClipVect2c<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2c<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
         {}
 
         /** \brief Copy constructor (const&).
         */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const MyType& other)
+        inline ClipVect2c<Kmin, Kmax>(const MyType& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (&).
+        /** \brief Copy constructor (const vcl::Vector&).
         */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(MyType& other)
-            : MyBaseType(other)
-        {}
-
-        /** \brief Copy constructor (const vcl::Vect2&).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const vcl::Vect2<TScalar>& other)
-            : MyBaseType(other)
-        {}
-
-        /** \brief Copy constructor (vcl::Vect2&).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(vcl::Vect2<TScalar>& other)
+        template<typename T, size_t S>
+        inline ClipVect2c<Kmin, Kmax>(const vcl::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::array&).
         */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const std::array<MyScalarType, 2>& other)
-            : MyBaseType()
-        {
-            copy(other);
-        }
-
-        /** \brief Copy constructor (std::array&).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(std::array<MyScalarType, 2>& other)
-            : MyBaseType()
-        {
-            copy(other);
-        }
+        template<typename T, size_t S>
+        inline ClipVect2c<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
 
         /** \brief Copy constructor (const std::vector&).
         */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const std::vector<MyScalarType>& vect)
-            : MyBaseType()
-        {
-            copy(vect);
-        }
-
-        /** \brief Copy constructor (std::vector&).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(std::vector<MyScalarType>& vect)
-            : MyBaseType()
-        {
-            copy(vect);
-        }
-
-        /** \brief Copy Constructor (const buffer).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(const MyScalarType buffer[MyBaseType::KSize])
-            : MyBaseType()
-        {
-            copy(buffer);
-        }
-
-        /** \brief Copy constructor (buffer).
-        */
-        inline ClipVect2Int<TScalar, Kmin, Kmax>(MyScalarType buffer[MyBaseType::KSize])
-            : MyBaseType()
-        {
-            copy(buffer);
-        }
-
-        //---  Destructor   -------------------------------------------------
-        virtual inline ~ClipVect2Int<TScalar, Kmin, Kmax>()
+        template<typename T>
+        inline ClipVect2c<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief clips value within valid range */
-        inline const TScalar clip_value(const MyScalarType value) const
-        {
-            return TScalar(value <= Kmin ? Kmin : (value >= Kmax ? Kmax : value));
-        }
-
-        /** \brief component x getter */
-        inline MyScalarType x()
-        {
-            return (MyScalarType)(*this)[0];
-        }
-
-        /** \brief component x getter (const) */
-        inline const MyScalarType x() const
-        {
-            return (MyScalarType)(*this)[0];
-        }
-
-        /** \brief component x setter */
-        inline MyScalarType x(const MyScalarType new_x)
-        {
-            return (MyScalarType)((*this)[0] = clip_value(new_x));
-        }
-
-        /** \brief component y getter */
-        inline MyScalarType y()
-        {
-            return (MyScalarType)(*this)[1];
-        }
-
-        /** \brief component y getter (const) */
-        inline const MyScalarType y() const
-        {
-            return (MyScalarType)(*this)[1];
-        }
-        /** \brief component y setter */
-        inline MyScalarType y(const MyScalarType new_y)
-        {
-            return (MyScalarType)((*this)[1] = clip_value(new_y));
-        }
-
-        //---   assignment operator   ---------------------------------------
-        /** \brief assign operator (const std::array). */
-        virtual inline MyType& operator= (const std::array<MyScalarType, MyBaseType::KSize>& other)
-        {
-            copy(other);
-            return *this;
-        }
-
-        /** \brief assign operator (std::array). */
-        virtual inline MyType& operator= (std::array<MyScalarType, MyBaseType::KSize>& other)
-        {
-            copy(other);
-            return *this;
-        }
-
-        //---   copy()   ----------------------------------------------------
-        /** \brief Copies a const vcl::Vector. */
-        virtual inline void copy(const MyType& other)
-        {
-            x(other.x());
-            y(other.y());
-        }
-
-        /** \brief Copies a vcl::Vector. */
-        virtual inline void copy(MyType& other)
-        {
-            x(other.x());
-            y(other.y());
-        }
-
-        /** \brief Copies a const std::array. */
-        virtual inline void copy(const std::array< MyScalarType,2>& other)
-        {
-            x(other[0]);
-            y(other[1]);
-        }
-
-        /** \brief Copies an std::array. */
-        virtual inline void copy(std::array< MyScalarType, 2>& other)
-        {
-            x(other[0]);
-            y(other[1]);
-        }
-
-        /** \brief Copies a const std::array. */
-        virtual inline void copy(const std::array< TScalar, 2>& other)
-        {
-            x(other[0]);
-            y(other[1]);
-        }
-
-        /** \brief Copies an std::array. */
-        virtual inline void copy(std::array< TScalar, 2>& other)
-        {
-            x(other[0]);
-            y(other[1]);
-        }
-
-        /** \brief Copies a const std::vector. */
-        virtual inline void copy(const std::vector<MyScalarType>& other)
-        {
-            x(other[0]);
-            y(other.size() > 1 ? other[1] : TScalar(0));
-        }
-
-        /** \brief Copies a std::vector. */
-        virtual inline void copy(std::vector<MyScalarType>& other)
-        {
-            x(other[0]);
-            y(other.size() > 1 ? other[1] : TScalar(0));
-        }
-
-        /** \brief Copies a const std::vector. */
-        virtual inline void copy(const std::vector<TScalar>& other)
-        {
-            x(other[0]);
-            y(other.size() > 1 ? other[1] : TScalar(0));
-        }
-
-        /** \brief Copies a std::vector. */
-        virtual inline void copy(std::vector<TScalar>& other)
-        {
-            x(other[0]);
-            y(other.size() > 1 ? other[1] : TScalar(0));
-        }
-
-        /** \brief Copies a const buffer. */
-        virtual inline void copy(const MyScalarType buffer[2])
-        {
-            x(buffer[0]);
-            y(buffer[1]);
-        }
-
-        /** \brief Copies a buffer. */
-        virtual inline void copy(MyScalarType buffer[2])
-        {
-            x(buffer[0]);
-            y(buffer[1]);
-        }
-
-        //---   assignment operator   ---------------------------------------
-        /** \brief assign operator (const std::vector). */
-        virtual inline MyType& operator= (const std::vector<TScalar>& other)
-        {
-            copy(other);
-            return *this;
-        }
-
-        /** \brief assign operator (std::array). */
-        virtual inline MyType& operator= (std::vector<TScalar>& other)
-        {
-            copy(other);
-            return *this;
-        }
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2c<Kmin, Kmax>()
+        {}
 
     };
 
-
-    //-----------------------------------------------------------------------
-    /** \brief The class of 2D vectors with double components (64 bits). */
-    typedef ClipVect2<double, double(0.0), double(1.0)> ClipVect2d;
-
-
-    //-----------------------------------------------------------------------
-    /** \brief The class of 2D vectors with float components (32 bits). */
-    typedef ClipVect2<float, float(0.0), float(1.0)> ClipVect2f;
-
-
-    //-----------------------------------------------------------------------
+    //=======================================================================
     /** \brief The class of 2D vectors with bytes components (8 bits). */
-    typedef ClipVect2Int<unsigned char, 0, 255> ClipVect2b;
+    template<const unsigned char Kmin = 0, const unsigned char Kmax = 255>
+    class ClipVect2b : public ClipVect2<unsigned char, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<unsigned char, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2b<Kmin, Kmax>               MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2b<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2b<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2b<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2b<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2b<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2b<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2b<Kmin, Kmax>()
+        {}
+    };
 
 
-    //-----------------------------------------------------------------------
+    //=======================================================================
     /** \brief The class of 2D vectors with short components (16 bits). */
-    typedef ClipVect2Int<short, short(-32767), short(32767)> ClipVect2s;
+    template<const short Kmin = -32768, const short Kmax = 32767>
+    class ClipVect2s : public ClipVect2<short, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<short, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2s<Kmin, Kmax>       MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2s<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2s<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2s<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2s<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2s<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2s<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2s<Kmin, Kmax>()
+        {}
+    };
 
 
-    //-----------------------------------------------------------------------
+    //=======================================================================
     /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    typedef ClipVect2Int<unsigned short, 0, 65535> ClipVect2us;
+    template<const unsigned short Kmin = 0, const unsigned short Kmax = 65535>
+    class ClipVect2us : public ClipVect2<unsigned short, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<unsigned short, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2us<Kmin, Kmax>               MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2us<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2us<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2us<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2us<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2us<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2us<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2us<Kmin, Kmax>()
+        {}
+    };
 
 
-    //-----------------------------------------------------------------------
+    //=======================================================================
     /** \brief The class of 2D vectors with int components (32 bits). */
-    typedef ClipVect2Int<int, int(-2147483647), int(2147483647)> ClipVect2i;
+    template<const int Kmin = -2147483648, const int Kmax = 2147483647>
+    class ClipVect2i : public ClipVect2<int, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2i<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2i<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2i<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2i<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2i<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2i<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2i<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2i<Kmin, Kmax>()
+        {}
+    };
 
 
-    //-----------------------------------------------------------------------
+    //=======================================================================
     /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-    typedef ClipVect2Int<unsigned int, 0, 4294967295> ClipVect2ui;
+    template<const unsigned int Kmin = 0, const unsigned int Kmax = 4294967295>
+    class ClipVect2ui : public ClipVect2<unsigned int, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<unsigned int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2ui<Kmin, Kmax>             MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2ui<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2ui<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2ui<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2ui<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2ui<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2ui<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2ui<Kmin, Kmax>()
+        {}
+    };
+
+
+    //=======================================================================
+    /** \brief The class of 2D vectors with float components (32 bits). */
+    template<const float Kmin = 0.0f, const float Kmax = 1.0f>
+    class ClipVect2f : public ClipVect2<float, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<float, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2f<Kmin, Kmax>       MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2f<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2f<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2f<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2f<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2f<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2f<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2f<Kmin, Kmax>()
+        {}
+    };
+
+
+    //=======================================================================
+    /** \brief The class of 2D vectors with double components (64 bits). */
+    template<const double Kmin = 0.0, const double Kmax = 1.0>
+    class ClipVect2d : public ClipVect2<double, Kmin, Kmax>
+    {
+    public:
+        typedef ClipVect2<double, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef ClipVect2d<Kmin, Kmax>        MyType;     //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
+        */
+        inline ClipVect2d<Kmin, Kmax>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+        inline ClipVect2d<Kmin, Kmax>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline ClipVect2d<Kmin, Kmax>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::Vector&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2d<Kmin, Kmax>(const vcl::Vector<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+        inline ClipVect2d<Kmin, Kmax>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline ClipVect2d<Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~ClipVect2d<Kmin, Kmax>()
+        {}
+    };
 
 } // end of namespace vcl

@@ -72,8 +72,8 @@ namespace vcl {
     class Vect3 : public Vector<TScalar, 3>
     {
     public:
-        typedef Vector<TScalar, 3> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef Vect3<TScalar>     MyType;     //<! shortcut to this class naming.
+        typedef Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------

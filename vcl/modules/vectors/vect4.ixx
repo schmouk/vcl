@@ -28,89 +28,91 @@ module;
 #include <array>
 #include <vector>
 
-export module vectors.vect3;
+export module vectors.vect4;
 
 import vectors.vector;
 
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
+
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
-    export template<typename TScalar> class Vect3;
+    export template<typename TScalar> class Vect4;
 
-    /** \brief The class of 3D vectors with double components (64 bits). */
-    export typedef Vect3<double> Vect3d;
+    /** \brief The class of 4D vectors with double components (64 bits). */
+    export typedef Vect4<double> Vect4d;
 
-    /** \brief The class of 3D vectors with float components (32 bits). */
-    export typedef Vect3<float> Vect3f;
+    /** \brief The class of 4D vectors with float components (32 bits). */
+    export typedef Vect4<float> Vect4f;
 
-    /** \brief The class of 3D vectors with bytes components (8 bits). */
-    export typedef Vect3<unsigned char> Vect3b;
+    /** \brief The class of 4D vectors with bytes components (8 bits). */
+    export typedef Vect4<unsigned char> Vect4b;
 
-    /** \brief The class of 3D vectors with short components (16 bits). */
-    export typedef Vect3<short> Vect3s;
+    /** \brief The class of 4D vectors with short components (16 bits). */
+    export typedef Vect4<short> Vect4s;
 
-    /** \brief The class of 3D vectors with unsigned short components (16 bits). */
-    export typedef Vect3<unsigned short> Vect3us;
+    /** \brief The class of 4D vectors with unsigned short components (16 bits). */
+    export typedef Vect4<unsigned short> Vect4us;
 
-    /** \brief The class of 3D vectors with int components (32 bits). */
-    export typedef Vect3<int> Vect3i;
+    /** \brief The class of 4D vectors with int components (32 bits). */
+    export typedef Vect4<int> Vect4i;
 
-    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    export typedef Vect3<unsigned int> Vect3ui;
+    /** \brief The class of 4D vectors with unsigned int components (32 bits). */
+    export typedef Vect4<unsigned int> Vect4ui;
 
 
     //-----------------------------------------------------------------------
-    /** \brief the generic class for 3-D vectors.
+    /** \brief the generic class for 4-D vectors.
     *
-    * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
+    * \sa its specializations Vect4d, Vect4f, Vect4b, Vect4s, Vect4us, Vect4i, and Vect4ui.
     */
     template<typename TScalar>
-    class Vect3 : public vcl::Vector<TScalar, 3>
+    class Vect4 : public vcl::vect::Vector<TScalar, 4>
     {
     public:
-        typedef vcl::Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
-        typedef vcl::Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
+        typedef vcl::vect::Vector<TScalar, 4> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef vcl::vect::Vect4<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor (components default to 0).
         */
-        inline Vect3<TScalar>()
+        inline Vect4<TScalar>()
             : MyBaseType()
         {}
 
         /** \brief Constructor with a filling value.
         */
         template<typename T>
-        inline Vect3<TScalar>(const T value)
+        inline Vect4<TScalar>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>
-        inline Vect3<TScalar>(const vcl::Vector<T, S>& other)
+        inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
-        inline Vect3<TScalar>(const std::array<T, S>& arr)
+        inline Vect4<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
 
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
-        inline Vect3<TScalar>(const std::vector<T>& vect)
+        inline Vect4<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~Vect3<TScalar>()
+        virtual inline ~Vect4<TScalar>()
         {}
 
         //---   Components accessors / mutators   --------------------------------------
@@ -152,6 +154,20 @@ namespace vcl {
         {
             return (*this)[2] = this->clipped(new_z);
         }
+
+        /** \brief component w accessor */
+        inline const TScalar w() const
+        {
+            return (*this)[3];
+        }
+
+        /** \brief component w mutator */
+        template<typename T>
+        inline TScalar w(const T new_w)
+        {
+            return (*this)[3] = this->clipped(new_w);
+        }
     };
 
+  } // end of namespace vect
 } // end of namespace vcl

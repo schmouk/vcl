@@ -35,6 +35,7 @@ import vectors.vector;
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
 
     //-----------------------------------------------------------------------
         // Forward declaration and Specializations
@@ -68,11 +69,11 @@ namespace vcl {
         * \sa its specializations Vect2d, Vect2f, Vect2b, Vect2s, Vect2us, Vect2i, and Vect2ui.
         */
         template<typename TScalar>
-        class Vect2 : public vcl::Vector<TScalar, 2>
+        class Vect2 : public vcl::vect::Vector<TScalar, 2>
         {
         public:
-            typedef vcl::Vector<TScalar, 2> MyBaseType; //<! wrapper to the inherited class naming.
-            typedef vcl::Vect2<TScalar>     MyType;     //<! wrapper to this class naming.
+            typedef vcl::vect::Vector<TScalar, 2> MyBaseType; //<! wrapper to the inherited class naming.
+            typedef vcl::vect::Vect2<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
             //---   constructors   ----------------------------------------------
@@ -92,7 +93,7 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             template<typename T, size_t S>
-            inline Vect2<TScalar>(const vcl::Vector<T, S>& other)
+            inline Vect2<TScalar>(const vcl::vect::Vector<T, S>& other)
                 : MyBaseType(other)
             {}
 
@@ -142,4 +143,5 @@ namespace vcl {
             }
         };
 
+  } // end of namespace vect
 } // end of namespace vcl

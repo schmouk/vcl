@@ -1,4 +1,3 @@
-#pragma once
 /*
 MIT License
 
@@ -23,44 +22,45 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
 //===========================================================================
+module;
+
 #include <array>
-#include <compare>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
-#include "utils/vector.h"
+export module vectors.vect3;
+
+import vectors.vector;
 
 
 //===========================================================================
 namespace vcl {
   namespace vect {
+
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
-    template<typename TScalar> class Vect3;
+    export template<typename TScalar> class Vect3;
 
     /** \brief The class of 3D vectors with double components (64 bits). */
-    typedef Vect3<double> Vect3d;
+    export typedef Vect3<double> Vect3d;
 
     /** \brief The class of 3D vectors with float components (32 bits). */
-    typedef Vect3<float> Vect3f;
+    export typedef Vect3<float> Vect3f;
 
     /** \brief The class of 3D vectors with bytes components (8 bits). */
-    typedef Vect3<unsigned char> Vect3b;
+    export typedef Vect3<unsigned char> Vect3b;
 
     /** \brief The class of 3D vectors with short components (16 bits). */
-    typedef Vect3<short> Vect3s;
+    export typedef Vect3<short> Vect3s;
 
     /** \brief The class of 3D vectors with unsigned short components (16 bits). */
-    typedef Vect3<unsigned short> Vect3us;
+    export typedef Vect3<unsigned short> Vect3us;
 
     /** \brief The class of 3D vectors with int components (32 bits). */
-    typedef Vect3<int> Vect3i;
+    export typedef Vect3<int> Vect3i;
 
     /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    typedef Vect3<unsigned int> Vect3ui;
+    export typedef Vect3<unsigned int> Vect3ui;
 
 
     //-----------------------------------------------------------------------
@@ -69,11 +69,11 @@ namespace vcl {
     * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
     */
     template<typename TScalar>
-    class Vect3 : public Vector<TScalar, 3>
+    class Vect3 : public vcl::vect::Vector<TScalar, 3>
     {
     public:
-        typedef Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
-        typedef Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
+        typedef vcl::vect::Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef vcl::vect::Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
@@ -156,5 +156,5 @@ namespace vcl {
         }
     };
 
-  } // end of namespace vcl::vect::vect
+  } // end of namespace vect
 } // end of namespace vcl

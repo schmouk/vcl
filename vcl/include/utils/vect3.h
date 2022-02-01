@@ -72,8 +72,8 @@ namespace vcl {
     class Vect3 : public Vector<TScalar, 3>
     {
     public:
-        typedef Vector<TScalar, 3> MyBaseType; //<! shortcut to this class inherited class naming.
-        typedef Vect3<TScalar>     MyType;     //<! shortcut to this class naming.
+        typedef Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
+        typedef Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
@@ -115,40 +115,45 @@ namespace vcl {
         virtual inline ~Vect3<TScalar>()
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief component x accessors */
-        inline TScalar& x()
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        inline const TScalar& x() const
+        /** \brief component x mutator */
+        template<typename T>
+        inline TScalar x(const T new_x)
         {
-            return (*this)[0];
+            return (*this)[0] = this->clipped(new_x);
         }
 
-        /** \brief component y accessors */
-        inline TScalar& y()
-        {
-            return (*this)[1];
-        }
-
-        inline const TScalar& y() const
+        /** \brief component y accessor */
+        inline const TScalar y() const
         {
             return (*this)[1];
         }
 
-        /** \brief component z accessors */
-        inline TScalar& z()
+        /** \brief component y mutator */
+        template<typename T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
+
+        /** \brief component z accessor */
+        inline const TScalar z() const
         {
             return (*this)[2];
         }
 
-        inline const TScalar& z() const
+        /** \brief component z mutator */
+        template<typename T>
+        inline TScalar z(const T new_z)
         {
-            return (*this)[2];
+            return (*this)[2] = this->clipped(new_z);
         }
-
     };
 
 } // end of namespace vcl

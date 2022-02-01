@@ -72,7 +72,7 @@ namespace vcl {
     class Vect2 : public Vector<TScalar, 2>
     {
     public:
-        typedef Vector<TScalar, 2> MyBaseType; //<! wrapper to this class inherited class naming.
+        typedef Vector<TScalar, 2> MyBaseType; //<! wrapper to the inherited class naming.
         typedef Vect2<TScalar>     MyType;     //<! wrapper to this class naming.
 
 
@@ -115,29 +115,32 @@ namespace vcl {
         virtual inline ~Vect2<TScalar>()
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief component x accessors */
-        inline TScalar& x()
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        inline const TScalar& x() const
+        /** \brief component x mutator */
+        template<typename T>
+        inline TScalar x(const T new_x)
         {
-            return (*this)[0];
+            return (*this)[0] = this->clipped(new_x);
         }
 
-        /** \brief component y accessors */
-        inline TScalar& y()
-        {
-            return (*this)[1];
-        }
-
-        inline const TScalar& y() const
+        /** \brief component y accessor */
+        inline const TScalar y() const
         {
             return (*this)[1];
         }
 
+        /** \brief component y mutator */
+        template<typename T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
     };
 
 } // end of namespace vcl

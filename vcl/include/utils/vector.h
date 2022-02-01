@@ -1001,8 +1001,8 @@ namespace vcl {
         }
 
         /** \brief *= operator (const std::array) */
-        template<typename T>
-        inline MyType& operator*= (const std::array<T, Ksize>& rhs)
+        template<typename T, size_t S>
+        inline MyType& operator*= (const std::array<T, S>& rhs)
         {
             mul(rhs);
             return *this;
@@ -1882,7 +1882,7 @@ namespace vcl {
         friend inline void mul(std::array<T, S>& lhs, const MyType& rhs)
         {
             auto rit = rhs.cbegin();
-            for (auto it = lhs.begin(); it != it->end() && rit != rhs.cend(); )
+            for (auto it = lhs.begin(); it != this->end() && rit != rhs.cend(); )
                 *it++ *= T(*rit++);
         }
 

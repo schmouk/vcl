@@ -36,6 +36,7 @@ SOFTWARE.
 
 //===========================================================================
 namespace vcl {
+  namespace vect {
 
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
@@ -93,7 +94,7 @@ namespace vcl {
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>
-        inline Vect4<TScalar>(const vcl::Vector<T, S>& other)
+        inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -169,4 +170,5 @@ namespace vcl {
         }
     };
 
+  } // end of namespace vcl::vect::vect
 } // end of namespace vcl

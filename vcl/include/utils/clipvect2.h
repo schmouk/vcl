@@ -42,22 +42,22 @@ namespace vcl {
     // Forward declaration and Specializations
     template<typename TScalar, const TScalar Kmin, const TScalar Kmax> class ClipVect2;
 
-    /** \brief The class of 2D vectors with bytes components (8 bits). * /
+    /** \brief The class of 2D vectors with bytes components (8 bits). */
     template<const char Kmin, const char Kmax> class ClipVect2c;
 
-    /** \brief The class of 2D vectors with bytes components (8 bits). * /
+    /** \brief The class of 2D vectors with bytes components (8 bits). */
     template<const unsigned char Kmin, const unsigned char Kmax> class ClipVect2b;
 
-    /** \brief The class of 2D vectors with short components (16 bits). * /
+    /** \brief The class of 2D vectors with short components (16 bits). */
     template<const short Kmin, const short Kmax> class ClipVect2s;
 
-    /** \brief The class of 2D vectors with unsigned short components (16 bits). * /
+    /** \brief The class of 2D vectors with unsigned short components (16 bits). */
     template<const unsigned short Kmin, const unsigned short Kmax> class ClipVect2us;
 
-    /** \brief The class of 2D vectors with int components (32 bits). * /
+    /** \brief The class of 2D vectors with int components (32 bits). */
     template<const int Kmin, const int Kmax> class ClipVect2i;
 
-    /** \brief The class of 2D vectors with unsigned int components (32 bits). * /
+    /** \brief The class of 2D vectors with unsigned int components (32 bits). */
     template<const unsigned int Kmin, const unsigned int Kmax> class ClipVect2ui;
 
     /** \brief The class of 2D vectors with float components (32 bits). */
@@ -137,6 +137,7 @@ namespace vcl {
         {
             this->fill(this->clipped(value));
         }
+
         inline ClipVect2<TScalar, Kmin, Kmax>(const long long value)
             : MyBaseType()
         {
@@ -199,30 +200,30 @@ namespace vcl {
         }
 
         //---   Components accessors   --------------------------------------
-        /** \brief component x getter */
+        /** \brief component x mutator */
+        template<typename T>
+        inline TScalar x(const T new_x)
+        {
+            return (*this)[0] = this->clipped(new_x);
+        }
+
+        /** \brief component x accessor */
         inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        /** \brief component x setter */
+        /** \brief component y mutator */
         template<typename T>
-        inline TScalar x(const T new_x)
+        inline TScalar y(const T new_y)
         {
-            return (*this)[0] = clipped(new_x);
+            return (*this)[1] = this->clipped(new_y);
         }
 
-        /** \brief component y getter */
+        /** \brief component y accessor */
         inline const TScalar y() const
         {
             return (*this)[1];
-        }
-
-        /** \brief component y setter */
-        template<typename T>
-        inline TScalar& y(const T new_y)
-        {
-            return (*this)[1] = clipped(new_y);
         }
     };
 
@@ -280,7 +281,6 @@ namespace vcl {
         //---  Destructor   -------------------------------------------------
         virtual inline ~ClipVect2c<Kmin, Kmax>()
         {}
-
     };
 
     //=======================================================================

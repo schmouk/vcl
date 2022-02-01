@@ -115,31 +115,32 @@ namespace vcl {
         virtual inline ~Vect2<TScalar>()
         {}
 
-        //---   Components accessors   --------------------------------------
-        /** \brief component x accessors */
-        template<typename T>
-        inline TScalar& x(const T new_x)
-        {
-            return (*this)[0] = this->clipped(new_x);
-        }
-
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
         inline const TScalar x() const
         {
             return (*this)[0];
         }
 
-        /** \brief component y accessors */
+        /** \brief component x mutator */
         template<typename T>
-        inline TScalar& y(const T new_y)
+        inline TScalar x(const T new_x)
         {
-            return (*this)[1] = this->clipped(new_y);
+            return (*this)[0] = this->clipped(new_x);
         }
 
+        /** \brief component y accessor */
         inline const TScalar y() const
         {
             return (*this)[1];
         }
 
+        /** \brief component y mutator */
+        template<typename T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
     };
 
 } // end of namespace vcl

@@ -81,6 +81,13 @@ namespace vcl {
                 : MyBaseType(value)
             {}
 
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos<TScalar, Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
+            {}
+
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
@@ -129,6 +136,13 @@ namespace vcl {
             template<typename T>
             inline Pos_s<Kmin, Kmax>(const T value)
                 : MyBaseType(value)
+            {}
+
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_s<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
             {}
 
             /** \brief Copy constructor (const&).
@@ -187,6 +201,13 @@ namespace vcl {
                 : MyBaseType(value)
             {}
 
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_us<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
+            {}
+
             /** \brief Copy constructor (const&).
             */
             inline Pos_us<Kmin, Kmax>(const MyType& other)
@@ -243,6 +264,13 @@ namespace vcl {
                 : MyBaseType(value)
             {}
 
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_i<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
+            {}
+
             /** \brief Copy constructor (const&).
             */
             inline Pos_i<Kmin, Kmax>(const MyType& other)
@@ -297,6 +325,13 @@ namespace vcl {
             template<typename T>
             inline Pos_ui<Kmin, Kmax>(const T value)
                 : MyBaseType(value)
+            {}
+
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_ui<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
             {}
 
             /** \brief Copy constructor (const&).
@@ -357,6 +392,13 @@ namespace vcl {
             template<typename T>
             inline Pos_f<Kmin, Kmax>(const T value)
                 : MyBaseType(value)
+            {}
+
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_f<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
             {}
 
             /** \brief Copy constructor (const&).

@@ -90,6 +90,18 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline Vect4<TScalar>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
+
         /** \brief Copy constructor (const&).
         */
         template<typename T, size_t S>

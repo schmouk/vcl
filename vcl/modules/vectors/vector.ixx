@@ -26,6 +26,7 @@ SOFTWARE.
 module;
 
 #include <array>
+#include <cstdarg>
 #include <sstream>
 #include <vector>
 
@@ -132,6 +133,19 @@ namespace vcl {
             : MyBaseType()
         {
             this->fill(clipped(value));
+        }
+
+        /** \brief Constructor with Ksize number of scalar args */
+        explicit inline Vector<TScalar, Ksize>(size_t n, ...)
+            : MyBaseType()
+        {
+            zero();
+            va_list components;
+            va_start(components, n);
+            auto it = this->begin();
+            while (n-- && it != this->end())
+                *it++ = clipped(va_arg(components, TScalar));
+            va_end(components);
         }
 
         /** \brief Copy constructor (const&).

@@ -97,6 +97,17 @@ namespace vcl {
             this->fill(this->clipped(value));
         }
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4<TScalar, Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned char value)
             : MyBaseType()
         {
@@ -276,6 +287,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4c<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4c<Kmin, Kmax>(const MyType& other)
@@ -331,6 +353,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4b<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4b<Kmin, Kmax>(const MyType& other)
@@ -387,6 +420,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4s<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4s<Kmin, Kmax>(const MyType& other)
@@ -443,6 +487,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4us<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4us<Kmin, Kmax>(const MyType& other)
@@ -499,6 +554,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4i<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4i<Kmin, Kmax>(const MyType& other)
@@ -555,6 +621,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4ui<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4ui<Kmin, Kmax>(const MyType& other)
@@ -611,6 +688,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4f<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4f<Kmin, Kmax>(const MyType& other)
@@ -667,6 +755,17 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect4d<Kmin, Kmax>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect4d<Kmin, Kmax>(const MyType& other)

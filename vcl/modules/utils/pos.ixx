@@ -88,10 +88,10 @@ namespace vcl {
                 : MyBaseType(x, y)
             {}
 
-            /** \brief Copy constructor (const vcl::vect::Vector&).
+            /** \brief Copy constructor (const vcl::vect::ClipVect2<TScalar, Kmin, Kmax&).
             */
-            template<typename T, size_t S>
-            inline Pos<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
+            template<typename T>
+            inline Pos<TScalar, Kmin, Kmax>(const vcl::vect::ClipVect2<TScalar, Kmin, Kmax>& other)
                 : MyBaseType(other)
             {}
 
@@ -148,8 +148,10 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline Pos_s<Kmin, Kmax>(const MyType& other)
-                : MyBaseType(other)
-            {}
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -211,8 +213,10 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline Pos_us<Kmin, Kmax>(const MyType& other)
-                : MyBaseType(other)
-            {}
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -274,8 +278,10 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline Pos_i<Kmin, Kmax>(const MyType& other)
-                : MyBaseType(other)
-            {}
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -337,8 +343,10 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline Pos_ui<Kmin, Kmax>(const MyType& other)
-                : MyBaseType(other)
-            {}
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -404,8 +412,10 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline Pos_f<Kmin, Kmax>(const MyType& other)
-                : MyBaseType(other)
-            {}
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */

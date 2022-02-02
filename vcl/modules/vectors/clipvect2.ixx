@@ -204,7 +204,7 @@ namespace vcl {
         template<typename T>
         inline const TScalar clipped(const T value) const
         {
-            return std::clamp(value, T(Kmin), T(Kmax)); // c++17
+            return (const TScalar)std::clamp(value, T(Kmin), T(Kmax)); // c++17
         }
 
         //---   Components accessors   --------------------------------------

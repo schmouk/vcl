@@ -36,83 +36,27 @@ namespace vcl {
     namespace utils {
 
         //=======================================================================
-        // Forward declaration and Specializations
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> class Pos;
-
-        /** \brief The class of 2D vectors with short components (16 bits). */
-        export template<const short Kmin, const short Kmax> class Pos_s;
-
-        /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-        export template<const unsigned short Kmin, const unsigned short Kmax> class Pos_us;
-
-        /** \brief The class of 2D vectors with int components (32 bits). */
-        export template<const int Kmin, const int Kmax > class Pos_i;
-
-        /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-        export template<const unsigned int Kmin, const unsigned int Kmax> class Pos_ui;
-
-        /** \brief The class of 2D vectors with float components (32 bits). */
-        export template<const float Kmin, const float Kmax> class Pos_f;
+        /** \brief class Pos: the generic class for 2-D clipped positions. */
+        export template<typename TScalar, const size_t Kmin, const size_t Kmax>
+        using Pos = vcl::vect::ClipVect2<TScalar, Kmin, Kmax>;
 
 
         //=======================================================================
-        /** \brief the generic class for 2-D clipped positions.
-        *
-        * \sa its specializations Pos_s, Pos_us, Pos_i, Pos_ui and Pos_f.
-        */
-        template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        class Pos : public vcl::vect::ClipVect2<TScalar, Kmin, Kmax>
-        {
-        public:
-            typedef vcl::vect::ClipVect2<TScalar, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-            typedef vcl::utils::Pos<TScalar, Kmin, Kmax>      MyType;     //!< wrapper to this class naming.
+        // Forward declaration and Specializations
+        /** \brief The class of 2D positions with short components (16 bits). */
+        export template<const short Kmin, const short Kmax> class Pos_s;
 
-            //---   constructors   ----------------------------------------------
-            /** \brief Empty constructor.
-            */
-            inline Pos<TScalar, Kmin, Kmax>()
-                : MyBaseType()
-            {}
+        /** \brief The class of 2D positions with unsigned short components (16 bits). */
+        export template<const unsigned short Kmin, const unsigned short Kmax> class Pos_us;
 
-            /** \brief Constructor with value.
-            */
-            template<typename T>
-            inline Pos<TScalar, Kmin, Kmax>(const T value)
-                : MyBaseType(value)
-            {}
+        /** \brief The class of 2D positions with int components (32 bits). */
+        export template<const int Kmin, const int Kmax > class Pos_i;
 
-            /** \brief Constructor with values.
-            */
-            template<typename T>
-            inline Pos<TScalar, Kmin, Kmax>(const T x, const T y)
-                : MyBaseType(x, y)
-            {}
+        /** \brief The class of 2D positions with unsigned int components (32 bits). */
+        export template<const unsigned int Kmin, const unsigned int Kmax> class Pos_ui;
 
-            /** \brief Copy constructor (const vcl::vect::ClipVect2<TScalar, Kmin, Kmax&).
-            */
-            template<typename T>
-            inline Pos<TScalar, Kmin, Kmax>(const vcl::vect::ClipVect2<TScalar, Kmin, Kmax>& other)
-                : MyBaseType(other)
-            {}
-
-            /** \brief Copy constructor (const std::array&).
-            */
-            template<typename T, size_t S>
-            inline Pos<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
-                : MyBaseType(other)
-            {}
-
-            /** \brief Copy constructor (const std::vector&).
-            */
-            template<typename T>
-            inline Pos<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
-                : MyBaseType(vect)
-            {}
-
-            //---  Destructor   -------------------------------------------------
-            virtual inline ~Pos<TScalar, Kmin, Kmax>()
-            {}
-        };
+        /** \brief The class of 2D positions with float components (32 bits). */
+        export template<const float Kmin, const float Kmax> class Pos_f;
 
 
         //=======================================================================

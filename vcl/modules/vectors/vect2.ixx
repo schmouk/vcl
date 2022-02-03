@@ -41,12 +41,6 @@ namespace vcl {
         // Forward declaration and Specializations
         export template<typename TScalar> class Vect2;
 
-        /** \brief The class of 2D vectors with double components (64 bits). */
-        export typedef Vect2<double> Vect2d;
-
-        /** \brief The class of 2D vectors with float components (32 bits). */
-        export typedef Vect2<float> Vect2f;
-
         /** \brief The class of 2D vectors with bytes components (8 bits). */
         export typedef Vect2<unsigned char> Vect2b;
 
@@ -61,6 +55,15 @@ namespace vcl {
 
         /** \brief The class of 2D vectors with unsigned int components (32 bits). */
         export typedef Vect2<unsigned int> Vect2ui;
+
+        /** \brief The class of 2D vectors with float components (32 bits). */
+        export typedef Vect2<float> Vect2f;
+
+        /** \brief The class of 2D vectors with double components (64 bits). */
+        export typedef Vect2<double> Vect2d;
+
+        /** \brief The class of 2D vectors with long double components (128 bits). */
+        export typedef Vect2<long double> Vect2ld;
 
 
         //-----------------------------------------------------------------------
@@ -96,8 +99,8 @@ namespace vcl {
             inline Vect2<TScalar>(const T x, const T y)
                 : MyBaseType()
             {
-                x(x());
-                y(y());
+                this->x(x);
+                this->y(y);
             }
 
             /** \brief Copy constructor (const&).

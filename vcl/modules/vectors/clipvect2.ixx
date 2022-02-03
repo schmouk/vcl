@@ -97,15 +97,6 @@ namespace vcl {
             this->fill(this->clipped(value));
         }
 
-        /** \brief Constructor with values.
-        */
-        template<typename T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const T x, const T y)
-            : MyBaseType()
-        {
-            x(x());
-            y(y());
-        }
         inline ClipVect2<TScalar, Kmin, Kmax>(const unsigned char value)
             : MyBaseType()
         {
@@ -123,6 +114,7 @@ namespace vcl {
         {
             this->fill(this->clipped(value));
         }
+
         inline ClipVect2<TScalar, Kmin, Kmax>(const int value)
             : MyBaseType()
         {
@@ -134,6 +126,7 @@ namespace vcl {
         {
             this->fill(this->clipped(value));
         }
+
         inline ClipVect2<TScalar, Kmin, Kmax>(const long value)
             : MyBaseType()
         {
@@ -157,6 +150,7 @@ namespace vcl {
         {
             this->fill(this->clipped(value));
         }
+
         inline ClipVect2<TScalar, Kmin, Kmax>(const float value)
             : MyBaseType()
         {
@@ -168,10 +162,21 @@ namespace vcl {
         {
             this->fill(this->clipped(value));
         }
+
         inline ClipVect2<TScalar, Kmin, Kmax>(const long double value)
             : MyBaseType()
         {
             this->fill(this->clipped(value));
+        }
+
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect2<TScalar, Kmin, Kmax>(const T x, const T y)
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
         }
 
         /** \brief Copy constructor (const vcl::vect::Vector&).
@@ -462,6 +467,7 @@ namespace vcl {
             x(x());
             y(y());
         }
+
         /** \brief Copy constructor (const&).
         */
         inline ClipVect2us<Kmin, Kmax>(const MyType& other)
@@ -527,6 +533,7 @@ namespace vcl {
             x(x());
             y(y());
         }
+
         /** \brief Copy constructor (const&).
         */
         inline ClipVect2i<Kmin, Kmax>(const MyType& other)

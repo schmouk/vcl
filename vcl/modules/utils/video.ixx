@@ -25,6 +25,10 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
 export module utils.video;
 
 
@@ -58,31 +62,59 @@ namespace vcl {
             /** \brief Empty constructor.
             */
             inline Timecode<FPS>()
-                : hh(0), mm(0), ss(0), ff(0)
+                : hh(0), mm(0), ss(0), ff(0), m_error(false)
             {}
 
             /** \brief Constructor with a single value).
             */
             template<typename T>
             inline Timecode<FPS>(const T value)
-                : hh(0), mm(0), ss(0), ff(0)
+                : hh(0), mm(0), ss(0), ff(0), m_error(false)
             {
                 prvt_set(double(value));
+                if (m_error)
+                    throw std::invalid_argument("too big value for Timecode constructor argument");
             }
 
             /** \brief Constructor with four filling values).
             */
             inline Timecode<FPS>(const CompT hr, const CompT mn, const CompT sc, const CompT fr)
-                : hh(hr), mm(mn), ss(sc), ff(fr)
-            {}
+                : hh(hr), mm(mn), ss(sc), ff(fr), m_error(false)
+            {
+                if (m_error)
+                    throw std::invalid_argument("invalid value for Timecode constructor arguments");
+            }
 
-            /** \brief Copy constructor.
+            /** \brief Move constructor.
             */
             template<const unsigned short F>
             inline Timecode<FPS>(const Timecode<F>& other)
-                : hh(0), mm(0), ss(0), ff(0)
+                : hh(0), mm(0), ss(0), ff(0), m_error(other.m_error)
             {
-                prvt_set((double)other);
+                if (m_error)
+                    throw std::invalid_argument("invalid timecode value passed as Timecode constructor argument");
+                else
+                    prvt_set((double)other);
+            }
+
+            /** \brief Constructor from char*.
+            */
+            inline Timecode<FPS>(const char* tc_chr)
+                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+            {
+                prvt_set(std::string(tc_chr));
+                if (m_error)
+                    throw std::invalid_argument("invalid c_string content passed as Timecode constructor argument");
+            }
+
+            /** \brief Constructor from string.
+            */
+            inline Timecode<FPS>(const std::string& tc_str)
+                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+            {
+                prvt_set(tc_str);
+                if (m_error)
+                    throw std::invalid_argument("invalid string content passed as Timecode constructor argument");
             }
 
             //---   Cast operations   -------------------------------------------
@@ -131,6 +163,7 @@ namespace vcl {
 
         private:
             typedef vcl::utils::Timecode<FPS> MyType; //<! wrapper to this class naming.
+            bool m_error; //!< error status of this timecode
             
             /** \brief Internally sets this timecode (double fractional seconds).
             */
@@ -143,7 +176,45 @@ namespace vcl {
                     mm = CompT((unsigned long)(fract_sec / 60.0) % 60);
                     ss = CompT((unsigned long)(fract_sec) % 60);
                     ff = CompT(FPS * (fract_sec - (unsigned long)fract_sec));
+                    if (hh > 99)
+                        prvt_set_error();
                 }
+            }
+
+            /** \brief Internally sets this timecode (const string&).
+            */
+            void prvt_set(const std::string& fract_sec)
+            {
+                std::stringstream sstr(fract_sec);
+                try {
+                    sstr >> hh >> ':' >> mm >> ':' >> ss >> ':' >> ff;
+                    prvt_check();
+                }
+                catch (...) {
+                    prvt_set_error();
+                }
+            }
+
+            /** \brief Internally checks for the correctness of this timecode .
+            */
+            inline const bool prvt_check()
+            {
+                if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
+                    prvt_clr_error();
+                else
+                    prvt_set_error();
+            }
+
+            /** \brief clears the internal error state  */
+            inline void prvt_clr_error()
+            {
+                m_error = false;
+            }
+
+            /** \brief sets the internal error state to true */
+            inline void prvt_set_error()
+            {
+                m_error = true;
             }
 
         };

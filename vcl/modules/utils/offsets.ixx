@@ -43,8 +43,8 @@ namespace vcl {
         /** \brief The class of 2D offsets with unsigned short components (16 bits). */
         export typedef Offsets<short> Offsets_s;
 
-        /** \brief The class of 2D offsets with unsigned int components (32 bits). */
-        export typedef Offsets<int> Offsets_i;
+        /** \brief The class of 2D offsets with unsigned long int components (32 bits). */
+        export typedef Offsets<long> Offsets_i;
 
         /** \brief The class of 2D offsets with float components (32 bits). */
         export typedef Offsets<float> Offsets_f;

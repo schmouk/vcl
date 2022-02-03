@@ -43,8 +43,8 @@ namespace vcl {
         /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
         export typedef Dims<unsigned short> Dims_us;
 
-        /** \brief The class of 2D dimensions with unsigned int components (32 bits). */
-        export typedef Dims<unsigned int> Dims_ui;
+        /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
+        export typedef Dims<unsigned long> Dims_ui;
 
         /** \brief The class of 2D dimensions with float components (32 bits). */
         export typedef Dims<float> Dims_f;

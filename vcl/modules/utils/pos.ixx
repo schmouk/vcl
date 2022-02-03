@@ -49,11 +49,11 @@ namespace vcl {
         /** \brief The class of 2D positions with unsigned short components (16 bits). */
         export template<const unsigned short Kmin, const unsigned short Kmax> class Pos_us;
 
-        /** \brief The class of 2D positions with int components (32 bits). */
-        export template<const int Kmin, const int Kmax > class Pos_i;
+        /** \brief The class of 2D positions with long int components (32 bits). */
+        export template<const long Kmin, const long Kmax > class Pos_i;
 
-        /** \brief The class of 2D positions with unsigned int components (32 bits). */
-        export template<const unsigned int Kmin, const unsigned int Kmax> class Pos_ui;
+        /** \brief The class of 2D positions with unsigned long int components (32 bits). */
+        export template<const unsigned long Kmin, const unsigned long Kmax> class Pos_ui;
 
         /** \brief The class of 2D positions with float components (32 bits). */
         export template<const float Kmin, const float Kmax> class Pos_f;
@@ -190,8 +190,8 @@ namespace vcl {
 
 
         //=======================================================================
-        /** \brief The class of 2D positions with int components (32 bits). */
-        template<const int Kmin = -2147483648, const int Kmax = 2147483647>
+        /** \brief The class of 2D positions with longint components (32 bits). */
+        template<const long Kmin = -2147483648, const long Kmax = 2147483647>
         class Pos_i : public vcl::vect::ClipVect2i<Kmin, Kmax>
         {
         public:
@@ -255,8 +255,8 @@ namespace vcl {
 
 
         //=======================================================================
-        /** \brief The class of 2D positions with unsigned int components (32 bits). */
-        template<const unsigned int Kmin = 0, const unsigned int Kmax = 4294967295>
+        /** \brief The class of 2D positions with unsigned long int components (32 bits). */
+        template<const unsigned long Kmin = 0, const unsigned long Kmax = 4294967295>
         class Pos_ui : public vcl::vect::ClipVect2ui<Kmin, Kmax>
         {
         public:

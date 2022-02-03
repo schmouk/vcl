@@ -55,11 +55,11 @@ namespace vcl {
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
     export template<const unsigned short Kmin, const unsigned short Kmax> class ClipVect4us;
 
-    /** \brief The class of 4D vectors with int components (32 bits). */
-    export template<const int Kmin, const int Kmax> class ClipVect4i;
+    /** \brief The class of 4D vectors with long int components (32 bits). */
+    export template<const long Kmin, const long Kmax> class ClipVect4i;
 
-    /** \brief The class of 4D vectors with unsigned int components (32 bits). */
-    export template<const unsigned int Kmin, const unsigned int Kmax> class ClipVect4ui;
+    /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
+    export template<const unsigned long Kmin, const unsigned long Kmax> class ClipVect4ui;
 
     /** \brief The class of 4D vectors with float components (32 bits). */
     export template<const float Kmin, const float Kmax> class ClipVect4f;
@@ -532,13 +532,13 @@ namespace vcl {
 
 
     //=======================================================================
-    /** \brief The class of 4D vectors with int components (32 bits). */
-    template<const int Kmin = -2147483648, const int Kmax = 2147483647>
-    class ClipVect4i : public vcl::vect::ClipVect4<int, Kmin, Kmax>
+    /** \brief The class of 4D vectors with long int components (32 bits). */
+    template<const long Kmin = -2147483648, const long Kmax = 2147483647>
+    class ClipVect4i : public vcl::vect::ClipVect4<long, Kmin, Kmax>
     {
     public:
-        typedef vcl::vect::ClipVect4<int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::vect::ClipVect4i<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+        typedef vcl::vect::ClipVect4<long, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef vcl::vect::ClipVect4i<Kmin, Kmax>      MyType;     //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -599,13 +599,13 @@ namespace vcl {
 
 
     //=======================================================================
-    /** \brief The class of 4D vectors with unsigned int components (32 bits). */
-    template<const unsigned int Kmin = 0, const unsigned int Kmax = 4294967295>
-    class ClipVect4ui : public vcl::vect::ClipVect4<unsigned int, Kmin, Kmax>
+    /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
+    template<const unsigned long Kmin = 0, const unsigned long Kmax = 4294967295>
+    class ClipVect4ui : public vcl::vect::ClipVect4<unsigned long, Kmin, Kmax>
     {
     public:
-        typedef vcl::vect::ClipVect4<unsigned int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::vect::ClipVect4ui<Kmin, Kmax>             MyType;     //!< wrapper to this class naming.
+        typedef vcl::vect::ClipVect4<unsigned long, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef vcl::vect::ClipVect4ui<Kmin, Kmax>              MyType;     //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.

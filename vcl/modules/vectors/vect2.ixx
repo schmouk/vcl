@@ -50,11 +50,11 @@ namespace vcl {
         /** \brief The class of 2D vectors with unsigned short components (16 bits). */
         export typedef Vect2<unsigned short> Vect2us;
 
-        /** \brief The class of 2D vectors with int components (32 bits). */
-        export typedef Vect2<int> Vect2i;
+        /** \brief The class of 2D vectors with long int components (32 bits). */
+        export typedef Vect2<long> Vect2i;
 
-        /** \brief The class of 2D vectors with unsigned int components (32 bits). */
-        export typedef Vect2<unsigned int> Vect2ui;
+        /** \brief The class of 2D vectors with unsigned long int components (32 bits). */
+        export typedef Vect2<unsigned long> Vect2ui;
 
         /** \brief The class of 2D vectors with float components (32 bits). */
         export typedef Vect2<float> Vect2f;

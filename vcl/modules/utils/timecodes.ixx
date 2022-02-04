@@ -149,6 +149,42 @@ namespace vcl {
             }
 
 
+            //---   Increment operator ++   ---------------------------------
+            /** \brief Pre-increment operator.
+            */
+            inline MyType& operator++()
+            {
+                *this += 1;
+                return *this;
+            }
+
+            /** \brief Post-increment operator.
+            */
+            MyType operator++(int)
+            {
+                *this += 1;
+                return *this - 1;
+            }
+
+
+            //---   Decrement operator --   ---------------------------------
+            /** \brief Pre-decrement operator.
+            */
+            inline MyType& operator--()
+            {
+                *this -= 1;
+                return *this;
+            }
+
+            /** \brief Post-decrement operator.
+            */
+            MyType operator--(int)
+            {
+                *this -= 1;
+                return *this + 1;
+            }
+
+
             //---   Operator +=   -------------------------------------------
             /* \brief operator += (const &)
             */

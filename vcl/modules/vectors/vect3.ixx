@@ -56,11 +56,11 @@ namespace vcl {
     /** \brief The class of 3D vectors with unsigned short components (16 bits). */
     export typedef Vect3<unsigned short> Vect3us;
 
-    /** \brief The class of 3D vectors with int components (32 bits). */
-    export typedef Vect3<int> Vect3i;
+    /** \brief The class of 3D vectors with long int components (32 bits). */
+    export typedef Vect3<long> Vect3i;
 
-    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    export typedef Vect3<unsigned int> Vect3ui;
+    /** \brief The class of 3D vectors with unsigned long int components (32 bits). */
+    export typedef Vect3<unsigned long> Vect3ui;
 
 
     //-----------------------------------------------------------------------
@@ -89,6 +89,17 @@ namespace vcl {
         inline Vect3<TScalar>(const T value)
             : MyBaseType(value)
         {}
+
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline Vect3<TScalar>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
 
         /** \brief Copy constructor (const&).
         */

@@ -26,6 +26,7 @@ SOFTWARE.
 module;
 
 #include <array>
+#include <cstdarg>
 #include <sstream>
 #include <vector>
 
@@ -52,86 +53,96 @@ namespace vcl {
         */
         inline Vector<TScalar, Ksize>()
             : MyBaseType()
-        {
-            zero();
-        }
+        {}
 
-        explicit inline Vector<TScalar, Ksize>(const char value)
+        inline Vector<TScalar, Ksize>(const char value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const unsigned char value)
+        inline Vector<TScalar, Ksize>(const unsigned char value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const short value)
+        inline Vector<TScalar, Ksize>(const short value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const unsigned short value)
+        inline Vector<TScalar, Ksize>(const unsigned short value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const int value)
+        inline Vector<TScalar, Ksize>(const int value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const unsigned int value)
+        inline Vector<TScalar, Ksize>(const unsigned int value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const long value)
+        inline Vector<TScalar, Ksize>(const long value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const unsigned long value)
+        inline Vector<TScalar, Ksize>(const unsigned long value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const long long value)
+        inline Vector<TScalar, Ksize>(const long long value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const unsigned long long value)
+        inline Vector<TScalar, Ksize>(const unsigned long long value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const float value)
+        inline Vector<TScalar, Ksize>(const float value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const double value)
+        inline Vector<TScalar, Ksize>(const double value)
             : MyBaseType()
         {
             this->fill(clipped(value));
         }
 
-        explicit inline Vector<TScalar, Ksize>(const long double value)
+        inline Vector<TScalar, Ksize>(const long double value)
             : MyBaseType()
         {
             this->fill(clipped(value));
+        }
+
+        /** \brief Constructor with Ksize number of scalar args */
+        inline Vector<TScalar, Ksize>(size_t n, ...)
+            : MyBaseType()
+        {
+            va_list components;
+            va_start(components, n);
+            auto it = this->begin();
+            while (n-- && it != this->end())
+                *it++ = clipped(va_arg(components, TScalar));
+            va_end(components);
         }
 
         /** \brief Copy constructor (const&).
@@ -140,7 +151,6 @@ namespace vcl {
         inline Vector<TScalar, Ksize>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType()
         {
-            zero();
             copy(other);
         }
 
@@ -150,7 +160,6 @@ namespace vcl {
         inline Vector<TScalar, Ksize>(const std::array<T, S>& other)
             : MyBaseType()
         {
-            zero();
             copy(other);
         }
 
@@ -160,7 +169,6 @@ namespace vcl {
         inline Vector<TScalar, Ksize>(const std::vector<T>& vect)
             : MyBaseType()
         {
-            zero();
             copy(vect);
         }
 

@@ -55,11 +55,11 @@ namespace vcl {
     /** \brief The class of 3D vectors with unsigned short components (16 bits). */
     export template<const unsigned short Kmin, const unsigned short Kmax> class ClipVect3us;
 
-    /** \brief The class of 3D vectors with int components (32 bits). */
-    export template<const int Kmin, const int Kmax> class ClipVect3i;
+    /** \brief The class of 3D vectors with long int components (32 bits). */
+    export template<const long Kmin, const long Kmax> class ClipVect3i;
 
-    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    export template<const unsigned int Kmin, const unsigned int Kmax> class ClipVect3ui;
+    /** \brief The class of 3D vectors with unsigned long int components (32 bits). */
+    export template<const unsigned long Kmin, const unsigned long Kmax> class ClipVect3ui;
 
     /** \brief The class of 3D vectors with float components (32 bits). */
     export template<const float Kmin, const float Kmax> class ClipVect3f;
@@ -97,6 +97,16 @@ namespace vcl {
             this->fill(this->clipped(value));
         }
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3<TScalar, Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         inline ClipVect3<TScalar, Kmin, Kmax>(const unsigned char value)
             : MyBaseType()
         {
@@ -263,6 +273,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3c<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3c<Kmin, Kmax>(const MyType& other)
@@ -318,6 +338,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3b<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3b<Kmin, Kmax>(const MyType& other)
@@ -374,6 +404,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3s<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3s<Kmin, Kmax>(const MyType& other)
@@ -430,6 +470,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3us<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3us<Kmin, Kmax>(const MyType& other)
@@ -464,13 +514,13 @@ namespace vcl {
 
 
     //=======================================================================
-    /** \brief The class of 3D vectors with int components (32 bits). */
-    template<const int Kmin = -2147483648, const int Kmax = 2147483647>
-    class ClipVect3i : public vcl::vect::ClipVect3<int, Kmin, Kmax>
+    /** \brief The class of 3D vectors with long int components (32 bits). */
+    template<const long Kmin = -2147483648, const long Kmax = 2147483647>
+    class ClipVect3i : public vcl::vect::ClipVect3<long, Kmin, Kmax>
     {
     public:
-        typedef vcl::vect::ClipVect3<int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::vect::ClipVect3i<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+        typedef vcl::vect::ClipVect3<long, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef vcl::vect::ClipVect3i<Kmin, Kmax>      MyType;     //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -486,6 +536,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3i<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3i<Kmin, Kmax>(const MyType& other)
@@ -520,13 +580,13 @@ namespace vcl {
 
 
     //=======================================================================
-    /** \brief The class of 3D vectors with unsigned int components (32 bits). */
-    template<const unsigned int Kmin = 0, const unsigned int Kmax = 4294967295>
-    class ClipVect3ui : public vcl::vect::ClipVect3<unsigned int, Kmin, Kmax>
+    /** \brief The class of 3D vectors with unsigned long int components (32 bits). */
+    template<const unsigned long Kmin = 0, const unsigned long Kmax = 4294967295>
+    class ClipVect3ui : public vcl::vect::ClipVect3<unsigned long, Kmin, Kmax>
     {
     public:
-        typedef vcl::vect::ClipVect3<unsigned int, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::vect::ClipVect3ui<Kmin, Kmax>             MyType;     //!< wrapper to this class naming.
+        typedef vcl::vect::ClipVect3<unsigned long, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+        typedef vcl::vect::ClipVect3ui<Kmin, Kmax>              MyType;     //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -542,6 +602,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3ui<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3ui<Kmin, Kmax>(const MyType& other)
@@ -598,6 +668,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3f<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3f<Kmin, Kmax>(const MyType& other)
@@ -654,6 +734,16 @@ namespace vcl {
             : MyBaseType(value)
         {}
 
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline ClipVect3d<Kmin, Kmax>(const T x, const T y, const T z = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+        }
         /** \brief Copy constructor (const&).
         */
         inline ClipVect3d<Kmin, Kmax>(const MyType& other)

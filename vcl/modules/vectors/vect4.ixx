@@ -56,11 +56,11 @@ namespace vcl {
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
     export typedef Vect4<unsigned short> Vect4us;
 
-    /** \brief The class of 4D vectors with int components (32 bits). */
-    export typedef Vect4<int> Vect4i;
+    /** \brief The class of 4D vectors with long int components (32 bits). */
+    export typedef Vect4<long> Vect4i;
 
-    /** \brief The class of 4D vectors with unsigned int components (32 bits). */
-    export typedef Vect4<unsigned int> Vect4ui;
+    /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
+    export typedef Vect4<unsigned long> Vect4ui;
 
 
     //-----------------------------------------------------------------------
@@ -89,6 +89,18 @@ namespace vcl {
         inline Vect4<TScalar>(const T value)
             : MyBaseType(value)
         {}
+
+        /** \brief Constructor with values.
+        */
+        template<typename T>
+        inline Vect4<TScalar>(const T x, const T y, const T z = T(0), const T w = T(0))
+            : MyBaseType()
+        {
+            x(x());
+            y(y());
+            z(z());
+            w(w());
+        }
 
         /** \brief Copy constructor (const&).
         */

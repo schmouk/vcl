@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <format>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -56,32 +57,33 @@ namespace vcl {
 
             typedef unsigned char CompT; //!< the internal type of timecode components
 
-            CompT hh, mm, ss, ff; //!< the four components of every timecode HH:MM:SS:FF
+            CompT hh, mm, ss, ff;        //!< the four components of every timecode HH:MM:SS:FF
+            bool b_error;                //!< error status of this timecode
 
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
             */
             inline Timecode<FPS>()
-                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+                : hh(0), mm(0), ss(0), ff(0), b_error(false)
             {}
 
             /** \brief Constructor with a single value).
             */
             template<typename T>
             inline Timecode<FPS>(const T value)
-                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+                : hh(0), mm(0), ss(0), ff(0), b_error(false)
             {
                 prvt_set(double(value));
-                if (m_error)
+                if (b_error)
                     throw std::invalid_argument("too big value for Timecode constructor argument");
             }
 
             /** \brief Constructor with four filling values).
             */
             inline Timecode<FPS>(const CompT hr, const CompT mn, const CompT sc, const CompT fr)
-                : hh(hr), mm(mn), ss(sc), ff(fr), m_error(false)
+                : hh(hr), mm(mn), ss(sc), ff(fr), b_error(false)
             {
-                if (m_error)
+                if (b_error)
                     throw std::invalid_argument("invalid value for Timecode constructor arguments");
             }
 
@@ -89,31 +91,31 @@ namespace vcl {
             */
             template<const unsigned short F>
             inline Timecode<FPS>(const Timecode<F>& other)
-                : hh(0), mm(0), ss(0), ff(0), m_error(other.m_error)
+                : hh(0), mm(0), ss(0), ff(0), b_error(other.b_error)
             {
-                if (m_error)
+                if (b_error)
                     throw std::invalid_argument("invalid timecode value passed as Timecode constructor argument");
                 else
-                    prvt_set((double)other);
+                    prvt_set(other);
             }
 
             /** \brief Constructor from char*.
             */
             inline Timecode<FPS>(const char* tc_chr)
-                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+                : hh(0), mm(0), ss(0), ff(0), b_error(false)
             {
                 prvt_set(std::string(tc_chr));
-                if (m_error)
+                if (b_error)
                     throw std::invalid_argument("invalid c_string content passed as Timecode constructor argument");
             }
 
             /** \brief Constructor from string.
             */
             inline Timecode<FPS>(const std::string& tc_str)
-                : hh(0), mm(0), ss(0), ff(0), m_error(false)
+                : hh(0), mm(0), ss(0), ff(0), b_error(false)
             {
                 prvt_set(tc_str);
-                if (m_error)
+                if (b_error)
                     throw std::invalid_argument("invalid string content passed as Timecode constructor argument");
             }
 
@@ -160,12 +162,18 @@ namespace vcl {
                 return 3600.0 * hh + 60.0 * mm + (double)ss + (double)ff / (double)FPS;
             }
 
+            /** \brief operator string&
+            */
+            inline operator std::string()
+            {
+                return std::format("{:02d}:{:02d}:{:02d}:{:02d}", hh, mm, ss, ff);
+            }
+
 
         private:
             typedef vcl::utils::Timecode<FPS> MyType; //<! wrapper to this class naming.
-            bool m_error; //!< error status of this timecode
             
-            /** \brief Internally sets this timecode (double fractional seconds).
+            /** \brief Internally sets this timecode (const double fractional seconds).
             */
             void prvt_set(const double fract_sec)
             {
@@ -195,6 +203,18 @@ namespace vcl {
                 }
             }
 
+            /** \brief Internally sets this timecode (const&).
+            */
+            template<const unsigned short F>
+            void prvt_set(const Timecode<F>& other)
+            {
+                if (other.b_error)
+                    throw std::invalid_argument("invalid timecode value passed as Timecode argument");
+                else {
+                    prvt_set(3600.0 * other.hh + 60.0 * other.mm + (double)other.ss + (double)other.ff / (double)F);
+                }
+            }
+
             /** \brief Internally checks for the correctness of this timecode .
             */
             inline const bool prvt_check()
@@ -208,16 +228,16 @@ namespace vcl {
             /** \brief clears the internal error state  */
             inline void prvt_clr_error()
             {
-                m_error = false;
+                b_error = false;
             }
 
             /** \brief sets the internal error state to true */
             inline void prvt_set_error()
             {
-                m_error = true;
+                b_error = true;
             }
 
         };
 
-    } // end of namespace vect
+    } // end of namespace utils
 } // end of namespace vcl

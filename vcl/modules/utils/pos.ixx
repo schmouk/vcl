@@ -68,6 +68,7 @@ namespace vcl {
             typedef vcl::vect::ClipVect2s<Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
             typedef vcl::utils::Pos_s<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
 
+
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
             */
@@ -121,7 +122,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_s<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (short).
+            */
+            static inline MyType origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_s Pos_Origin_s;
 
 
         //=======================================================================
@@ -186,7 +197,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_us<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (unsigned short).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_us Pos_Origin_us;
 
 
         //=======================================================================
@@ -251,7 +272,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_i<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (long).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_i Pos_Origin_i;
 
 
         //=======================================================================
@@ -316,7 +347,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_ui<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (unsigned long).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_ui Pos_Origin_ui;
 
 
         //=======================================================================
@@ -385,7 +426,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_f<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (float).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_f Pos_Origin_f;
 
     } // end of namespace utils
 } // end of namespace vcl

@@ -49,25 +49,25 @@ namespace vcl {
         export bool IN_RANGE_01;
 
         export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline TScalar in_range_ii(const TScalar x)
+        inline const bool in_range_ii(const TScalar x)
         {
             return Kmin <= x && x <= Kmax;
         }
 
         export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-            inline TScalar in_range_io(const TScalar x)
+            inline const bool in_range_io(const TScalar x)
         {
             return Kmin <= x && x < Kmax;
         }
 
         export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline TScalar in_range_oi(const TScalar x)
+        inline const bool in_range_oi(const TScalar x)
         {
             return Kmin < x && x <= Kmax;
         }
 
         export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline TScalar in_range_oo(const TScalar x)
+        inline const bool in_range_oo(const TScalar x)
         {
             return Kmin < x && x < Kmax;
         }

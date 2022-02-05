@@ -675,7 +675,7 @@ namespace vcl {
             template<const unsigned short F>
             inline bool operator <= (const vcl::utils::Timecode<F>& rhs)
             {
-                return frame_s() <= rhs.frame_s();
+                return frame_s() < rhs.frame_s() || *this == rhs;
             }
 
             /** operator > */
@@ -689,21 +689,22 @@ namespace vcl {
             template<const unsigned short F>
             inline bool operator >= (const vcl::utils::Timecode<F>& rhs)
             {
-                return frame_s() >= rhs.frame_s();
+                return frame_s() > rhs.frame_s() || *this == rhs;
             }
 
             /** operator == */
             template<const unsigned short F>
             inline bool operator == (const vcl::utils::Timecode<F>& rhs)
             {
-                return frame_s() == rhs.frame_s();
+                constexpr FrameTime EPS = 1e-4f;
+                return vcl::utils::in_range_ii<FrameTime, -EPS, EPS>(this->frame_s() - rhs.frame_s());
             }
 
             /** operator != */
             template<const unsigned short F>
             inline bool operator != (const vcl::utils::Timecode<F>& rhs)
             {
-                return frame_s() != rhs.frame_s();
+                return !(*this == rhs);
             }
 
 

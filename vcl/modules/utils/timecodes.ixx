@@ -765,10 +765,10 @@ namespace vcl {
             inline const bool prvt_check()
             {
                 //if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
-                if (vcl::utils::IN_RANGE(0, hh, 99) &&
-                        vcl::utils::IN_RANGE(0, mm, 59) &&
-                        vcl::utils::IN_RANGE(0, ss, 59) &&
-                        vcl::utils::IN_RANGE_1(0, ff, FPS))
+                if (vcl::utils::in_range_ii<CompT, 0, 99>(hh) &&
+                        vcl::utils::in_range_io<CompT, 0, 60>(mm) &&
+                        vcl::utils::in_range_ii<CompT, 0, 59>(ss) &&
+                        vcl::utils::in_range_io<CompT, 0, FPS>(ff))
                     prvt_clr_error();
                 else
                     prvt_set_error();

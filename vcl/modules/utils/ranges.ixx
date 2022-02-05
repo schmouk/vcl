@@ -43,10 +43,34 @@ namespace vcl {
 #define IN_RANGE_1(x,a,b) ((a) <= (x) && (x) < (b))
 #define IN_RANGE_01(x,a,b) ((a) < (x) && (x) < (b))
 
-    export bool IN_RANGE;
-    export bool IN_RANGE_0;
-    export bool IN_RANGE_1;
-    export bool IN_RANGE_01;
+        export bool IN_RANGE;
+        export bool IN_RANGE_0;
+        export bool IN_RANGE_1;
+        export bool IN_RANGE_01;
+
+        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+        inline TScalar in_range_ii(const TScalar x)
+        {
+            return Kmin <= x && x <= Kmax;
+        }
+
+        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+            inline TScalar in_range_io(const TScalar x)
+        {
+            return Kmin <= x && x < Kmax;
+        }
+
+        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+        inline TScalar in_range_oi(const TScalar x)
+        {
+            return Kmin < x && x <= Kmax;
+        }
+
+        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+        inline TScalar in_range_oo(const TScalar x)
+        {
+            return Kmin < x && x < Kmax;
+        }
 
     } // end of namespace utils
 } // end of namespace vcl

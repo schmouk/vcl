@@ -32,6 +32,8 @@ module;
 
 export module utils.timecodes;
 
+import utils.ranges;
+
 
 //===========================================================================
 namespace vcl {
@@ -762,7 +764,11 @@ namespace vcl {
             */
             inline const bool prvt_check()
             {
-                if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
+                //if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
+                if (vcl::utils::IN_RANGE(0, hh, 99) &&
+                        vcl::utils::IN_RANGE(0, mm, 59) &&
+                        vcl::utils::IN_RANGE(0, ss, 59) &&
+                        vcl::utils::IN_RANGE_1(0, ff, FPS))
                     prvt_clr_error();
                 else
                     prvt_set_error();

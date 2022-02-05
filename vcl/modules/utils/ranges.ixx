@@ -39,14 +39,14 @@ namespace vcl {
 
 //---------------------------------------------------------------------------
 #define IN_RANGE(x,a,b) ((a) <= (x) && (x) <= (b))
-#define IN_RANGE_0(x,a,b) ((a) < (x) && (x) <= (b))
-#define IN_RANGE_1(x,a,b) ((a) <= (x) && (x) < (b))
-#define IN_RANGE_01(x,a,b) ((a) < (x) && (x) < (b))
+#define IN_RANGE_01(x,a,b) ((a) < (x) && (x) <= (b))
+#define IN_RANGE_10(x,a,b) ((a) <= (x) && (x) < (b))
+#define IN_RANGE_00(x,a,b) ((a) < (x) && (x) < (b))
 
         export bool IN_RANGE;
-        export bool IN_RANGE_0;
-        export bool IN_RANGE_1;
         export bool IN_RANGE_01;
+        export bool IN_RANGE_10;
+        export bool IN_RANGE_00;
 
         export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         inline const bool in_range_ii(const TScalar x)

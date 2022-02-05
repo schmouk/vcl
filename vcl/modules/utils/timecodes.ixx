@@ -661,6 +661,50 @@ namespace vcl {
             }
 
 
+            //---   Comparison Operators   ----------------------------------
+            /** operator < */
+            template<const unsigned short F>
+            inline bool operator < (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() < rhs.frame_s();
+            }
+
+            /** operator <= */
+            template<const unsigned short F>
+            inline bool operator <= (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() <= rhs.frame_s();
+            }
+
+            /** operator > */
+            template<const unsigned short F>
+            inline bool operator > (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() > rhs.frame_s();
+            }
+
+            /** operator >= */
+            template<const unsigned short F>
+            inline bool operator >= (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() >= rhs.frame_s();
+            }
+
+            /** operator == */
+            template<const unsigned short F>
+            inline bool operator == (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() == rhs.frame_s();
+            }
+
+            /** operator != */
+            template<const unsigned short F>
+            inline bool operator != (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() != rhs.frame_s();
+            }
+
+
         private:
 
             static inline Timecode::FrameTime kEPS = Timecode::FrameTime(1e-5);

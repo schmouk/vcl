@@ -68,6 +68,9 @@ namespace vcl {
             typedef vcl::vect::ClipVect2s<Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
             typedef vcl::utils::Pos_s<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
 
+            static inline Pos_s<Kmin, Kmax> origin;
+
+
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
             */

@@ -73,8 +73,8 @@ namespace vcl {
             {
                 va_list components;
                 va_start(components, n);
-                TScalar* ptr = this->val;
-                while (n-- && ptr != this->val + Ksize)
+                TScalar* ptr = begin();
+                while (n-- && ptr != end())
                     *ptr++ = clipped(va_arg(components, TScalar));
                 va_end(components);
             }
@@ -240,7 +240,7 @@ namespace vcl {
             inline void copy(const std::array<T, S>& other)
             {
                 auto ot = other.cbegin();
-                for (TScalar* ptr = this->val; ptr != this->val + Ksize && ot != other.cend(); )
+                for (TScalar* ptr = begin(); ptr != end() && ot != other.cend(); )
                     *ptr++ = clipped(*ot++);
             }
 
@@ -248,8 +248,8 @@ namespace vcl {
             template<typename T, size_t S>
             friend inline void copy(std::array<T, S>&& lhs, MyType&& rhs)
             {
-                TScalar p_rhs = &rhs.val;
-                for (T* p_lhs = &lhs.begin(); p_lhs != &lhs.end() && p_rhs != &rhs.val + Ksize; )
+                TScalar p_rhs = &rhs.begin();
+                for (T* p_lhs = &lhs.begin(); p_lhs != &lhs.end() && p_rhs != &rhs.end(); )
                     *p_lhs++ = T(*p_rhs++);
             }
 
@@ -258,7 +258,7 @@ namespace vcl {
             inline void copy(const std::vector<T>& other)
             {
                 auto ot = other.cbegin();
-                for (TScalar* ptr = this->val; ptr != this->val + Ksize && ot != other.cend(); )
+                for (TScalar* ptr = begin(); ptr != this->end() && ot != other.cend(); )
                     *ptr++ = clipped(*ot++);
             }
 
@@ -266,8 +266,8 @@ namespace vcl {
             template<typename T>
             friend inline void copy(std::vector<T>&& lhs, MyType&& rhs)
             {
-                TScalar p_rhs = &rhs.val;
-                for (T* p_lhs = lhs.begin(); p_lhs != lhs.end() && p_rhs != rhs.val + Ksize; )
+                TScalar p_rhs = &rhs.begin();
+                for (T* p_lhs = lhs.begin(); p_lhs != lhs.end() && p_rhs != &rhs.end() + Ksize; )
                     *p_lhs++ = T(*p_rhs++);
             }
 
@@ -1938,91 +1938,91 @@ namespace vcl {
             inline void div(const char value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const unsigned char value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const short value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const unsigned short value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const int value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const unsigned int value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const long value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const unsigned long value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const long long value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const unsigned long long value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const float value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const double value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
             inline void div(const long double value)
             {
                 if (value != 0)
-                    for (TScalar* ptr = this->val; ptr != this->val + Ksize; )
+                    for (auto ptr = this->begin(); ptr != end(); )
                         *ptr++ = clipped(*ptr / value);
             }
 
@@ -2031,7 +2031,7 @@ namespace vcl {
             inline void div(const std::array<T, S>& rhs)
             {
                 auto rit = rhs.cbegin();
-                for (TScalar* ptr = this->val; ptr != this->eval + Ksize && rit != rhs.cend(); ptr++, rit++)
+                for (TScalar* ptr = begin(); ptr != end() && rit != rhs.cend(); ptr++, rit++)
                     if (*rit != T(0))
                         *ptr = clipped(*ptr / *rit);
             }
@@ -2040,8 +2040,8 @@ namespace vcl {
             template<typename T, size_t S>
             friend inline void div(std::array<T, S>& lhs, const MyType& rhs)
             {
-                TScalar* ptr = rhs.val;
-                for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.val + Ksize; it++, ptr++)
+                TScalar* ptr = rhs.begin();
+                for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.end(); it++, ptr++)
                     if (*ptr != T(0))
                         *it = clipped(*it / *ptr);
             }
@@ -2051,7 +2051,7 @@ namespace vcl {
             inline void div(const std::vector<T>& rhs)
             {
                 auto rit = rhs.cbegin();
-                for (TScalar* ptr = this->val; ptr != this->eval + Ksize && rit != rhs.cend(); ptr++, rit++)
+                for (TScalar* ptr = begin(); ptr != this->end() && rit != rhs.cend(); ptr++, rit++)
                     if (*rit != T(0))
                         *ptr = clipped(*ptr / *rit);
             }
@@ -2060,8 +2060,8 @@ namespace vcl {
             template<typename T>
             friend inline void div(std::vector<T>& lhs, const MyType& rhs)
             {
-                TScalar* ptr = rhs.val;
-                for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.val + Ksize; it++, ptr++)
+                TScalar* ptr = rhs.begin();
+                for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.end(); it++, ptr++)
                     if (*ptr != T(0))
                         *it = clipped(*it / *ptr);
             }

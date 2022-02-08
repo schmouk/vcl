@@ -417,8 +417,79 @@ namespace vcl {
 
             //---   assignment operator   ---------------------------------------
             /** \brief assign operator with specified value */
-            template<typename T>
-            inline MyType& operator= (const T scalar_value)
+            inline MyType& operator= (const char scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const unsigned char scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const short scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const unsigned short scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const int scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const unsigned int scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const long scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const unsigned long scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const long long scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const unsigned long long scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const float scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const double scalar_value)
+            {
+                fill(scalar_value);
+                return *this;
+            }
+
+            inline MyType& operator= (const long double scalar_value)
             {
                 fill(scalar_value);
                 return *this;

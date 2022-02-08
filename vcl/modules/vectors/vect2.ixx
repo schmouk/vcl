@@ -86,12 +86,14 @@ namespace vcl {
                 : MyBaseType()
             {}
 
-            /** \brief Filling constructor (single scalar).
+            /** \brief Constructor with value.
             */
             template<typename T>
             inline Vect2<TScalar>(const T value)
-                : MyBaseType(value)
-            {}
+                : MyBaseType()
+            {
+                this->fill(this->clipped(value));
+            }
 
             /** \brief Constructor with values.
             */
@@ -103,16 +105,16 @@ namespace vcl {
                 this->y(y);
             }
 
-            /** \brief Copy constructor (const&).
+            /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
             inline Vect2<TScalar>(const vcl::vect::Vector<T, S>& other)
                 : MyBaseType(other)
             {}
 
-            /** \brief Move constructor (&&).
+            /** \brief Move constructor (vcl::vect::Vector&&).
             */
-            template<typename T, const size_t S>
+            template<typename T, size_t S>
             inline Vect2<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}

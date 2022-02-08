@@ -86,7 +86,7 @@ namespace vcl {
                 : MyBaseType()
             {}
 
-            /** \brief Constructor with a filling value.
+            /** \brief Filling constructor (single scalar).
             */
             template<typename T>
             inline Vect2<TScalar>(const T value)
@@ -107,6 +107,13 @@ namespace vcl {
             */
             template<typename T, size_t S>
             inline Vect2<TScalar>(const vcl::vect::Vector<T, S>& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Move constructor (&&).
+            */
+            template<typename T, const size_t S>
+            inline Vect2<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}
 

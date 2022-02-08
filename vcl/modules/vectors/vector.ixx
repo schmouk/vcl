@@ -60,12 +60,84 @@ namespace vcl {
 
             /** \brief Filling constructor (single scalar).
             */
-            template<typename T>
-            inline Vector<TScalar, Ksize>(const T& value)
+            explicit inline Vector<TScalar, Ksize>(const char value)
                 : MyBaseType()
             {
                 fill(value);
             }
+
+            explicit inline Vector<TScalar, Ksize>(const unsigned char value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const short value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const unsigned short value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const int value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const unsigned int value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const long value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const unsigned long value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const long long value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const unsigned long long value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const float value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const double value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
+            explicit inline Vector<TScalar, Ksize>(const long double value)
+                : MyBaseType()
+            {
+                fill(value);
+            }
+
 
             /** \brief Constructor with Ksize number of scalar args */
             inline Vector<TScalar, Ksize>(size_t n, ...)
@@ -100,10 +172,10 @@ namespace vcl {
             /** \brief Constructor (const std::array&).
             */
             template<typename T, size_t S>
-            inline Vector<TScalar, Ksize>(const std::array<T, S>& other)
+            inline Vector<TScalar, Ksize>(const std::array<T, S>& arr)
                 : MyBaseType()
             {
-                copy(other);
+                copy(arr);
             }
 
             /** \brief Constructor (const std::vector&).
@@ -123,10 +195,81 @@ namespace vcl {
 
             //---   fill()   ----------------------------------------------------
             /** \brief Fills vectors with a single scalar value. */
-            template<typename T>
-            inline void fill(const T scalar_value)
+            inline void fill(const char scalar_value)
             {
-                const TScalar val = clipped(scalar_value);
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const unsigned char scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const short scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const unsigned short scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const int scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const unsigned int scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const long scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const unsigned long scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const long long scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const unsigned long long scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const float scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const double scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
+                for (auto it = begin(); it != end(); *it++ = val);
+            }
+
+            inline void fill(const long double scalar_value)
+            {
+                TScalar val = clipped(scalar_value);
                 for (auto it = begin(); it != end(); *it++ = val);
             }
 
@@ -1514,12 +1657,72 @@ namespace vcl {
                 return this->val + Ksize;
             }
 
-            /** \brief Returns the specified value clipped - does no clipping in this base class. */
-            template<typename T>
-            inline const TScalar clipped(const T value)
+            /** \brief Returns the specified value clipped. */
+            inline const TScalar clipped(const char value)
             {
                 return TScalar(value);
             }
+
+            inline const TScalar clipped(const unsigned char value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const short value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const unsigned short value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const int value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const unsigned int value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const long value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const unsigned long value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const long long value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const unsigned long long value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const float value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const double value)
+            {
+                return TScalar(value);
+            }
+
+            inline const TScalar clipped(const long double value)
+            {
+                return TScalar(value);
+            }
+
 
             /** \brief Returns a string representation of this vector. */
             std::string repr()

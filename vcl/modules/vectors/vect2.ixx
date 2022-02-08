@@ -35,7 +35,7 @@ import vectors.vector;
 
 //===========================================================================
 namespace vcl {
-  namespace vect {
+    namespace vect {
 
     //-----------------------------------------------------------------------
         // Forward declaration and Specializations
@@ -163,5 +163,5 @@ namespace vcl {
             }
         };
 
-  } // end of namespace vect
+    } // end of namespace vect
 } // end of namespace vcl

@@ -25,7 +25,6 @@ SOFTWARE.
 //===========================================================================
 module;
 
-
 export module utils.dims;
 
 import vectors.vect2;
@@ -37,80 +36,87 @@ namespace vcl {
 
         //=======================================================================
         // Forward declaration
-        export template<typename TScalar> class Dims;
+        export template<typename TScalar> class DimsT;
 
         // Specializations
         /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
-        export typedef Dims<unsigned short> Dims_us;
+        export typedef DimsT<unsigned short> Dims_us;
 
         /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
-        export typedef Dims<unsigned long> Dims_ui;
+        export typedef DimsT<unsigned long> Dims_ui;
 
         /** \brief The class of 2D dimensions with float components (32 bits). */
-        export typedef Dims<float> Dims_f;
+        export typedef DimsT<float> Dims_f;
+
+        /** \brief The class of 2D dimensions with double components (64 bits). */
+        export typedef DimsT<double> Dims_d;
 
 
         //=======================================================================
-        /** \brief The generic class for 2D dimensions. */
+        /** \brief The generic class for 2D dimensions.
+        *
+        * notice vcl::utils::Size does not inherit from cv::Size, but rather
+        * inherits from vcl::vect::Vect2<>.  This way, vcl::utils::Size gets
+        * more functionalities thant cv::Size.
+        */
         template<typename TScalar>
-        class Dims : public vcl::vect::Vect2<TScalar>
+        class DimsT : public vcl::vect::Vect2<TScalar>
         {
         public:
-            typedef vcl::vect::Vect2<TScalar> MyBaseType; //!< wrapper to the inherited class naming.
-            typedef vcl::utils::Dims<TScalar> MyType;     //!< wrapper to this class naming.
+            typedef vcl::vect::Vect2<TScalar>  MyBaseType; //!< wrapper to the inherited class naming.
+            typedef vcl::utils::DimsT<TScalar> MyType;     //!< wrapper to this class naming.
 
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
             */
-            inline Dims<TScalar>()
+            inline DimsT<TScalar>()
                 : MyBaseType()
             {}
 
             /** \brief Constructor with value.
             */
             template<typename T>
-            inline Dims<TScalar>(const T value)
+            inline DimsT<TScalar>(const T value)
                 : MyBaseType(value)
             {}
 
             /** \brief Constructor with values.
             */
             template<typename T>
-            inline Dims<TScalar>(const T width, const T height)
+            inline DimsT<TScalar>(const T width, const T height)
                 : MyBaseType(width, height)
             {}
-
-            /** \brief Copy constructor (const&).
-            */
-            inline Dims<TScalar>(const MyType& other)
-                : MyBaseType()
-            {
-                this->copy(other);
-            }
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
-            inline Dims<TScalar>(const vcl::vect::Vector<T, S>& other)
+            inline DimsT<TScalar>(const vcl::vect::Vector<T, S>& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Move constructor (&&).
+            */
+            template<typename T, const size_t S>
+            inline DimsT<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}
 
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
-            inline Dims<TScalar>(const std::array<T, S>& other)
+            inline DimsT<TScalar>(const std::array<T, S>& other)
                 : MyBaseType(other)
             {}
 
             /** \brief Copy constructor (const std::vector&).
             */
             template<typename T>
-            inline Dims<TScalar>(const std::vector<T>& vect)
+            inline DimsT<TScalar>(const std::vector<T>& vect)
                 : MyBaseType(vect)
             {}
 
             //---  Destructor   -------------------------------------------------
-            virtual inline ~Dims<TScalar>()
+            virtual inline ~DimsT<TScalar>()
             {}
 
             //---  Accessors/Mutators   -----------------------------------------
@@ -141,52 +147,53 @@ namespace vcl {
             }
 
             //---  Miscelaneous   ----------------------------------------------
+            /** \brief returns the area related to the dimensions */
+            inline const TScalar area() const
+            {
+                return width() * height();  // CAUTION: may overfloaw
+            }
+
             /** \brief returns the ratio of width / height */
             inline const double ratio_wh() const
             {
                 return double(width()) / double(height());
             }
 
-            /** \brief returns the surface related to the dimensions */
-            inline const TScalar surface() const
-            {
-                return width() * height();  // caution: may overflow...
-            }
-
+            //---  Comparison operators   --------------------------------------
             /** \brief operator == */
             inline bool operator== (const MyType& other)
             {
-                return surface() == other.surface();
+                return width() == other.width() && height() == other.height();
             }
 
             /** \brief operator != */
             inline bool operator!= (const MyType& other)
             {
-                return surface() != other.surface();
+                return !(*this == other);
             }
 
             /** \brief operator < */
             inline bool operator< (const MyType& other)
             {
-                return surface() < other.surface();
+                return area() < other.area();
             }
 
             /** \brief operator <= */
             inline bool operator<= (const MyType& other)
             {
-                return surface() <= other.surface();
+                return *this < other || *this == other;
             }
 
             /** \brief operator > */
             inline bool operator> (const MyType& other)
             {
-                return surface() > other.surface();
+                return !(*this <= other);
             }
 
             /** \brief operator >= */
             inline bool operator>= (const MyType& other)
             {
-                return surface() >= other.surface();
+                return !(*this < other);
             }
 
         };

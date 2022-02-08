@@ -280,6 +280,7 @@ namespace vcl {
                 x(x());
                 y(y());
             }
+
             /** \brief Copy constructor (const&).
             */
             inline ClipVect2c<Kmin, Kmax>(const MyType& other)

@@ -102,17 +102,10 @@ namespace vcl {
                 w(w());
             }
 
-            /** \brief Copy constructor (const&).
+            /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
             inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
-                : MyBaseType(other)
-            {}
-
-            /** \brief Move constructor (&&).
-            */
-            template<typename T, const size_t S>
-            inline Vect4<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}
 

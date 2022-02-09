@@ -186,13 +186,6 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
-            /** \brief Move constructor (&&).
-            */
-            template<typename T, const size_t S>
-            inline ClipVect2<TScalar, Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
-                : MyBaseType(other)
-            {}
-
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>

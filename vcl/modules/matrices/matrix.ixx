@@ -27,6 +27,8 @@ module;
 
 #include <new>
 
+#include <opencv2/core/matx.hpp>  // to get access to cv::Vec<_Tp, cn>
+
 
 export module matrices.matrix;
 

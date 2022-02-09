@@ -73,21 +73,21 @@ This is not yet that day.
 
 We are developping **vcl** under Windows 10, using **OpenCV 4.5.5**.
 
-A very good document for the installation of OpenCV can be found at [https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path](https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path)
+A very good document for the installation of **OpenCV** can be found at [https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path](https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path)
 (from Bernát Gábor). There, you'll get explanations for older versions of OpenCV, but they still 
 remain valid for the latest one!
 
 Nevertheless, here below are the two simple steps to take for installing
 **OpenCV 4.5.5** on **Windows platforms**:
 
-**1.** Download Windows installer from [https://opencv.org/releases](https://opencv.org/releases/)  
-(direct link for this download: [https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download](https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download)
+**1.** Download Windows installer from [https://opencv.org/releases](https://opencv.org/releases/) 
+(direct link for this download: [https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download](https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download))
 
-**2.** The donwloaded file is a self-extracting archive. DOuble click on it 
-and in the editable form "Extract to:", put the destination folder of your 
-choice. `C:\` or `D:\` could be an excellent choice. We decided to extract 
-it into a specific folder on our platform that we dedicate to an external 
-libraries: `D:\Libs`.  
+**2.** The donwloaded file is a self-extracting archive. Double click on it 
+and in the editable text field with title `Extract to:`, put the destination 
+folder of your choice. `C:\` or `D:\` could be an excellent choice. We have 
+decided to extract it into a specific folder on our platform that we dedicate 
+to external libraries: `D:\Libs`.  
 Once extraction will have completed, you'll get a new folder named `opencv` 
 created and filled in the destination folder of your choice - for instance, 
 resp. `C:\opencv`, `D:\opencv` or `D:\Libs\opencv`.

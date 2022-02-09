@@ -3,7 +3,7 @@
 Library **vlc** clearly takes benefit of external library **OpenCV** as an 
 underlying layer of its core code. You will have to install **OpenCV** on 
 your own machine to be able to use **vcl** in your code as well as to be 
-able to run your final code on your machines.
+able to run your final applications on your machines.
 
 This intallation document aims at helping you to do so. It is split in two 
 main parts. The first one relates to the installation of the OpenCV library 
@@ -11,9 +11,9 @@ on your operating system platform. The second one relates to the setting of
 your projects configurations to get access to any **OpenCV** goodies that 
 are mandatory for **vcl** to compile and run.
 
-Notice: We first document Windows platforms usage. We know that Linuxians 
+Notice: At first, we document Windows platforms usage. We know that Linuxians 
 are great fellows. They get used to use external software and they know do 
-how to install thme according to their favorite linux platforms (Debian, 
+how to install them according to their favorite linux platforms (Debian, 
 Red Hat, Ubuntu, ...) As soon as we will have tried to set these exotic 
 environments by our side, we will provide the proper explanations here. 
 Meanwhile, Linuxians will have to do the job by themselves. For sure they 
@@ -24,7 +24,7 @@ know how to.
 
 By February 2022 we are using **OpenCV** in its latest and stable version 
 **4.5.5** - see:
-- (https://opencv.org/)[https://opencv.org/] for an overview of OpenCV,
+- [https://opencv.org/](https://opencv.org/) for an overview of OpenCV,
 - (https://docs.opencv.org/4.5.5/)[https://docs.opencv.org/4.5.5/] to get 
   access to the latest version of its documentation, and
 - (https://github.com/opencv/opencv)[https://github.com/opencv/opencv] to 

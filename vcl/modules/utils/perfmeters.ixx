@@ -49,9 +49,15 @@ namespace vcl {
                 : prvt_start(std::chrono::steady_clock::now())
             {}
 
-            /** \brief Move constructor.
+            /** \brief Copy constructor.
             */
             inline PerfMeter(const PerfMeter& other)
+                : prvt_start(other.prvt_start)
+            {}
+
+            /** \brief Move constructor.
+            */
+            inline PerfMeter(PerfMeter&& other)
                 : prvt_start(other.prvt_start)
             {}
 

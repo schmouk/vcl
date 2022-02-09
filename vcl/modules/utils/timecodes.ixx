@@ -26,11 +26,14 @@ SOFTWARE.
 module;
 
 #include <format>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
 export module utils.timecodes;
+
+import utils.ranges;
 
 
 //===========================================================================
@@ -45,6 +48,15 @@ namespace vcl {
         export typedef Timecode<24> Timecode24fps; //!< 24 frames per second timecode (cinema)
         export typedef Timecode<25> Timecode25fps; //!< 25 frames per second timecode (TV - DVB)
         export typedef Timecode<30> Timecode30fps; //!< ~30 frames per second timecode (TV - ATSC/ISDB)
+
+        
+        // not to be used out of this module scope
+        std::map<std::string, std::string> _TC_ERR_TXT = {
+            {"TC001", "too big value for Timecode constructor argument"},
+            {"TC002", "invalid value for Timecode constructor arguments"},
+            {"TC003", "invalid timecode value passed as Timecode constructor argument"},
+            {"TC004", "invalid c_string content passed as Timecode constructor argument"}
+        };
 
 
         //-----------------------------------------------------------------------
@@ -71,7 +83,7 @@ namespace vcl {
                 : hh(0), mm(0), ss(0), ff(0), b_error(false)
             {}
 
-            /** \brief Constructor with a single value).
+            /** \brief Constructor with a single value.
             */
             template<typename T>
             inline Timecode<FPS>(const T value)
@@ -79,26 +91,38 @@ namespace vcl {
             {
                 prvt_set(Timecode::FrameTime(value));
                 if (b_error)
-                    throw std::invalid_argument("too big value for Timecode constructor argument");
+                    throw std::invalid_argument(_TC_ERR_TXT["TC001"]);
             }
 
-            /** \brief Constructor with four filling values).
+            /** \brief Constructor with four filling values.
             */
             inline Timecode<FPS>(const CompT hr, const CompT mn, const CompT sc, const CompT fr)
                 : hh(hr), mm(mn), ss(sc), ff(fr), b_error(false)
             {
                 if (b_error)
-                    throw std::invalid_argument("invalid value for Timecode constructor arguments");
+                    throw std::invalid_argument(_TC_ERR_TXT["TC002"]);
             }
 
-            /** \brief Move constructor.
+            /** \brief Copy constructor.
             */
             template<const unsigned short F>
             inline Timecode<FPS>(const vcl::utils::Timecode<F>& other)
                 : hh(0), mm(0), ss(0), ff(0), b_error(other.b_error)
             {
                 if (b_error)
-                    throw std::invalid_argument("invalid timecode value passed as Timecode constructor argument");
+                    throw std::invalid_argument(_TC_ERR_TXT["TC003"]);
+                else
+                    prvt_set(other);
+            }
+
+            /** \brief Move constructor.
+            */
+            template<const unsigned short F>
+            inline Timecode<FPS>(vcl::utils::Timecode<F>&& other)
+                : hh(0), mm(0), ss(0), ff(0), b_error(other.b_error)
+            {
+                if (b_error)
+                    throw std::invalid_argument(_TC_ERR_TXT["TC003"]);
                 else
                     prvt_set(other);
             }
@@ -110,7 +134,7 @@ namespace vcl {
             {
                 prvt_set(std::string(tc_chr));
                 if (b_error)
-                    throw std::invalid_argument("invalid c_string content passed as Timecode constructor argument");
+                    throw std::invalid_argument(_TC_ERR_TXT["TC004"]);
             }
 
             /** \brief Constructor from string.
@@ -120,7 +144,7 @@ namespace vcl {
             {
                 prvt_set(tc_str);
                 if (b_error)
-                    throw std::invalid_argument("invalid string content passed as Timecode constructor argument");
+                    throw std::invalid_argument(_TC_ERR_TXT["TC003"]);
             }
 
 
@@ -661,9 +685,56 @@ namespace vcl {
             }
 
 
+            //---   Comparison Operators   ----------------------------------
+            /** operator < */
+            template<const unsigned short F>
+            inline bool operator < (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() < rhs.frame_s();
+            }
+
+            /** operator <= */
+            template<const unsigned short F>
+            inline bool operator <= (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() < rhs.frame_s() || *this == rhs;
+            }
+
+            /** operator > */
+            template<const unsigned short F>
+            inline bool operator > (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() > rhs.frame_s();
+            }
+
+            /** operator >= */
+            template<const unsigned short F>
+            inline bool operator >= (const vcl::utils::Timecode<F>& rhs)
+            {
+                return frame_s() > rhs.frame_s() || *this == rhs;
+            }
+
+            /** operator == */
+            template<const unsigned short F>
+            inline bool operator == (const vcl::utils::Timecode<F>& rhs)
+            {
+                constexpr FrameTime EPS = 1e-4f;
+                return vcl::utils::in_range_ii<FrameTime, -EPS, EPS>(this->frame_s() - rhs.frame_s());
+            }
+
+            /** operator != */
+            template<const unsigned short F>
+            inline bool operator != (const vcl::utils::Timecode<F>& rhs)
+            {
+                return !(*this == rhs);
+            }
+
+
         private:
 
             static inline Timecode::FrameTime kEPS = Timecode::FrameTime(1e-5);
+
+            static std::string m_ERR_TXT[];
 
             /** \brief Internally sets this timecode (const FrameIndex).
             */
@@ -718,7 +789,11 @@ namespace vcl {
             */
             inline const bool prvt_check()
             {
-                if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
+                //if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
+                if (vcl::utils::in_range_ii<CompT, 0, 99>(hh) &&
+                        vcl::utils::in_range_io<CompT, 0, 60>(mm) &&
+                        vcl::utils::in_range_ii<CompT, 0, 59>(ss) &&
+                        vcl::utils::in_range_io<CompT, 0, FPS>(ff))
                     prvt_clr_error();
                 else
                     prvt_set_error();

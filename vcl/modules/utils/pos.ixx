@@ -58,6 +58,9 @@ namespace vcl {
         /** \brief The class of 2D positions with float components (32 bits). */
         export template<const float Kmin, const float Kmax> class Pos_f;
 
+        /** \brief The class of 2D positions with double components (64 bits). */
+        export template<const double Kmin, const double Kmax> class Pos_d;
+
 
         //=======================================================================
         /** \brief The class of 2D positions with short components (16 bits). */
@@ -67,6 +70,7 @@ namespace vcl {
         public:
             typedef vcl::vect::ClipVect2s<Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
             typedef vcl::utils::Pos_s<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+
 
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
@@ -104,6 +108,13 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_s<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
@@ -121,7 +132,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_s<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (short).
+            */
+            static inline MyType origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_s Pos_Origin_s;
 
 
         //=======================================================================
@@ -169,6 +190,13 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_us<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
@@ -186,7 +214,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_us<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (unsigned short).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_us Pos_Origin_us;
 
 
         //=======================================================================
@@ -234,6 +272,13 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_i<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
@@ -251,7 +296,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_i<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (long).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_i Pos_Origin_i;
 
 
         //=======================================================================
@@ -299,6 +354,13 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_ui<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
@@ -316,7 +378,17 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_ui<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (unsigned long).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_ui Pos_Origin_ui;
 
 
         //=======================================================================
@@ -368,6 +440,13 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_f<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
@@ -385,7 +464,103 @@ namespace vcl {
             //---  Destructor   -------------------------------------------------
             virtual inline ~Pos_f<Kmin, Kmax>()
             {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (float).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
         };
+
+        export vcl::utils::Pos_f Pos_Origin_f;
+
+
+        //=======================================================================
+        /** \brief The class of 2D positions with double components (64 bits).
+        *
+        * This class of positions relates to proportional positions, relative
+        * to the size of graphical component, a texture or a frame.
+        */
+        template<const double Kmin = 0.0, const double Kmax = 1.0>
+        class Pos_d : public vcl::vect::ClipVect2d<Kmin, Kmax>
+        {
+        public:
+            typedef vcl::vect::ClipVect2d<Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
+            typedef vcl::utils::Pos_d<Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+
+            //---   constructors   ----------------------------------------------
+            /** \brief Empty constructor.
+            */
+            inline Pos_d<Kmin, Kmax>()
+                : MyBaseType()
+            {}
+
+            /** \brief Constructor with value.
+            */
+            template<typename T>
+            inline Pos_d<Kmin, Kmax>(const T value)
+                : MyBaseType(value)
+            {}
+
+            /** \brief Constructor with values.
+            */
+            template<typename T>
+            inline Pos_d<Kmin, Kmax>(const T x, const T y)
+                : MyBaseType(x, y)
+            {}
+
+            /** \brief Copy constructor (const&).
+            */
+            inline Pos_d<Kmin, Kmax>(const MyType& other)
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
+
+            /** \brief Copy constructor (const vcl::vect::Vector&).
+            */
+            template<typename T, size_t S>
+            inline Pos_d<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Move constructor (const vcl::vect::Vector&&).
+            */
+            template<typename T, size_t S>
+            inline Pos_d<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Copy constructor (const std::array&).
+            */
+            template<typename T, size_t S>
+            inline Pos_d<Kmin, Kmax>(const std::array<T, S>& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Copy constructor (const std::vector&).
+            */
+            template<typename T>
+            inline Pos_d<Kmin, Kmax>(const std::vector<T>& vect)
+                : MyBaseType(vect)
+            {}
+
+            //---  Destructor   -------------------------------------------------
+            virtual inline ~Pos_d<Kmin, Kmax>()
+            {}
+
+            //---   origin   ----------------------------------------------------
+            /* \brief returns the origin position (float).
+            */
+            inline MyType& origin()
+            {
+                return MyType();
+            }
+        };
+
+        export vcl::utils::Pos_d Pos_Origin_d;
 
     } // end of namespace utils
 } // end of namespace vcl

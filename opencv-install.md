@@ -1,4 +1,4 @@
-# How To - Installing OpenCV for **vcl** use
+# How To - Installing OpenCV for vcl use
 
 Library **vlc** clearly takes benefit of external library **OpenCV** as an 
 underlying layer of its core code. You will have to install **OpenCV** on 
@@ -20,7 +20,7 @@ Meanwhile, Linuxians will have to do the job by themselves. For sure they
 know how to.
 
 
-## Intro - OpenCV version and c++ version used for vcl
+## 0. Intro - OpenCV version and c++ version used for vcl
 
 By February 2022 we are using **OpenCV** in its latest and stable version 
 **4.5.5** - see:
@@ -38,9 +38,9 @@ advices for the setting of your projects configuration.
 Notice : For the developement of library **vcl**, we are currently using 
 Microsoft Visual Studio Community 2022 (64-bit) in its Version 17.0.5 
 (*copyright 2021 Microsoft Corporation*). We strongly encourage students, 
-families and Open Source devs who are developpng on Windows to use this 
+families and Open Source devs who are developping on Windows to use this 
 framework on their favorite platforms. This release of this IDE takes big 
-benefits from the Professinal version of this IDE and is released for free 
+benefits from the Professional version of this IDE and is released for free 
 for those people and type of activities. If your developements are 
 profesionnal or for business purpose ones, then you **should** get a pro 
 licence of Microsoft Visual Studio 2022 IDE.
@@ -52,15 +52,53 @@ to the responibility of their users.
 
 
 
-## Intalling OpenCV on your platform
+## 1. Intalling OpenCV on your platform
+
+It is mandatory to install **OpenCV** on your Windows platform to be able 
+to use **vcl**, since **vcl** using **OpenCV** as an underlying layer. So,
+we try to explain here how to do, as far as we can.
+
+
+### Linux
+
+As stated above, Linuxians are great fellows. They know "how to" far better 
+than we can explain for their favorite platform(s).
+
+We will finally use a Linux platform to develop **vcl**. Finally will we. 
+One day. By this day, we will be able to provide documentation about this.  
+This is not yet that day.
+
+
+### Windows
+
+We are developping **vcl** under Windows 10, using **OpenCV 4.5.5**.
+
+A very good document for the installation of OpenCV can be found at [https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path](https://docs.opencv.org/4.5.5/d3/d52/tutorial_windows_install.html#tutorial_windows_install_path)
+(from Bernát Gábor). There, you'll get explanations for older versions of OpenCV, but they still 
+remain valid for the latest one!
+
+Nevertheless, here below are the two simple steps to take for installing
+**OpenCV 4.5.5** on **Windows platforms**:
+
+**1.** Download Windows installer from [https://opencv.org/releases](https://opencv.org/releases/)  
+(direct link for this download: [https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download](https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe/download)
+
+**2.** The donwloaded file is a self-extracting archive. DOuble click on it 
+and in the editable form "Extract to:", put the destination folder of your 
+choice. `C:\` or `D:\` could be an excellent choice. We decided to extract 
+it into a specific folder on our platform that we dedicate to an external 
+libraries: `D:\Libs`.  
+Once extraction will have completed, you'll get a new folder named `opencv` 
+created and filled in the destination folder of your choice - for instance, 
+resp. `C:\opencv`, `D:\opencv` or `D:\Libs\opencv`.
+
+
+
+## 2. Configuring your projects for using OpenCV
 
 ### Linux
 
 ### Windows
-
-
-
-## Configuring your projects for using OpenCV
 
 
 <...in progress...>

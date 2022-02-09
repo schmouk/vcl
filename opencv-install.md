@@ -24,10 +24,10 @@ know how to.
 
 By February 2022 we are using **OpenCV** in its latest and stable version 
 **4.5.5** - see:
-- [https://opencv.org/](https://opencv.org/) for an overview of OpenCV,
-- (https://docs.opencv.org/4.5.5/)[https://docs.opencv.org/4.5.5/] to get 
+- [https://opencv.org](https://opencv.org/) for an overview of OpenCV,
+- [https://docs.opencv.org/4.5.5](https://docs.opencv.org/4.5.5/) to get 
   access to the latest version of its documentation, and
-- (https://github.com/opencv/opencv)[https://github.com/opencv/opencv] to 
+- [https://github.com/opencv/opencv](https://github.com/opencv/opencv) to 
   get access to its whole c++ code (preferably branch 4.x for current 
   version of **vcl**).
   

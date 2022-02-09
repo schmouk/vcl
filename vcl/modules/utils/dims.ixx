@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+
 export module utils.dims;
 
 import vectors.vect2;
@@ -87,6 +88,14 @@ namespace vcl {
                 : MyBaseType(width, height)
             {}
 
+            /** \brief Copy constructor (const&).
+            */
+            inline DimsT<TScalar>(const MyType& other)
+                : MyBaseType()
+            {
+                this->copy(other);
+            }
+
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
@@ -94,9 +103,9 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
-            /** \brief Move constructor (&&).
+            /** \brief Move constructor (vcl::vect::Vector&&).
             */
-            template<typename T, const size_t S>
+            template<typename T, size_t S>
             inline DimsT<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}
@@ -120,6 +129,12 @@ namespace vcl {
             {}
 
             //---  Accessors/Mutators   -----------------------------------------
+            /** \brief component width accessor */
+            inline const TScalar width() const
+            {
+                return (*this)[0];
+            }
+
             /** \brief component width mutator */
             template<typename T>
             inline TScalar width(const T new_width)
@@ -127,10 +142,10 @@ namespace vcl {
                 return (*this)[0] = new_width;
             }
 
-            /** \brief component width accessor */
-            inline const TScalar width() const
+            /** \brief component height accessor */
+            inline const TScalar height() const
             {
-                return (*this)[0];
+                return (*this)[1];
             }
 
             /** \brief component height mutator */
@@ -138,12 +153,6 @@ namespace vcl {
             inline TScalar height(const T new_height)
             {
                 return (*this)[1] = new_height;
-            }
-
-            /** \brief component height accessor */
-            inline const TScalar height() const
-            {
-                return (*this)[1];
             }
 
             //---  Miscelaneous   ----------------------------------------------
@@ -161,39 +170,45 @@ namespace vcl {
 
             //---  Comparison operators   --------------------------------------
             /** \brief operator == */
-            inline bool operator== (const MyType& other)
+            template<typename T>
+            inline bool operator== (const vcl::utils::DimsT<T>& other)
             {
                 return width() == other.width() && height() == other.height();
             }
 
             /** \brief operator != */
-            inline bool operator!= (const MyType& other)
+            template<typename T>
+            inline bool operator!= (const vcl::utils::DimsT<T>& other)
             {
                 return !(*this == other);
             }
 
             /** \brief operator < */
-            inline bool operator< (const MyType& other)
+            template<typename T>
+            inline bool operator< (const vcl::utils::DimsT<T>& other)
             {
                 return area() < other.area();
             }
 
             /** \brief operator <= */
-            inline bool operator<= (const MyType& other)
+            template<typename T>
+            inline bool operator<= (const vcl::utils::DimsT<T>& other)
             {
                 return *this < other || *this == other;
             }
 
             /** \brief operator > */
-            inline bool operator> (const MyType& other)
+            template<typename T>
+            inline bool operator> (const vcl::utils::DimsT<T>& other)
             {
-                return !(*this <= other);
+                return area() > other.area();
             }
 
             /** \brief operator >= */
-            inline bool operator>= (const MyType& other)
+            template<typename T>
+            inline bool operator>= (const vcl::utils::DimsT<T>& other)
             {
-                return !(*this < other);
+                return area() >= other.area();
             }
 
         };

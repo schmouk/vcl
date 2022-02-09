@@ -44,12 +44,12 @@ namespace vcl {
         {
         public:
 
-            typedef vcl::mat::Mat<TComp>    MyType; //<! wrapper to this class naming.
-            typedef unsigned long           TSize;  //<! the internal type for width and height values.
-            typedef vcl::utils::Dims<TSize> TDims;  //<! the internal type for dimensions.
+            typedef vcl::mat::Mat<TComp>             MyType; //<! wrapper to this class naming.
+            typedef unsigned long                    TSize;  //<! the internal type for width and height values.
+            typedef vcl::utils::DimsT<unsigned long> TDims;  //<! the internal type for matrix dimensions.
 
             //---   constructors   ----------------------------------------------
-            /** \brief Constructor with width, height and default filling value.
+            /** \brief Constructor with width, height and default (null) filling value.
             */
             inline Mat<TComp>(const TSize width, const TSize height)
                 : m_dims(width, height), prvt_data(NULL)
@@ -76,7 +76,7 @@ namespace vcl {
                 fill(value);
             }
 
-            /** \brief Constructor with dims and default filling value.
+            /** \brief Constructor with dims and default (null) filling value.
             */
             inline Mat<TComp>(const TDims& dims)
                 : m_dims(width, height), prvt_data(NULL)
@@ -186,7 +186,7 @@ namespace vcl {
 
 
         protected:
-            vcl::utils::Dims<size_t> m_dims; //!< the dimensions of this matrix.
+            vcl::utils::DimsT<size_t> m_dims; //!< the dimensions of this matrix.
 
 
         private:
@@ -194,9 +194,9 @@ namespace vcl {
             std::vector<TComp*> prvt_rows;
 
             /** \brief creates the data storage for this matrix. */
-            void prvt_create(const vcl::utils::Dims<TSize> dims)
+            void prvt_create(const vcl::utils::DimsT<TSize> dims)
             {
-                prvt_data = new(std::nothrow) TComp[dims.surface()];
+                prvt_data = new(std::nothrow) TComp[dims.area()];
                 prvt_rows.resize(dims.height());
                 TComp* ptr = prvt_data;
                 for (auto it = prvt_rows.begin(); it != prvt_rows.end(); it++, ptr += sizeof(TComp))

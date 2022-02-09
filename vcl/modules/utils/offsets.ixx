@@ -37,52 +37,52 @@ namespace vcl {
 
         //=======================================================================
         // Forward declaration
-        export template<typename TScalar> class Offsets;
+        export template<typename TScalar> class OffsetsT;
 
         // Specializations
         /** \brief The class of 2D offsets with unsigned short components (16 bits). */
-        export typedef Offsets<short> Offsets_s;
+        export typedef OffsetsT<short> Offsets_s;
 
         /** \brief The class of 2D offsets with unsigned long int components (32 bits). */
-        export typedef Offsets<long> Offsets_i;
+        export typedef OffsetsT<long> Offsets_i;
 
         /** \brief The class of 2D offsets with float components (32 bits). */
-        export typedef Offsets<float> Offsets_f;
+        export typedef OffsetsT<float> Offsets_f;
 
 
         //=======================================================================
         /** \brief The generic class for 2D offsets. */
         template<typename TScalar>
-        class Offsets : public vcl::vect::Vect2<TScalar>
+        class OffsetsT : public vcl::vect::Vect2<TScalar>
         {
         public:
-            typedef vcl::vect::Vect2<TScalar>    MyBaseType; //!< wrapper to the inherited class naming.
-            typedef vcl::utils::Offsets<TScalar> MyType;     //!< wrapper to this class naming.
+            typedef vcl::vect::Vect2<TScalar>     MyBaseType; //!< wrapper to the inherited class naming.
+            typedef vcl::utils::OffsetsT<TScalar> MyType;     //!< wrapper to this class naming.
 
             //---   constructors   ----------------------------------------------
             /** \brief Empty constructor.
             */
-            inline Offsets<TScalar>()
+            inline OffsetsT<TScalar>()
                 : MyBaseType()
             {}
 
             /** \brief Constructor with value.
             */
             template<typename T>
-            inline Offsets<TScalar>(const T value)
+            inline OffsetsT<TScalar>(const T value)
                 : MyBaseType(value)
             {}
 
             /** \brief Constructor with values.
             */
             template<typename T>
-            inline Offsets<TScalar>(const T width, const T height)
+            inline OffsetsT<TScalar>(const T width, const T height)
                 : MyBaseType(width, height)
             {}
 
             /** \brief Copy constructor (const&).
             */
-            inline Offsets<TScalar>(const MyType& other)
+            inline OffsetsT<TScalar>(const MyType& other)
                 : MyBaseType()
             {
                 this->copy(other);
@@ -91,26 +91,33 @@ namespace vcl {
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
             template<typename T, size_t S>
-            inline Offsets<TScalar>(const vcl::vect::Vector<T, S>& other)
+            inline OffsetsT<TScalar>(const vcl::vect::Vector<T, S>& other)
+                : MyBaseType(other)
+            {}
+
+            /** \brief Move constructor (&&).
+            */
+            template<typename T, const size_t S>
+            inline OffsetsT<TScalar>(vcl::vect::Vector<T, S>&& other)
                 : MyBaseType(other)
             {}
 
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
-            inline Offsets<TScalar>(const std::array<T, S>& other)
+            inline OffsetsT<TScalar>(const std::array<T, S>& other)
                 : MyBaseType(other)
             {}
 
             /** \brief Copy constructor (const std::vector&).
             */
             template<typename T>
-            inline Offsets<TScalar>(const std::vector<T>& vect)
+            inline OffsetsT<TScalar>(const std::vector<T>& vect)
                 : MyBaseType(vect)
             {}
 
             //---  Destructor   -------------------------------------------------
-            virtual inline ~Offsets<TScalar>()
+            virtual inline ~OffsetsT<TScalar>()
             {}
 
             //---  Accessors/Mutators   -----------------------------------------

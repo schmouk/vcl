@@ -197,14 +197,14 @@ There, you will set
 `D:\Libs\opencv\build\x64\vc15\lib\opencv_world455.lib` according to the 
 folder in which you have install the whole **openCV** stuff at step
 *1. Installing OpenCV on your platform*;
-- and for Configuration *Debug* and^platform *x64*:  
+- and for Configuration *Debug* and platform *x64*:  
 `C:\opencv\build\x64\vc15\lib\opencv_world455d.lib`, 
 `D:\opencv\build\x64\vc15\lib\opencv_world455d.lib` or 
 `D:\Libs\opencv\build\x64\vc15\lib\opencv_world455d.lib` according to the 
 folder in which you have install the whole **openCV** stuff at step
 *1. Installing OpenCV on your platform*.
 
-Do the same thing by replacing `x64`by `x86` for *Win32* platforms, as long 
+Do the same thing by replacing `x64` by `x86` for *Win32* platforms, as long 
 as you will have installed the 32-bits build of **OpenCV** - which is 
 currently not our case.
 
@@ -216,5 +216,5 @@ of page
 [https://docs.opencv.org/4.5.5/dd/d6e/tutorial_windows_visual_studio_opencv.html](https://docs.opencv.org/4.5.5/dd/d6e/tutorial_windows_visual_studio_opencv.html).
 
 Well, the creation of this test project is left to you as an interesting 
-exercise - whatever your platform and IDE is.
+exercise - whatever your platform and IDE are.
 

@@ -41,13 +41,16 @@ namespace vcl {
 
         // Specializations
         /** \brief The class of 2D offsets with unsigned short components (16 bits). */
-        export typedef OffsetsT<short> Offsets_s;
+        export typedef OffsetsT<unsigned short> Offsets_s;
 
         /** \brief The class of 2D offsets with unsigned long int components (32 bits). */
-        export typedef OffsetsT<long> Offsets_i;
+        export typedef OffsetsT<unsigned long> Offsets_i;
 
         /** \brief The class of 2D offsets with float components (32 bits). */
         export typedef OffsetsT<float> Offsets_f;
+
+        /** \brief The class of 2D offsets with double components (64 bits). */
+        export typedef OffsetsT<double> Offsets_d;
 
 
         //=======================================================================
@@ -76,17 +79,15 @@ namespace vcl {
             /** \brief Constructor with values.
             */
             template<typename T>
-            inline OffsetsT<TScalar>(const T width, const T height)
-                : MyBaseType(width, height)
+            inline OffsetsT<TScalar>(const T dx, const T dy)
+                : MyBaseType(dx, dy)
             {}
 
             /** \brief Copy constructor (const&).
             */
             inline OffsetsT<TScalar>(const MyType& other)
-                : MyBaseType()
-            {
-                this->copy(other);
-            }
+                : MyBaseType(other.dx, other.dy)
+            {}
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -105,8 +106,8 @@ namespace vcl {
             /** \brief Copy constructor (const std::array&).
             */
             template<typename T, size_t S>
-            inline OffsetsT<TScalar>(const std::array<T, S>& other)
-                : MyBaseType(other)
+            inline OffsetsT<TScalar>(const std::array<T, S>& arr)
+                : MyBaseType(arr)
             {}
 
             /** \brief Copy constructor (const std::vector&).
@@ -146,7 +147,6 @@ namespace vcl {
             {
                 return (*this)[1];
             }
-
         };
 
     } // end of namespace utils

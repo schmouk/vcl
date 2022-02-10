@@ -25,6 +25,8 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <opencv2/core/types.hpp>
+
 
 export module utils.dims;
 
@@ -56,9 +58,10 @@ namespace vcl {
         //=======================================================================
         /** \brief The generic class for 2D dimensions.
         *
-        * notice vcl::utils::Size does not inherit from cv::Size, but rather
-        * inherits from vcl::vect::Vect2<>.  This way, vcl::utils::Size gets
-        * more functionalities thant cv::Size.
+        * Notice: vcl::utils::Size does not inherit from cv::Size,  but rather
+        * inherits from vcl::vect::Vect2<>.  This way, vcl::utils::Size  gets
+        * more functionalities than cv::Size. Casting constructor and operator 
+        * exist nevertheless.
         */
         template<typename TScalar>
         class DimsT : public vcl::vect::Vect2<TScalar>
@@ -91,10 +94,8 @@ namespace vcl {
             /** \brief Copy constructor (const&).
             */
             inline DimsT<TScalar>(const MyType& other)
-                : MyBaseType()
-            {
-                this->copy(other);
-            }
+                : MyBaseType(other)
+            {}
 
             /** \brief Copy constructor (const vcl::vect::Vector&).
             */
@@ -124,9 +125,24 @@ namespace vcl {
                 : MyBaseType(vect)
             {}
 
+            /** \brief Copy constructor (const cv::Size_&).
+            */
+            template<typename T>
+            inline PosT<TScalar, Kmin, Kmax>(const cv::Size_<T>& sz)
+                : MyBaseType(TScalar(sz.width), TScalar(sz.height))
+            {}
+
             //---  Destructor   -------------------------------------------------
             virtual inline ~DimsT<TScalar>()
             {}
+
+            //---   Casting operator   --------------------------------------
+            /** \brief cast operator to cv::Size_<_Tp> */
+            template<typename T>
+            inline operator cv::Size_<T>& ()
+            {
+                return cv::Size_<T>(T(this->x()), T(this->y()));
+            }
 
             //---  Accessors/Mutators   -----------------------------------------
             /** \brief component width accessor */
@@ -210,7 +226,6 @@ namespace vcl {
             {
                 return area() >= other.area();
             }
-
         };
 
     } // end of namespace utils

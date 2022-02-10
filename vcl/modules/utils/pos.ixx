@@ -61,7 +61,13 @@ namespace vcl {
 
 
         //===================================================================
-        /** \brief The templated class of 2D positions. */
+        /** \brief The templated class of 2D positions.
+        *
+        * Notice: vcl::utils::PosT does not inherit from cv::Point,  but rather
+        * inherits from vcl::vect::Vect2<>.  This  way,  vcl::utils::PosT  gets
+        * more functionalities than cv::Point. Casting constructor and operator 
+        * exist nevertheless.
+        */
         template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         class PosT : public vcl::vect::ClipVect2<TScalar, Kmin, Kmax>
         {
@@ -104,7 +110,7 @@ namespace vcl {
                 : MyBaseType(other)
             {}
 
-            /** \brief Move constructor (const vcl::vect::Vector&&).
+            /** \brief Move constructor (vcl::vect::Vector&&).
             */
             template<typename T, size_t S>
             inline PosT<TScalar, Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
@@ -123,6 +129,13 @@ namespace vcl {
             template<typename T>
             inline PosT<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
                 : MyBaseType(vect)
+            {}
+
+            /** \brief Copy constructor (const cv::Point_&).
+            */
+            template<typename T>
+            inline PosT<TScalar, Kmin, Kmax>(const cv::Point_<T>& pt)
+                : MyBaseType(TScalar(pt.x), TScalar(pt.y))
             {}
 
             //---  Destructor   ---------------------------------------------

@@ -128,7 +128,7 @@ namespace vcl {
             /** \brief Copy constructor (const cv::Size_&).
             */
             template<typename T>
-            inline PosT<TScalar, Kmin, Kmax>(const cv::Size_<T>& sz)
+            inline DimsT<TScalar>(const cv::Size_<T>& sz)
                 : MyBaseType(TScalar(sz.width), TScalar(sz.height))
             {}
 

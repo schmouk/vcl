@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <limits>
 #include <opencv2/core/types.hpp>
 
 export module utils.pos;
@@ -38,7 +39,9 @@ namespace vcl {
 
         //===================================================================
         /** \brief class PosT: the generic class for 2-D clipped positions. */
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> class PosT;
+        export template<typename TScalar,
+                        const TScalar Kmin = std::numeric_limits<TScalar>::min,
+                        const TScalar Kmax = std::numeric_limits<TScalar>::max> class PosT;
 
         // Specializations
         /** \brief The class of 2D positions with short components (16 bits). */
@@ -87,7 +90,7 @@ namespace vcl {
             */
             template<typename T>
             inline PosT<TScalar, Kmin, Kmax>(const T value)
-                : MyBaseType(TScalar(value))
+                : MyBaseType(value)
             {}
 
             /** \brief Constructor with values.
@@ -114,7 +117,7 @@ namespace vcl {
             */
             template<typename T, size_t S>
             inline PosT<TScalar, Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
-                : MyBaseType(&other)
+                : MyBaseType(other)
             {}
 
             /** \brief Copy constructor (const std::array&).

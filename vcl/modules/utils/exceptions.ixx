@@ -31,10 +31,8 @@ export module utils.exceptions;
 
 
 //===========================================================================
-namespace vcl {
-    namespace except {
+namespace vcl::except {
 
-        //===================================================================
+    //===================================================================
 
-    } // end of namespace except
 } // end of namespace vcl

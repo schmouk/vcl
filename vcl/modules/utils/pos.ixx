@@ -27,6 +27,7 @@ module;
 
 #include <limits>
 #include <opencv2/core/types.hpp>
+#include "vcl_concepts.h"
 
 export module utils.pos;
 
@@ -40,7 +41,9 @@ namespace vcl::utils {
     /** \brief class PosT: the generic class for 2-D clipped positions. */
     export template<typename TScalar,
                     const TScalar Kmin = std::numeric_limits<TScalar>::min,
-                    const TScalar Kmax = std::numeric_limits<TScalar>::max> class PosT;
+                    const TScalar Kmax = std::numeric_limits<TScalar>::max> 
+        requires vcl::concepts::is_numeric<TScalar>
+    class PosT;
 
     // Specializations
     /** \brief The class of 2D positions with short components (16 bits). */
@@ -71,6 +74,7 @@ namespace vcl::utils {
     * exist nevertheless.
     */
     template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+        requires vcl::concepts::is_numeric<TScalar>
     class PosT : public vcl::vect::ClipVect2<TScalar, Kmin, Kmax>
     {
     public:
@@ -88,6 +92,7 @@ namespace vcl::utils {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
@@ -95,6 +100,7 @@ namespace vcl::utils {
         /** \brief Constructor with values.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const T x, const T y)
             : MyBaseType(x, y)
         {}
@@ -108,6 +114,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -115,6 +122,7 @@ namespace vcl::utils {
         /** \brief Move constructor (vcl::vect::Vector&&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -122,6 +130,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
@@ -129,6 +138,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -136,6 +146,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const cv::Point_&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline PosT<TScalar, Kmin, Kmax>(const cv::Point_<T>& pt)
             : MyBaseType(TScalar(pt.x), TScalar(pt.y))
         {}
@@ -147,6 +158,7 @@ namespace vcl::utils {
         //---   Casting operator   --------------------------------------
         /** \brief cast operator to cv::Point_<_Tp> */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline operator cv::Point_<T>& ()
         {
             return cv::Point_<T>(T(this->x()), T(this->y()));

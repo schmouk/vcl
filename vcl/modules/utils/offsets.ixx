@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include "vcl_concepts.h"
 
 export module utils.offsets;
 
@@ -36,7 +37,9 @@ namespace vcl::utils {
 
     //=======================================================================
     // Forward declaration
-    export template<typename TScalar> class OffsetsT;
+    export template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
+    class OffsetsT;
 
     // Specializations
     /** \brief The class of 2D offsets with unsigned short components (16 bits). */
@@ -55,6 +58,7 @@ namespace vcl::utils {
     //=======================================================================
     /** \brief The generic class for 2D offsets. */
     template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
     class OffsetsT : public vcl::vect::Vect2<TScalar>
     {
     public:

@@ -26,7 +26,7 @@ SOFTWARE.
 module;
 
 #include <opencv2/core/types.hpp>
-
+#include "vcl_concepts.h"
 
 export module utils.dims;
 
@@ -38,7 +38,9 @@ namespace vcl::utils {
 
     //=======================================================================
     // Forward declaration
-    export template<typename TScalar> class DimsT;
+    export template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
+    class DimsT;
 
     // Specializations
     /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
@@ -63,6 +65,7 @@ namespace vcl::utils {
     * exist nevertheless.
     */
     template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
     class DimsT : public vcl::vect::Vect2<TScalar>
     {
     public:
@@ -79,6 +82,7 @@ namespace vcl::utils {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const T value)
             : MyBaseType(value)
         {}
@@ -86,6 +90,7 @@ namespace vcl::utils {
         /** \brief Constructor with values.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const T width, const T height)
             : MyBaseType(width, height)
         {}
@@ -99,6 +104,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -106,6 +112,7 @@ namespace vcl::utils {
         /** \brief Move constructor (vcl::vect::Vector&&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -113,6 +120,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -120,6 +128,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -127,6 +136,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const cv::Size_&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline DimsT<TScalar>(const cv::Size_<T>& sz)
             : MyBaseType(TScalar(sz.width), TScalar(sz.height))
         {}
@@ -138,6 +148,7 @@ namespace vcl::utils {
         //---   Casting operator   --------------------------------------
         /** \brief cast operator to cv::Size_<_Tp> */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline operator cv::Size_<T>& ()
         {
             return cv::Size_<T>(T(this->width()), T(this->height()));
@@ -152,6 +163,7 @@ namespace vcl::utils {
 
         /** \brief component width mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar width(const T new_width)
         {
             return (*this)[0] = new_width;
@@ -165,6 +177,7 @@ namespace vcl::utils {
 
         /** \brief component height mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar height(const T new_height)
         {
             return (*this)[1] = new_height;
@@ -186,6 +199,7 @@ namespace vcl::utils {
         //---  Comparison operators   --------------------------------------
         /** \brief operator == */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator== (const vcl::utils::DimsT<T>& other)
         {
             return width() == other.width() && height() == other.height();
@@ -193,6 +207,7 @@ namespace vcl::utils {
 
         /** \brief operator != */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator!= (const vcl::utils::DimsT<T>& other)
         {
             return !(*this == other);
@@ -200,6 +215,7 @@ namespace vcl::utils {
 
         /** \brief operator < */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator< (const vcl::utils::DimsT<T>& other)
         {
             return area() < other.area();
@@ -207,6 +223,7 @@ namespace vcl::utils {
 
         /** \brief operator <= */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator<= (const vcl::utils::DimsT<T>& other)
         {
             return *this < other || *this == other;
@@ -214,6 +231,7 @@ namespace vcl::utils {
 
         /** \brief operator > */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator> (const vcl::utils::DimsT<T>& other)
         {
             return area() > other.area();
@@ -221,6 +239,7 @@ namespace vcl::utils {
 
         /** \brief operator >= */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline bool operator>= (const vcl::utils::DimsT<T>& other)
         {
             return area() >= other.area();

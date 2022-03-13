@@ -32,6 +32,8 @@ module;
 
 #include <opencv2/core/types.hpp> // to get access to cv::Rect_<_Tp>
 
+#include "vcl_concepts.h"
+
 export module graphitems.rect;
 
 import utils.dims;
@@ -45,7 +47,9 @@ namespace vcl::graphitems {
 
     //===================================================================
     /** \brief class RectT: the generic class for 2-D rectangles. */
-    export template<typename TScalar> class RectT;
+    export template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
+    class RectT;
 
     // Specializations
     /** \brief The class of rectangles with integer positions and unsigned integer dimensions (32 bits). */
@@ -70,6 +74,7 @@ namespace vcl::graphitems {
     *         values are inverted.
     */
     template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
     class RectT : public cv::Rect_<TScalar>
     {
     public:

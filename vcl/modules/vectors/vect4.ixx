@@ -27,6 +27,7 @@ module;
 
 #include <array>
 #include <vector>
+#include "vcl_concepts.h"
 
 export module vectors.vect4;
 
@@ -38,7 +39,9 @@ namespace vcl::vect {
         
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
-    export template<typename TScalar> class Vect4;
+    export template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
+    class Vect4;
 
     /** \brief The class of 4D vectors with double components (64 bits). */
     export typedef Vect4<double> Vect4d;
@@ -68,6 +71,7 @@ namespace vcl::vect {
     * \sa its specializations Vect4d, Vect4f, Vect4b, Vect4s, Vect4us, Vect4i, and Vect4ui.
     */
     template<typename TScalar>
+        requires vcl::concepts::is_numeric<TScalar>
     class Vect4 : public vcl::vect::Vector<TScalar, 4>
     {
     public:
@@ -85,25 +89,28 @@ namespace vcl::vect {
         /** \brief Constructor with a filling value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline Vect4<TScalar>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline Vect4<TScalar>(const T x, const T y, const T z = T(0), const T w = T(0))
+        template<typename T, typename U, typename V, typename W>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>&& vcl::concepts::is_numeric<V>&& vcl::concepts::is_numeric<W>
+        inline Vect4<TScalar>(const T x_, const U y_, const V z_ = T(0), const W w_ = T(0))
             : MyBaseType()
         {
-            x(x());
-            y(y());
-            z(z());
-            w(w());
+            x(x_);
+            y(y_);
+            z(z_);
+            w(w_);
         }
 
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -111,6 +118,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline Vect4<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
@@ -118,6 +126,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline Vect4<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -135,6 +144,7 @@ namespace vcl::vect {
 
         /** \brief component x mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar x(const T new_x)
         {
             return (*this)[0] = this->clipped(new_x);
@@ -148,6 +158,7 @@ namespace vcl::vect {
 
         /** \brief component y mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar y(const T new_y)
         {
             return (*this)[1] = this->clipped(new_y);
@@ -161,6 +172,7 @@ namespace vcl::vect {
 
         /** \brief component z mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar z(const T new_z)
         {
             return (*this)[2] = this->clipped(new_z);
@@ -174,6 +186,7 @@ namespace vcl::vect {
 
         /** \brief component w mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar w(const T new_w)
         {
             return (*this)[3] = this->clipped(new_w);

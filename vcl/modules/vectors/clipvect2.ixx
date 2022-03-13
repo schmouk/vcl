@@ -28,6 +28,7 @@ module;
 #include <algorithm>
 #include <array>
 #include <vector>
+#include "vcl_concepts.h"
 
 export module vectors.clipvect2;
 
@@ -40,7 +41,9 @@ namespace vcl::vect {
 
     //=======================================================================
     // Forward declaration and Specializations
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> class ClipVect2;
+    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> 
+        requires vcl::concepts::is_numeric<TScalar>
+    class ClipVect2;
 
     /** \brief The class of 2D vectors with bytes components (8 bits). */
     export template<const char Kmin, const char Kmax> class ClipVect2c;
@@ -73,6 +76,7 @@ namespace vcl::vect {
     * \sa its specializations ClipVect2d, ClipVect2f, ClipVect2b, ClipVect2s, ClipVect2us, ClipVect2i, and ClipVect2ui.
     */
     template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+        requires vcl::concepts::is_numeric<TScalar>
     class ClipVect2 : public vcl::vect::Vect2<TScalar>
     {
     public:
@@ -170,17 +174,19 @@ namespace vcl::vect {
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline ClipVect2<TScalar, Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -188,6 +194,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -195,6 +202,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -206,6 +214,7 @@ namespace vcl::vect {
         //---   miscelaneous   ----------------------------------------------
         /** \brief Returns the specified value clipped. */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline const TScalar clipped(const T value) const
         {
             return (const TScalar)std::clamp(value, T(Kmin), T(Kmax)); // c++17
@@ -214,6 +223,7 @@ namespace vcl::vect {
         //---   Components accessors   --------------------------------------
         /** \brief component x mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar x(const T new_x)
         {
             return (*this)[0] = this->clipped(new_x);
@@ -227,6 +237,7 @@ namespace vcl::vect {
 
         /** \brief component y mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar y(const T new_y)
         {
             return (*this)[1] = this->clipped(new_y);
@@ -259,18 +270,20 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2c<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2c<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2c<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const&).
@@ -282,6 +295,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2c<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -289,6 +303,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2c<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -296,6 +311,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2c<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -303,6 +319,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2c<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -331,19 +348,22 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2b<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2b<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2b<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
+
         /** \brief Copy constructor (const&).
         */
         inline ClipVect2b<Kmin, Kmax>(const MyType& other)
@@ -353,6 +373,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2b<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -360,6 +381,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2b<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -367,6 +389,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2b<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -374,6 +397,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2b<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -403,18 +427,20 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2s<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2s<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2s<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const&).
@@ -426,6 +452,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2s<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -433,6 +460,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2s<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -440,6 +468,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2s<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -447,6 +476,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2s<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -476,18 +506,20 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2us<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2us<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2us<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const&).
@@ -499,6 +531,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2us<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -506,6 +539,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2us<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -513,6 +547,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2us<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -520,6 +555,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2us<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -549,18 +585,20 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2i<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2i<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2i<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const&).
@@ -572,6 +610,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2i<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -579,6 +618,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2i<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -586,6 +626,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2i<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -593,6 +634,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2i<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -622,18 +664,20 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2ui<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2ui<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2ui<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
 
         /** \brief Copy constructor (const&).
@@ -645,6 +689,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2ui<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -652,6 +697,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2ui<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -659,6 +705,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2ui<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -666,6 +713,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2ui<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -695,19 +743,22 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2f<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2f<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2f<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
+
         /** \brief Copy constructor (const&).
         */
         inline ClipVect2f<Kmin, Kmax>(const MyType& other)
@@ -717,6 +768,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2f<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -724,6 +776,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2f<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -731,6 +784,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2f<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -738,6 +792,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2f<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -767,19 +822,22 @@ namespace vcl::vect {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2d<Kmin, Kmax>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline ClipVect2d<Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect2d<Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
-            x(x());
-            y(y());
+            x(x_);
+            y(y_);
         }
+
         /** \brief Copy constructor (const&).
         */
         inline ClipVect2d<Kmin, Kmax>(const MyType& other)
@@ -789,6 +847,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2d<Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -796,6 +855,7 @@ namespace vcl::vect {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2d<Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -803,6 +863,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2d<Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
@@ -810,6 +871,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline ClipVect2d<Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}

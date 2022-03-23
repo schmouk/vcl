@@ -61,6 +61,16 @@ namespace vcl::vect {
 
         /** \brief Filling constructor (single scalar).
         */
+        /***
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline Vector<TScalar, Ksize>(const T value)
+            : MyBaseType()
+        {
+            fill<T>(value);
+        }
+        ***/
+        /***/
         explicit inline Vector<TScalar, Ksize>(const char value)
             : MyBaseType()
         {
@@ -138,18 +148,19 @@ namespace vcl::vect {
         {
             fill(value);
         }
+        /***/
 
 
         /** \brief Constructor with Ksize number of scalar args */
-        /** /
+        /**/
         template<typename T, typename... Ts>
-            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<Ts...>
-        Vector<TScalar, Ksize>(const T x_, Ts const... rest)
+            requires vcl::concepts::is_numeric<T> // && vcl::concepts::is_numeric<Ts...>
+        inline Vector<TScalar, Ksize>(const T x_, Ts const... rest)
             : MyBaseType()
         {
-            _set(begin(), x_, rest);
+            _set(begin(), x_, rest...);
         }
-        /**/
+        /** /
         inline Vector<TScalar, Ksize>(size_t n, ...)
             : MyBaseType()
         {
@@ -186,7 +197,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        inline Vector<TScalar, Ksize>(const std::array<T, S>& arr)
+        explicit inline Vector<TScalar, Ksize>(const std::array<T, S>& arr)
             : MyBaseType()
         {
             copy(arr);
@@ -196,7 +207,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        inline Vector<TScalar, Ksize>(const std::vector<T>& vect)
+        explicit inline Vector<TScalar, Ksize>(const std::vector<T>& vect)
             : MyBaseType()
         {
             copy(vect);
@@ -210,6 +221,17 @@ namespace vcl::vect {
 
         //---   fill()   ----------------------------------------------------
         /** \brief Fills vectors with a single scalar value. */
+        /*** /
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void fill(const T scalar_value)
+        {
+            const TScalar val = clipped(scalar_value);
+            for (auto it = begin(); it != end(); *it++ = val);
+        }
+        /***/
+
+        /***/
         inline void fill(const char scalar_value)
         {
             TScalar val = clipped(scalar_value);
@@ -287,7 +309,7 @@ namespace vcl::vect {
             TScalar val = clipped(scalar_value);
             for (auto it = begin(); it != end(); *it++ = val);
         }
-
+        /***/
 
         //---   equality operators   ----------------------------------------
         /** \brief operator == (vcl::vect::Vector) */
@@ -2437,13 +2459,20 @@ namespace vcl::vect {
     private:
         //---   _set()   ----------------------------------------------------
         /** \brief Sets this vector components with a variadic list of arguments. */
+        /***
+        template<typename T, typename... Ts>
+        void _set(TScalar* it) {
+            // the stop method
+        }
+        ***/
+
         template<typename T, typename... Ts>
         void _set(TScalar* it, const T& first, Ts const... rest) {
-            if constexpr (sizeof...(rest) > 0) {
-                if (it != end()) {
-                    *it++ = clipped(first);
+            if (it != end()) {
+                *it++ = clipped(first);
+                if constexpr (sizeof...(rest) > 0) {
+                    _set(it, rest...);
                 }
-                _set(it, rest...);
             }
         }
 

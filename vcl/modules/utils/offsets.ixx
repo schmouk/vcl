@@ -89,7 +89,8 @@ namespace vcl::utils {
         /** \brief Copy constructor (const&).
         */
         inline OffsetsT<TScalar>(const MyType& other)
-            : MyBaseType(other.dx, other.dy)
+            //: MyBaseType(other.dx, other.dy)
+            : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const vcl::vect::Vector&).

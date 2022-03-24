@@ -26,13 +26,13 @@ SOFTWARE.
 module;
 
 #include <array>
-#include <cstdarg>
 #include <sstream>
 #include <utility>
 #include <vector>
-#include "vcl_concepts.h"
 
 #include <opencv2/core/matx.hpp>  // to get access to cv::Vec<_Tp, cn>
+
+#include "vcl_concepts.h"
 
 export module vectors.vector;
 
@@ -59,119 +59,21 @@ namespace vcl::vect {
             : MyBaseType()
         {}
 
-        /** \brief Filling constructor (single scalar).
+        /** \brief Constructor with scalar args.
+        * Notice:  if one and only one scalar argument x_ is passed  at
+        * construction time, then all the components of this vector are
+        * assigned with this single scalar value (fill operation).
         */
-        /***
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline Vector<TScalar, Ksize>(const T value)
-            : MyBaseType()
-        {
-            fill<T>(value);
-        }
-        ***/
-        /***/
-        explicit inline Vector<TScalar, Ksize>(const char value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const unsigned char value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const short value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const unsigned short value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const int value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const unsigned int value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const long value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const unsigned long value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const long long value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const unsigned long long value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const float value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const double value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-
-        explicit inline Vector<TScalar, Ksize>(const long double value)
-            : MyBaseType()
-        {
-            fill(value);
-        }
-        /***/
-
-
-        /** \brief Constructor with Ksize number of scalar args */
-        /**/
         template<typename T, typename... Ts>
-            requires vcl::concepts::is_numeric<T> // && vcl::concepts::is_numeric<Ts...>
+            requires vcl::concepts::is_numeric<T>
         inline Vector<TScalar, Ksize>(const T x_, Ts const... rest)
             : MyBaseType()
         {
-            _set(begin(), x_, rest...);
+            if (sizeof...(rest) > 0)
+                _set(begin(), x_, rest...);
+            else
+                fill<T>(x_);
         }
-        /** /
-        inline Vector<TScalar, Ksize>(size_t n, ...)
-            : MyBaseType()
-        {
-            va_list components;
-            va_start(components, n);
-            TScalar* ptr = begin();
-            while (n-- && ptr != end())
-                *ptr++ = clipped(va_arg(components, TScalar));
-            va_end(components);
-        }
-        /**/
 
         /** \brief Copy constructor (const&).
         */
@@ -221,95 +123,28 @@ namespace vcl::vect {
 
         //---   fill()   ----------------------------------------------------
         /** \brief Fills vectors with a single scalar value. */
-        /*** /
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline void fill(const T scalar_value)
         {
             const TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-        /***/
-
-        /***/
-        inline void fill(const char scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
+            //for (auto it = begin(); it != end(); *it++ = val);
+            for_each([val](TScalar& c){ c = val; });
         }
 
-        inline void fill(const unsigned char scalar_value)
+
+        //---   for_each()   ------------------------------------------------
+        /** \brief Applies the parameter function to each component of this vcl::vector.
+        * The argument must be a function, a method or a lambda and must
+        * accept a component value as its parameter.
+        */
+        template<typename TFunc>
+        inline void for_each(TFunc f)
         {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
+            for (auto it = begin(); it != end(); it++)
+                f(*it);
         }
 
-        inline void fill(const short scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const unsigned short scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const int scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const unsigned int scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const long scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const unsigned long scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const long long scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const unsigned long long scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const float scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const double scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-
-        inline void fill(const long double scalar_value)
-        {
-            TScalar val = clipped(scalar_value);
-            for (auto it = begin(); it != end(); *it++ = val);
-        }
-        /***/
 
         //---   equality operators   ----------------------------------------
         /** \brief operator == (vcl::vect::Vector) */
@@ -469,81 +304,11 @@ namespace vcl::vect {
 
         //---   assignment operator   ---------------------------------------
         /** \brief assign operator with specified value */
-        inline MyType& operator= (const char scalar_value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator= (const T scalar_value)
         {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const unsigned char scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const short scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const unsigned short scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const int scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const unsigned int scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const long scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const unsigned long scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const long long scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const unsigned long long scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const float scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const double scalar_value)
-        {
-            fill(scalar_value);
-            return *this;
-        }
-
-        inline MyType& operator= (const long double scalar_value)
-        {
-            fill(scalar_value);
+            fill<T>(scalar_value);
             return *this;
         }
 
@@ -585,81 +350,11 @@ namespace vcl::vect {
         }
 
         /** \brief += operator (const TScalar) */
-        inline MyType& operator+= (const char value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator+= (const T value)
         {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const unsigned char value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const short value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const unsigned short value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const int value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const unsigned int value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const long value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const unsigned long value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const long long value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const unsigned long long value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const float value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const double value)
-        {
-            add(value);
-            return *this;
-        }
-
-        inline MyType& operator+= (const long double value)
-        {
-            add(value);
+            add<T>(value);
             return *this;
         }
 
@@ -686,7 +381,7 @@ namespace vcl::vect {
             requires vcl::concepts::is_numeric<T>
         inline MyType& operator+= (const std::vector<T>& rhs)
         {
-            add(rhs);
+            add<T>(rhs);
             return *this;
         }
 
@@ -711,133 +406,17 @@ namespace vcl::vect {
         }
 
         /** \brief + operator (const TScalar) */
-        friend inline MyType operator+ (MyType lhs, const char value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned char value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const short value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned short value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const int value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned int value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const long value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned long value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const long long value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned long long value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const float value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const double value)
-        {
-            return lhs += value;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator+ (MyType lhs, const T value)
         {
             return lhs += value;
         }
 
         /** \brief + operator (const TScalar, vcl::vect::Vector) */
-        friend inline MyType operator+ (const char value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const unsigned char value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const short value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const unsigned short value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const int value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const unsigned int value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const long value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const unsigned long value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const  long long value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const unsigned  long long value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const float value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const double value, MyType rhs)
-        {
-            return rhs += value;
-        }
-
-        friend inline MyType operator+ (const long double value, MyType rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator+ (const T value, MyType rhs)
         {
             return rhs += value;
         }
@@ -874,6 +453,13 @@ namespace vcl::vect {
             return lhs += rhs;
         }
 
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator+ (const T value, MyType rhs)
+        {
+            return MyType(value) += rhs;
+        }
+
         /** \brief unary operator + */
         MyType& operator+()
         {
@@ -892,81 +478,11 @@ namespace vcl::vect {
         }
 
         /** \brief -= operator (const TScalar) */
-        inline MyType& operator-= (const char value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator-= (const T value)
         {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const unsigned char value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const short value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const unsigned short value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const int value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const unsigned int value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const long value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const unsigned long value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const long long value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const unsigned long long value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const float value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const double value)
-        {
-            sub(value);
-            return *this;
-        }
-
-        inline MyType& operator-= (const long double value)
-        {
-            sub(value);
+            sub<T>(value);
             return *this;
         }
 
@@ -1007,7 +523,7 @@ namespace vcl::vect {
         }
 
         //---   operator -   ------------------------------------------------
-        /** \brief + operator (const reference).
+        /** \brief - operator (const reference).
         * Note: optimized for chained v1-v2-v3
         */
         template<typename T, size_t S>
@@ -1018,67 +534,9 @@ namespace vcl::vect {
         }
 
         /** \brief - operator (const TScalar) */
-        friend inline MyType operator- (MyType lhs, const char value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned char value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const short value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned short value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const int value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned int value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const long value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned long value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const long long value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned long long value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const float value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const double value)
-        {
-            return lhs -= value;
-        }
-
-        friend inline MyType operator- (MyType lhs, const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator- (MyType lhs, const T value)
         {
             return lhs -= value;
         }
@@ -1089,65 +547,13 @@ namespace vcl::vect {
             return MyType(value) -= rhs;
         }
 
-        friend inline MyType operator- (const unsigned char value, MyType rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator- (const T value, MyType rhs)
         {
             return MyType(value) -= rhs;
         }
 
-        friend inline MyType operator- (const short value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const unsigned short value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const int value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const unsigned int value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const long value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const unsigned long value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const  long long value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const unsigned  long long value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const float value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const double value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
-
-        friend inline MyType operator- (const long double value, MyType rhs)
-        {
-            return MyType(value) -= rhs;
-        }
 
         /** \brief - operator (const std::array) */
         template<typename T, size_t S>
@@ -1180,6 +586,7 @@ namespace vcl::vect {
         {
             return lhs -= rhs;
         }
+
         /** \brief unary operator - */
         MyType operator-()
         {
@@ -1198,81 +605,11 @@ namespace vcl::vect {
         }
 
         /** \brief *= operator (const TScalar) */
-        inline MyType& operator*= (const char value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator*= (const T value)
         {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const unsigned char value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const short value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const unsigned short value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const int value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const unsigned int value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const long value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const unsigned long value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const long long value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const unsigned long long value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const float value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const double value)
-        {
-            mul(value);
-            return *this;
-        }
-
-        inline MyType& operator*= (const long double value)
-        {
-            mul(value);
+            mul<T>(value);
             return *this;
         }
 
@@ -1324,133 +661,17 @@ namespace vcl::vect {
         }
 
         /** \brief * operator (vcl::vect::Vector, const TScalar) */
-        friend inline MyType operator* (MyType lhs, const char value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const unsigned char value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const short value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const unsigned short value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const int value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const unsigned int value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const long value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const unsigned long value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const long long value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const unsigned long long value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const float value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const double value)
-        {
-            return lhs *= value;
-        }
-
-        friend inline MyType operator* (MyType lhs, const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator* (MyType lhs, const T value)
         {
             return lhs *= value;
         }
 
         /** \brief * operator (const TScalar, vcl::vect::Vector) */
-        friend inline MyType operator* (const char value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const unsigned char value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const short value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const unsigned short value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const int value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const unsigned int value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const long value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const unsigned long value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const  long long value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const unsigned  long long value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const float value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const double value, MyType rhs)
-        {
-            return rhs *= value;
-        }
-
-        friend inline MyType operator* (const long double value, MyType rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator* (const T value, MyType rhs)
         {
             return rhs *= value;
         }
@@ -1499,79 +720,9 @@ namespace vcl::vect {
         }
 
         /** \brief /= operator (const TScalar) */
-        inline MyType& operator/= (const char value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const unsigned char value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const short value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const unsigned short value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const int value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const unsigned int value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const long value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const unsigned long value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const long long value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const unsigned long long value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const float value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const double value)
-        {
-            div(value);
-            return *this;
-        }
-
-        inline MyType& operator/= (const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator/= (const T value)
         {
             div(value);
             return *this;
@@ -1626,133 +777,17 @@ namespace vcl::vect {
         }
 
         /** \brief / operator (vcl::vect::Vector, const TScalar) */
-        friend inline MyType operator/ (MyType lhs, const char value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const unsigned char value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const short value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const unsigned short value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const int value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const unsigned int value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const long value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const unsigned long value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const long long value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const unsigned long long value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const float value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const double value)
-        {
-            return lhs /= value;
-        }
-
-        friend inline MyType operator/ (MyType lhs, const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator/ (MyType lhs, const T value)
         {
             return lhs /= value;
         }
 
         /** \brief / operator (const T Scalar, vcl::vect::Vector) */
-        friend inline MyType operator/ (const char value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const unsigned char value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const short value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const unsigned short value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const int value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const unsigned int value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const long value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const unsigned long value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const  long long value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const unsigned  long long value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const float value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const double value, MyType& rhs)
-        {
-            return MyType(value) /= rhs;
-        }
-
-        friend inline MyType operator/ (const long double value, MyType& rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator/ (const T value, MyType& rhs)
         {
             return MyType(value) /= rhs;
         }
@@ -1824,67 +859,9 @@ namespace vcl::vect {
         }
 
         /** \brief Returns the specified value clipped. */
-        inline const TScalar clipped(const char value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const unsigned char value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const short value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const unsigned short value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const int value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const unsigned int value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const long value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const unsigned long value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const long long value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const unsigned long long value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const float value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const double value)
-        {
-            return TScalar(value);
-        }
-
-        inline const TScalar clipped(const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline const TScalar clipped(const T value)
         {
             return TScalar(value);
         }
@@ -1926,79 +903,9 @@ namespace vcl::vect {
         }
 
         /** \brief inplace add operation (scalar) */
-        inline void add(const char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const unsigned char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const unsigned short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const unsigned int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const unsigned long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const unsigned long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const float value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const double value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it + value);
-        }
-
-        inline void add(const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void add(const T value)
         {
             for (auto it = this->begin(); it != this->end(); it++)
                 *it = clipped(*it + value);
@@ -2057,79 +964,9 @@ namespace vcl::vect {
         }
 
         /** \brief inplace sub operation (scalar) */
-        inline void sub(const char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const unsigned char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const unsigned short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const unsigned int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const unsigned long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const unsigned long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const float value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const double value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it - value);
-        }
-
-        inline void sub(const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void sub(const T value)
         {
             for (auto it = this->begin(); it != this->end(); it++)
                 *it = clipped(*it - value);
@@ -2188,79 +1025,9 @@ namespace vcl::vect {
         }
 
         /** \brief inplace mul operation (scalar) */
-        inline void mul(const char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const unsigned char value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const unsigned short value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const unsigned int value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const unsigned long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const unsigned long long value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const float value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const double value)
-        {
-            for (auto it = this->begin(); it != this->end(); it++)
-                *it = clipped(*it * value);
-        }
-
-        inline void mul(const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void mul(const T value)
         {
             for (auto it = this->begin(); it != this->end(); it++)
                 *it = clipped(*it * value);
@@ -2320,91 +1087,9 @@ namespace vcl::vect {
         }
 
         /** \brief inplace div operation (scalar) */
-        inline void div(const char value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const unsigned char value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const short value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const unsigned short value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const int value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const unsigned int value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const long value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const unsigned long value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const long long value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const unsigned long long value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const float value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const double value)
-        {
-            if (value != 0)
-                for (auto ptr = this->begin(); ptr != end(); )
-                    *ptr++ = clipped(*ptr / value);
-        }
-
-        inline void div(const long double value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void div(const T value)
         {
             if (value != 0)
                 for (auto ptr = this->begin(); ptr != end(); )
@@ -2458,14 +1143,7 @@ namespace vcl::vect {
 
     private:
         //---   _set()   ----------------------------------------------------
-        /** \brief Sets this vector components with a variadic list of arguments. */
-        /***
-        template<typename T, typename... Ts>
-        void _set(TScalar* it) {
-            // the stop method
-        }
-        ***/
-
+        /** \brief Sets this vector components with a parameters pack. */
         template<typename T, typename... Ts>
         void _set(TScalar* it, const T& first, Ts const... rest) {
             if (it != end()) {
@@ -2478,4 +1156,4 @@ namespace vcl::vect {
 
     }; // end of class Vector<typename TScalar, const size_t Ksize>
 
-}
+} // end of namespace vcl::vect

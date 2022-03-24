@@ -31,6 +31,8 @@ module;
 #include <stdexcept>
 #include <string>
 
+#include "vcl_concepts.h"
+
 export module utils.timecodes;
 
 import utils.ranges;
@@ -54,7 +56,7 @@ namespace vcl::utils {
         {"TC001", "too big value for Timecode constructor argument"},
         {"TC002", "invalid value for Timecode constructor arguments"},
         {"TC003", "invalid timecode value passed as Timecode constructor argument"},
-        {"TC004", "invalid c_string content passed as Timecode constructor argument"}
+        {"TC004", "invalid c_string content passed as Timecode constructor argument"},
     };
 
 
@@ -85,6 +87,7 @@ namespace vcl::utils {
         /** \brief Constructor with a single value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline Timecode<FPS>(const T value)
             : hh(0), mm(0), ss(0), ff(0), b_error(false)
         {
@@ -220,97 +223,11 @@ namespace vcl::utils {
 
         /* \brief operator += (const char) on frames count
         */
-        MyType& operator += (const char offset)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator += (const T offset)
         {
             prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const unsigned char) on frames count
-        */
-        MyType& operator += (const unsigned char offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const short) on frames count
-        */
-        MyType& operator += (const short offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const unsigned short) on frames count
-        */
-        MyType& operator += (const unsigned short offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const int) on frames count
-        */
-        MyType& operator += (const int offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const unsigned int) on frames count
-        */
-        MyType& operator += (const unsigned int offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const long) on frames count
-        */
-        MyType& operator += (const long offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const unsigned long) on frames count
-        */
-        MyType& operator += (const unsigned long offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const long long) on frames count
-        */
-        MyType& operator += (const long long offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const unsigned long long) on frames count
-        */
-        MyType& operator += (const unsigned long long offset)
-        {
-            prvt_set(this->frame_index() + FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const float) on frames times
-        */
-        MyType& operator += (const float offset)
-        {
-            prvt_set(this->frame_s() + FrameTime(offset));
-            return *this;
-        }
-
-        /* \brief operator += (const double) on frames times
-        */
-        MyType& operator += (const double offset)
-        {
-            prvt_set(this->frame_s() + FrameTime(offset));
             return *this;
         }
 
@@ -325,122 +242,16 @@ namespace vcl::utils {
         }
 
         /** \brief + operator (const TScalar) */
-        friend inline MyType operator+ (MyType lhs, const char offset)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator+ (MyType lhs, const T offset)
         {
             return lhs += offset;
         }
 
-        friend inline MyType operator+ (const char offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned char offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const unsigned char offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const short offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const short offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned short offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const unsigned short offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const int offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const int offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned int offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const unsigned int offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const long offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const long offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned long offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const unsigned long offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const long long offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const long long offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const unsigned long long offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const unsigned long long offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const float offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const float offset, MyType rhs)
-        {
-            return rhs += offset;
-        }
-
-        friend inline MyType operator+ (MyType lhs, const double offset)
-        {
-            return lhs += offset;
-        }
-
-        friend inline MyType operator+ (const double offset, MyType rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator+ (const T offset, MyType rhs)
         {
             return rhs += offset;
         }
@@ -458,97 +269,11 @@ namespace vcl::utils {
 
         /* \brief operator -= (const char) on frames count
         */
-        MyType& operator -= (const char offset)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator -= (const T offset)
         {
             prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const unsigned char) on frames count
-        */
-        MyType& operator -= (const unsigned char offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const short) on frames count
-        */
-        MyType& operator -=(const short offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const unsigned short) on frames count
-        */
-        MyType& operator -= (const unsigned short offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const int) on frames count
-        */
-        MyType& operator -= (const int offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const unsigned int) on frames count
-        */
-        MyType& operator -= (const unsigned int offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const long) on frames count
-        */
-        MyType& operator -= (const long offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const unsigned long) on frames count
-        */
-        MyType& operator -= (const unsigned long offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const long long) on frames count
-        */
-        MyType& operator -= (const long long offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const unsigned long long) on frames count
-        */
-        MyType& operator -= (const unsigned long long offset)
-        {
-            prvt_set(this->frame_index() - FrameIndex(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const float) on frames times
-        */
-        MyType& operator -= (const float offset)
-        {
-            prvt_set(this->frame_s() - FrameTime(offset));
-            return *this;
-        }
-
-        /* \brief operator -= (const double) on frames times
-        */
-        MyType& operator -= (const double offset)
-        {
-            prvt_set(this->frame_s() - FrameTime(offset));
             return *this;
         }
 
@@ -563,122 +288,16 @@ namespace vcl::utils {
         }
 
         /** \brief - operator (const TScalar) */
-        friend inline MyType operator- (MyType lhs, const char offset)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator- (MyType lhs, const T offset)
         {
             return lhs -= offset;
         }
 
-        friend inline MyType operator- (const char offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned char offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const unsigned char offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const short offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const short offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned short offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const unsigned short offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const int offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const int offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned int offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const unsigned int offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const long offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const long offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned long offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const unsigned long offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const long long offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const long long offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const unsigned long long offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const unsigned long long offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const float offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const float offset, MyType rhs)
-        {
-            return rhs -= offset;
-        }
-
-        friend inline MyType operator- (MyType lhs, const double offset)
-        {
-            return lhs -= offset;
-        }
-
-        friend inline MyType operator- (const double offset, MyType rhs)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator- (const T offset, MyType rhs)
         {
             return rhs -= offset;
         }
@@ -788,10 +407,9 @@ namespace vcl::utils {
         */
         inline const bool prvt_check()
         {
-            //if (0 <= hh && hh <= 99 && 0 <= mm && mm < 60 && 0 <= ss && ss < 60 && 0 <= ff && ff < FPS)
             if (vcl::utils::in_range_ii<CompT, 0, 99>(hh) &&
                     vcl::utils::in_range_io<CompT, 0, 60>(mm) &&
-                    vcl::utils::in_range_ii<CompT, 0, 59>(ss) &&
+                    vcl::utils::in_range_io<CompT, 0, 60>(ss) &&
                     vcl::utils::in_range_io<CompT, 0, FPS>(ff))
                 prvt_clr_error();
             else

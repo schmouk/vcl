@@ -75,27 +75,29 @@ namespace vcl::utils {
         /** \brief Constructor with value.
         */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline OffsetsT<TScalar>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-        inline OffsetsT<TScalar>(const T dx, const T dy)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline OffsetsT<TScalar>(const T dx, const U dy)
             : MyBaseType(dx, dy)
         {}
 
         /** \brief Copy constructor (const&).
         */
         inline OffsetsT<TScalar>(const MyType& other)
-            //: MyBaseType(other.dx, other.dy)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline OffsetsT<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -103,6 +105,7 @@ namespace vcl::utils {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline OffsetsT<TScalar>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -110,6 +113,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
         inline OffsetsT<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
@@ -128,6 +132,7 @@ namespace vcl::utils {
         //---  Accessors/Mutators   -----------------------------------------
         /** \brief component dx mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar dx(const T new_dx)
         {
             return (*this)[0] = new_dx;
@@ -141,6 +146,7 @@ namespace vcl::utils {
 
         /** \brief component dy mutator */
         template<typename T>
+            requires vcl::concepts::is_numeric<T>
         inline TScalar dy(const T new_dy)
         {
             return (*this)[1] = new_dy;

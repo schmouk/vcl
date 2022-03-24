@@ -99,9 +99,9 @@ namespace vcl::utils {
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const T x, const T y)
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline PosT<TScalar, Kmin, Kmax>(const T x, const U y)
             : MyBaseType(x, y)
         {}
 

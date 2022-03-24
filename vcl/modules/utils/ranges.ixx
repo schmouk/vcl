@@ -38,10 +38,10 @@ export module utils.ranges;
 namespace vcl::utils {
 
 //---------------------------------------------------------------------------
-#define IN_RANGE(x,a,b) ((a) <= (x) && (x) <= (b))
-#define IN_RANGE_01(x,a,b) ((a) < (x) && (x) <= (b))
-#define IN_RANGE_10(x,a,b) ((a) <= (x) && (x) < (b))
-#define IN_RANGE_00(x,a,b) ((a) < (x) && (x) < (b))
+#define IN_RANGE(x,a,b)    ((a) <= (x) && (x) <= (b))
+#define IN_RANGE_01(x,a,b) ((a) <  (x) && (x) <= (b))
+#define IN_RANGE_10(x,a,b) ((a) <= (x) && (x) <  (b))
+#define IN_RANGE_00(x,a,b) ((a) <  (x) && (x) <  (b))
 
     export bool IN_RANGE;
     export bool IN_RANGE_01;

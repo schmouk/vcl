@@ -89,9 +89,9 @@ namespace vcl::utils {
 
         /** \brief Constructor with values.
         */
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline DimsT<TScalar>(const T width, const T height)
+        template<typename W, typename H>
+            requires vcl::concepts::is_numeric<W>&& vcl::concepts::is_numeric<H>
+        inline DimsT<TScalar>(const W width, const H height)
             : MyBaseType(width, height)
         {}
 

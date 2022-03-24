@@ -94,10 +94,12 @@ namespace vcl::vect {
 
         /** \brief Constructor with value.
         */
-        inline ClipVect4<TScalar, Kmin, Kmax>(const char value)
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline ClipVect4<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType()
         {
-            this->fill(this->clipped(value));
+            this->fill<T>(this->clipped(value));
         }
 
         /** \brief Constructor with values.
@@ -111,74 +113,6 @@ namespace vcl::vect {
             y(y_);
             z(z_);
             w(w_);
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned char value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const short value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned short value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-        inline ClipVect4<TScalar, Kmin, Kmax>(const int value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned int value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-        inline ClipVect4<TScalar, Kmin, Kmax>(const long value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned long value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-        inline ClipVect4<TScalar, Kmin, Kmax>(const long long value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const unsigned long long value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-        inline ClipVect4<TScalar, Kmin, Kmax>(const float value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const double value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
-        }
-
-        inline ClipVect4<TScalar, Kmin, Kmax>(const long double value)
-            : MyBaseType()
-        {
-            this->fill(this->clipped(value));
         }
 
         /** \brief Copy constructor (const vcl::vect::Vector&).

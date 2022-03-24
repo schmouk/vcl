@@ -97,7 +97,7 @@ namespace vcl::vect {
         /** \brief Constructor with values.
         */
         template<typename T, typename U, typename V, typename W>
-            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>&& vcl::concepts::is_numeric<V>&& vcl::concepts::is_numeric<W>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V> && vcl::concepts::is_numeric<W>
         inline Vect4<TScalar>(const T x_, const U y_, const V z_ = T(0), const W w_ = T(0))
             : MyBaseType()
         {

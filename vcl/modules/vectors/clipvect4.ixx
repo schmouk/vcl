@@ -143,15 +143,6 @@ namespace vcl::vect {
         virtual inline ~ClipVect4<TScalar, Kmin, Kmax>()
         {}
 
-        //---   miscelaneous   ----------------------------------------------
-        /** \brief Returns the specified value clipped. */
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline const TScalar clipped(const T value) const
-        {
-            return std::clamp(value, T(Kmin), T(Kmax)); // c++17
-        }
-
         //---   Components accessors / mutators   --------------------------------------
         /** \brief component x accessor */
         inline const TScalar x() const
@@ -207,6 +198,15 @@ namespace vcl::vect {
         inline TScalar w(const T new_w)
         {
             return (*this)[3] = this->clipped(new_w);
+        }
+
+        //---   miscelaneous   ----------------------------------------------
+        /** \brief Returns the specified value clipped. */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline const TScalar clipped(const T value) const
+        {
+            return std::clamp(value, T(Kmin), T(Kmax)); // c++17
         }
     };
 

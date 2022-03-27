@@ -141,16 +141,13 @@ namespace vcl::vect {
         virtual inline ~ClipVect2<TScalar, Kmin, Kmax>()
         {}
 
-        //---   miscelaneous   ----------------------------------------------
-        /** \brief Returns the specified value clipped. */
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline const TScalar clipped(const T value) const
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline const TScalar x() const
         {
-            return (const TScalar)std::clamp(value, T(Kmin), T(Kmax)); // std::clamp is a c++17 function
+            return (*this)[0];
         }
 
-        //---   Components accessors   --------------------------------------
         /** \brief component x mutator */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
@@ -159,10 +156,10 @@ namespace vcl::vect {
             return (*this)[0] = this->clipped(new_x);
         }
 
-        /** \brief component x accessor */
-        inline const TScalar x() const
+        /** \brief component y accessor */
+        inline const TScalar y() const
         {
-            return (*this)[0];
+            return (*this)[1];
         }
 
         /** \brief component y mutator */
@@ -173,10 +170,13 @@ namespace vcl::vect {
             return (*this)[1] = this->clipped(new_y);
         }
 
-        /** \brief component y accessor */
-        inline const TScalar y() const
+        //---   miscelaneous   ----------------------------------------------
+        /** \brief Returns the specified value clipped. */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline const TScalar clipped(const T value) const
         {
-            return (*this)[1];
+            return (const TScalar)std::clamp(value, T(Kmin), T(Kmax)); // std::clamp is a c++17 function
         }
     };
 

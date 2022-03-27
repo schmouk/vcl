@@ -25,31 +25,51 @@ SOFTWARE.
 //===========================================================================
 module;
 
-export module utils.base_funcs;
+#include <opencv2/core/types.hpp>
 
+#include "vcl_concepts.h"
+
+export module utils.colors;
 
 
 //===========================================================================
 namespace vcl::utils {
-    
-    /** \brief Returns the max of two objects.
-    * Notice: types T and U must be comparable, i.e. the operator '>'
-    * must have been defined between these two types.
-    */
-    export template<typename T, typename U>
-    inline auto max(const T& a, const U& b)
-    {
-        return (a > b) ? a : b;
-    }
 
-    /** \brief Returns the min of two objects.
-    * Notice: types T and U must be comparable, i.e. the operator '<'
-    * must have been defined between these two types.
+    //===================================================================
+    /** \brief class Color: the base class for all colors.
+    * 
+    * This class is abstract: operator '=(const Color<T>)' is set to
+    * be abstract.
     */
-    export template<typename T, typename U>
-    inline auto min(const T& a, const U& b)
+    export class Color
     {
-        return (a < b) ? a : b;
-        // notice: "return vcl::utils::max(b, a);" would fit also...
-    }
+    public:
+        //---   constructors   ------------------------------------------
+        /** \brief Empty constructor. */
+        inline Color() = default;
+
+        /** \brief Copy constructor. */
+        inline Color(const Color& clr) = default;
+
+        /** \brief Move constructor. */
+        inline Color(Color&& clr) = default;
+
+
+        //--- Destructor ----------------------------------------------------
+        /** \brief Destructor. */
+        inline ~Color() = default;
+
+
+        //--- Assignment ----------------------------------------------------
+        /** \brief Copy assignment. */
+        inline Color& operator=(Color& other) = default;
+
+        /** \brief Assignment by value.
+        * This method MUST BE overridden in inheriting classes.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline Color& operator=(const T& value) = delete;
+    };
+
 }

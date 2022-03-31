@@ -45,9 +45,9 @@ namespace vcl::vect {
         requires vcl::concepts::is_numeric<TScalar>
     class ClipVect2;
 
-    /** \brief The class of 2D vectors with bytes components (8 bits). */
+    /** \brief The class of 2D vectors with signed 8-bits components (8 bits). */
     export template<const char Kmin, const char Kmax> class ClipVect2c;
-    
+
     /** \brief The class of 2D vectors with bytes components (8 bits). */
     export template<const unsigned char Kmin, const unsigned char Kmax> class ClipVect2b;
 

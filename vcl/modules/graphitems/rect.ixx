@@ -27,6 +27,7 @@ module;
 
 #include <array>
 #include <sstream>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -209,7 +210,7 @@ namespace vcl::graphitems {
         }
         /** \brief left side position mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void left_x(const T& new_x) noexcept
         {
             MyBaseType::x = TScalar(new_x);
@@ -222,7 +223,7 @@ namespace vcl::graphitems {
         }
         /** \brief right side position mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void right_x(const T& new_x) noexcept
         {
             if (new_x >= MyBaseType::x)
@@ -238,7 +239,7 @@ namespace vcl::graphitems {
         }
         /** \brief top side position mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void top_y(const T& new_y) noexcept
         {
             MyBaseType::y = TScalar(new_y);
@@ -251,7 +252,7 @@ namespace vcl::graphitems {
         }
         /** \brief bottom side position mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void bottom_y(const T& new_y) noexcept
         {
             if (new_y >= MyBaseType::y)
@@ -268,7 +269,7 @@ namespace vcl::graphitems {
 
         /** \brief top-left mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void top_left(const vcl::utils::PosT<T>& new_pos) noexcept
         {
             MyBaseType::x = TScalar(new_pos.x());
@@ -282,7 +283,7 @@ namespace vcl::graphitems {
         }
         /** \brief bottom-right mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void bottom_right(const vcl::utils::PosT<T>& new_pos) noexcept
         {
             right_x(new_pos.x());
@@ -303,7 +304,7 @@ namespace vcl::graphitems {
         }
         /** \brief Dimensions mutator. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline void dims(const vcl::utils::DimsT<T>& new_dims)
         {
             this->width = new_dims.width;
@@ -316,7 +317,7 @@ namespace vcl::graphitems {
         * Returns the dimensions of this rectangle.
         */
         template<typename T = MYType::TScalar>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline operator vcl::utils::DimsT<T>()
         {
             return vcl::utils::DimsT<T>(this->width, this->height);
@@ -326,7 +327,7 @@ namespace vcl::graphitems {
         * Returns the top-left corner position of this rectangle.
         */
         template<typename T = MYType::TScalar>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline operator vcl::utils::PosT<T>()
         {
             return vcl::utils::PosT<T>(this->x, this->y);
@@ -336,7 +337,7 @@ namespace vcl::graphitems {
         //--- In place cropping ---------------------------------------------
         /** In-place cropping with 4 different margins. */
         template<typename T, typename U, typename V, typename W>
-            requires vcl::concepts::is_scalar<T> && vcl::concepts::is_scalar<U> && vcl::concepts::is_scalar<V> && vcl::concepts::is_scalar<W>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V> && vcl::concepts::is_numeric<W>
         inline MyType& crop(const T& left_margin, const U& right_margin, const V& top_margin, const W& bottom_margin) noexcept
         {
             move(left_margin, top_margin);
@@ -345,7 +346,7 @@ namespace vcl::graphitems {
 
         /** In-place cropping with X- and Y- margins. */
         template<typename T, typename U>
-            requires vcl::concepts::is_scalar<T> && vcl::concepts::is_scalar<U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
         inline MyType& crop(const T& x_margins, const U& y_margins) noexcept
         {
             return crop(x_margins, x_margins, y_margins, y_margins);
@@ -353,7 +354,7 @@ namespace vcl::graphitems {
 
         /** In-place croppping with all same margins. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& crop(const T& all_margins) noexcept
         {
             return crop(all_margins, all_margins, all_margins, all_margins);
@@ -368,7 +369,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const T& incr) noexcept
         {
             return resize(incr, incr);
@@ -378,7 +379,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_scalar<T> && vcl::concepts::is_scalar<U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
         inline MyType& resize(const T& incr_x, const U& incr_y) noexcept
         {
             this->width += TScalar(incr_x);
@@ -390,7 +391,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const vcl::utils::DimsT<T>& incr) noexcept
         {
             return resize(incr.width, incr.height);
@@ -400,7 +401,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const vcl::vect::Vect2<T>& incr) noexcept
         {
             return resize(incr.x, incr.y);
@@ -410,7 +411,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const std::vector<T>& incr) noexcept
         {
             if (incr.size() > 1)
@@ -423,7 +424,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T, const size_t Ksize>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const std::array<T, Ksize>& incr) noexcept
         {
             if (Ksize > 1)
@@ -434,7 +435,7 @@ namespace vcl::graphitems {
 
         /** \brief Resizes this rectangle according to an 'other' rectangle dimensions. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& resize(const vcl::graphitems::RectT<T>& other) noexcept
         {
             this->width = other.width;
@@ -443,12 +444,178 @@ namespace vcl::graphitems {
         }
 
 
+        //--- Scaling -------------------------------------------------------
+        /** \brief Resizes this rectangle according to a scaling factor.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& scale(const T& factor)
+        {
+            return scale(factor, factor);
+        }
+
+        /** \brief Resizes this rectangle according to two scaling factors.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values raise an invalid_argument exception.
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        MyType& scale(const T& factor_x, const U& factor_y)
+        {
+            if (factor_x < T(0) || factor_y < T(0))
+                throw std::invalid_argument("scaling factors cannot be negative");
+            else
+            {
+                this->width = TScalar(this->width * factor_x);
+                this->height = TScalar(this->height * factor_y);
+            }
+            return *this;
+        }
+
+        /** \brief Resizes this rectangle according to a scaling factor.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator *= (const T& factor)
+        {
+            return scale(factor, factor);
+        }
+
+        /** \brief Resizes this rectangle according to scaling factors.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator *= (const vcl::vect::Vector<T, Ksize>& vect)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(vect[0], vect[0]);
+            default:
+                return scale(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to scaling factors.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator *= (const std::vector<T>& vect)
+        {
+            switch (vect.size())
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(vect[0], vect[0]);
+            default:
+                return scale(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to scaling factors.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator *= (const std::array<T, Ksize>& arr)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(arr[0], arr[0]);
+            default:
+                return scale(arr[0], arr[1]);
+            }
+        }
+
+        /** \brief Resizing operator * (const TScalar) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (MyType lhs, const T value)
+        {
+            return lhs *= value;
+        }
+
+        /** \brief Resizing operator * (const TScalar, vcl::graphitems::RectT<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (const T value, MyType rhs)
+        {
+            return rhs *= value;
+        }
+
+        /** \brief Resizing operator * (const vcl::vect::Vector<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (MyType lhs, const vcl::vect::Vector<T, S>& vect)
+        {
+            return lhs *= vect;
+        }
+
+        /** \brief Resizing operator * (const vcl::vect::Vector<>, vcl::graphitems::RectT<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (const vcl::vect::Vector<T, S>& vect, MyType rhs)
+        {
+            return rhs *= vect;
+        }
+
+        /** \brief Resizing operator * (const std::vector<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (MyType lhs, const std::vector<T>& vect)
+        {
+            return lhs *= vect;
+        }
+
+        /** \brief Resizing operator * (const std::vector<>, vcl::graphitems::RectT<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (const std::vector<T>& vect, MyType rhs)
+        {
+            return rhs *= vect;
+        }
+
+        /** \brief Resizing operator * (const std::array<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (MyType lhs, const std::array<T, S>& arr)
+        {
+            return lhs *= arr;
+        }
+
+        /** \brief Resizing operator * (const std::array<>, vcl::graphitems::RectT<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator * (const std::array<T, S>& arr, MyType rhs)
+        {
+            return rhs *= arr;
+        }
+
+
         //--- Inset / Outset ------------------------------------------------
         /** \brief Reduces the dimensions of this rectangle (1 scalar argument).
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& inset(const T& offset) noexcept
         {
             return inset(offset, offset);
@@ -458,7 +625,7 @@ namespace vcl::graphitems {
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_scalar<T> && vcl::concepts::is_scalar<U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
         inline MyType& inset(const T& offset_x, const U& offset_y) noexcept
         {
            return crop(TScalar(offset_x), TScalar(offset_y));
@@ -468,7 +635,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& inset(const vcl::utils::DimsT<T>& incr) noexcept
         {
             return inset(incr.width, incr.height);
@@ -478,7 +645,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& inset(const vcl::vect::Vect2<T>& incr) noexcept
         {
             return inset(incr.x, incr.y);
@@ -488,7 +655,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& inset(const std::vector<T>& incr) noexcept
         {
             if (incr.size() > 1)
@@ -500,11 +667,11 @@ namespace vcl::graphitems {
         /** \brief Reduces the dimensions of this rectangle (1 std::array argument).
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
-        template<typename T, const size_t Ksize>
-            requires vcl::concepts::is_scalar<T>
-        inline MyType& inset(const std::array<T, Ksize>& incr) noexcept
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& inset(const std::array<T, S>& incr) noexcept
         {
-            if (Ksize > 1)
+            if (S > 1)
                 return inset(incr[0], incr[1]);
             else
                 return inset(incr[0], incr[0]);
@@ -514,7 +681,7 @@ namespace vcl::graphitems {
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& outset(const T& offset) noexcept
         {
             return outset(offset, offset);
@@ -524,7 +691,7 @@ namespace vcl::graphitems {
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_scalar<T>&& vcl::concepts::is_scalar<U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
         inline MyType& outset(const T& offset_x, const U& offset_y) noexcept
         {
             return crop(TScalar(-offset_x), TScalar(-offset_y));
@@ -534,7 +701,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& outset(const vcl::utils::DimsT<T>& incr) noexcept
         {
             return outset(incr.width, incr.height);
@@ -544,7 +711,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& outset(const vcl::vect::Vect2<T>& incr) noexcept
         {
             return outset(incr.x, incr.y);
@@ -554,7 +721,7 @@ namespace vcl::graphitems {
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& outset(const std::vector<T>& incr) noexcept
         {
             if (incr.size() > 1)
@@ -566,11 +733,11 @@ namespace vcl::graphitems {
         /** \brief Augments the dimensions of this rectangle (1 std::array argument).
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
-        template<typename T, const size_t Ksize>
-            requires vcl::concepts::is_scalar<T>
-        inline MyType& outset(const std::array<T, Ksize>& incr) noexcept
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& outset(const std::array<T, S>& incr) noexcept
         {
-            if (Ksize > 1)
+            if (S > 1)
                 return outset(incr[0], incr[1]);
             else
                 return outset(incr[0], incr[0]);
@@ -580,7 +747,7 @@ namespace vcl::graphitems {
         //--- Intersection / Union / Containment ----------------------------
         /** \brief Returns true if this rectangle contains a specified position. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool contains(vcl::utils::PosT<T>& pos) const noexcept
         {
             return MyBaseType::x <= pos.x() && pos.x() <= right_x() && MyBaseType::y <= pos.y() && pos.y() <= bottom_y();
@@ -590,7 +757,7 @@ namespace vcl::graphitems {
         * \sa does_embed().
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool contains(vcl::graphitems::RectT<T>& other) const noexcept
         {
             return does_embed(other);
@@ -600,7 +767,7 @@ namespace vcl::graphitems {
         * \sa contains(const RectT<T>&).
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool does_embed(vcl::graphitems::RectT<T>& other) const noexcept
         {
             return intersection(other) == other;
@@ -608,7 +775,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns true if this rectangle intersects with the 'other' one. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline bool does_intersect(const vcl::graphitems::RectT<T>& other) const noexcept
         {
             return other.bottom_y() >= MyBaseType::y &&
@@ -619,7 +786,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns the intersection of this rectangle with the 'other' one. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         MyType& intersection_rect(const vcl::graphitems::RectT<T>& other) noexcept
         {
             if (does_intersect(other))
@@ -638,7 +805,7 @@ namespace vcl::graphitems {
         *   rectangles. Notice: 'b_strict' defaults to true.
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         MyType& union_rect(const vcl::graphitems::RectT<T>& other, const bool b_strict = true) noexcept
         {
             if (b_strict && !does_intersect(other))
@@ -654,7 +821,7 @@ namespace vcl::graphitems {
         * \sa union_rect().
         */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& operator + (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return union_rect(other, false);
@@ -662,7 +829,7 @@ namespace vcl::graphitems {
 
         /** \brief In-place non-strict union of this rectangle with an 'other' one. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline MyType& operator += (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return *this = union_rect(other, false);
@@ -670,7 +837,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns true if this rectangle is fully embedded in the 'other' one or if it equals it. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool operator <= (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return other.does_embed(*this);
@@ -678,7 +845,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns true if this rectangle is fully embedded in the 'other' one. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool operator < (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return *this != other && other.does_embed(*this);
@@ -686,7 +853,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns true if this rectangle fully embeds in the 'other' one or if it equals it. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool operator >= (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return does_embed(other);
@@ -694,7 +861,7 @@ namespace vcl::graphitems {
 
         /** \brief Returns true if this rectangle fully embeds in the 'other' one. */
         template<typename T>
-            requires vcl::concepts::is_scalar<T>
+            requires vcl::concepts::is_numeric<T>
         inline const bool operator > (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return *this != other && does_embed(other);
@@ -702,22 +869,94 @@ namespace vcl::graphitems {
 
 
         //--- Drawing -------------------------------------------------------
-        /** \brief Draws this rectangle contours in a specified frame. */
+        /** \brief Draws this rectangle contours in a specified frame (whole arguments provided). */
         inline void draw(cv::Mat&                 frame,
                          const vcl::utils::Color& border_color,
-                         const int                border_thickness = 1,
-                         const int                border_type = cv::LINE_8)
+                         const int                border_thickness,
+                         const cv::LineTypes      border_type)
+        {
+            prvt_last_border_color = border_color;
+            prvt_last_border_thickness = border_thickness;
+            prvt_last_border_type = border_type;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_color again). */
+        inline void draw(cv::Mat&            frame,
+                         const int           border_thickness,
+                         const cv::LineTypes border_type)
+        {
+            prvt_last_border_thickness = border_thickness;
+            prvt_last_border_type = border_type;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_thickness again). */
+        inline void draw(cv::Mat&                 frame,
+                         const vcl::utils::Color& border_color,
+                         const cv::LineTypes      border_type)
+        {
+            prvt_last_border_color = border_color;
+            prvt_last_border_type = border_type;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_type again). */
+        inline void draw(cv::Mat& frame,
+                         const vcl::utils::Color& border_color,
+                         const int                border_thickness)
+        {
+            prvt_last_border_color = border_color;
+            prvt_last_border_thickness = border_thickness;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_color and _thickness again). */
+        inline void draw(cv::Mat& frame, const cv::LineTypes border_type)
+        {
+            prvt_last_border_type = border_type;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_color and _type again). */
+        inline void draw(cv::Mat& frame, const int border_thickness)
+        {
+            prvt_last_border_thickness = border_thickness;
+            draw(frame);
+        }
+
+        /** \brief Draws this rectangle contours in a specified frame (use previous border_thickness and _ttype again). */
+        inline void draw(cv::Mat& frame, const vcl::utils::Color& border_color)
+        {
+            prvt_last_border_color = border_color;
+            draw(frame);
+        }
+
+
+        /** \brief Draws this rectangle contours in a specified frame (use all previous specifiers again).
+        * CAUTION: while first calling method  'draw()'  on  a  rectangle,
+        *       color  MUST BE specified. Not doing so may lead to the not 
+        *       display of the rectangle in the frame  or  may  result  to 
+        *       unpredictable color used for the display of the rectangle.
+        */
+        inline void draw(cv::Mat& frame)
         {
             cv::rectangle(
                 frame,
                 cv::Point_<TScalar>(top_left()),
                 cv::Point_<TScalar>(bottom_right()),
-                border_color,
-                border_thickness,
-                border_type,
+                prvt_last_border_color,
+                prvt_last_border_thickness,
+                prvt_last_border_type,
                 0  // notice: in vcl, the number of fractional bits in the point coordinates is forced to zero.  
             );
         }
+
+
+    private:
+        vcl::utils::Color prvt_last_border_color{ };
+        int               prvt_last_border_thickness{ 1 };
+        cv::LineTypes     prvt_last_border_type{ cv::LINE_8 };
 
     };
 

@@ -150,8 +150,12 @@ namespace vcl::vect {
         /** \brief operator == (vcl::vect::Vector) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        inline bool operator == (const vcl::vect::Vector<T, S>& other)
+        bool operator == (const vcl::vect::Vector<T, S>& other)
         {
+            constexpr bool same_sizes = (S == Ksize);
+            if (!same_sizes)
+                return false;
+
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
                 if (*ptr++ != *pot++)
@@ -162,8 +166,12 @@ namespace vcl::vect {
         /** \brief operator == (std::array) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        inline bool operator == (const std::array<T, S>& other)
+        bool operator == (const std::array<T, S>& other)
         {
+            constexpr bool same_sizes = (S == Ksize);
+            if (!same_sizes)
+                return false;
+
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
                 if (*ptr++ != *pot++)
@@ -174,8 +182,12 @@ namespace vcl::vect {
         /** \brief operator == (std::array, vcl::vect::Vector) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        friend inline bool operator == (const std::array<T, S>& lhs, const MyType& rhs)
+        friend bool operator == (const std::array<T, S>& lhs, const MyType& rhs)
         {
+            constexpr bool same_sizes = (S == Ksize);
+            if (!same_sizes)
+                return false;
+
             const TScalar* rit = rhs.cbegin();
             for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
                 if (*lit++ != *rit++)
@@ -186,8 +198,11 @@ namespace vcl::vect {
         /** \brief operator == (std::vector) */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        inline bool operator == (const std::vector<T>& other)
+        bool operator == (const std::vector<T>& other)
         {
+            if (other.size() != Ksize)
+                return false;
+
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
                 if (*ptr++ != *pot++)
@@ -198,8 +213,11 @@ namespace vcl::vect {
         /** \brief operator == (std::vector, vcl::vect::Vector) */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        friend inline bool operator == (const std::vector<T>& lhs, const MyType& rhs)
+        friend bool operator == (const std::vector<T>& lhs, const MyType& rhs)
         {
+            if (lhs.size() != Ksize)
+                return false;
+
             const TScalar* rit = rhs.cbegin();
             for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
                 if (*lit++ != *rit++)
@@ -215,7 +233,7 @@ namespace vcl::vect {
             return !(*this == other);
         }
 
-        /** \brief operator == (std::array) */
+        /** \brief operator != (std::array) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
         inline bool operator != (const std::array<T, S>& other)
@@ -223,7 +241,7 @@ namespace vcl::vect {
             return !(*this == other);
         }
 
-        /** \brief operator == (std::array, vcl::vect::Vector) */
+        /** \brief operator != (std::array, vcl::vect::Vector) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
         friend inline bool operator != (const std::array<T, S>& lhs, const MyType& rhs)
@@ -231,7 +249,7 @@ namespace vcl::vect {
             return !(rhs == lhs);
         }
 
-        /** \brief operator == (std::vector) */
+        /** \brief operator != (std::vector) */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline bool operator != (const std::vector<T>& other)
@@ -239,7 +257,7 @@ namespace vcl::vect {
             return !(*this == other);
         }
 
-        /** \brief operator == (std::vector, vcl::vect::Vector) */
+        /** \brief operator != (std::vector, vcl::vect::Vector) */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         friend inline bool operator != (const std::vector<T>& lhs, const MyType& rhs)
@@ -553,7 +571,6 @@ namespace vcl::vect {
         {
             return MyType(value) -= rhs;
         }
-
 
         /** \brief - operator (const std::array) */
         template<typename T, size_t S>
@@ -898,8 +915,8 @@ namespace vcl::vect {
         inline void add(const vcl::vect::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
-            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
-                *it++ += *rit++;
+            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++)
+                *it = clipped(*it + *rit++);
         }
 
         /** \brief inplace add operation (scalar) */
@@ -959,8 +976,8 @@ namespace vcl::vect {
         inline void sub(const vcl::vect::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
-            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
-                *it++ -= *rit++;
+            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++)
+                *it = clipped(*it - *rit++);
         }
 
         /** \brief inplace sub operation (scalar) */
@@ -1020,8 +1037,8 @@ namespace vcl::vect {
         inline void mul(const vcl::vect::Vector<T, S>& rhs)
         {
             auto rit = rhs.cbegin();
-            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); )
-                *it++ *= *rit++;
+            for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++)
+                *it = clipped(*it * *rit++);
         }
 
         /** \brief inplace mul operation (scalar) */
@@ -1082,8 +1099,8 @@ namespace vcl::vect {
         {
             auto rit = rhs.cbegin();
             for (auto it = this->begin(); it != this->end() && rit != rhs.cend(); it++, rit++)
-                if (*rit != TScalar(0))
-                    *it /= *rit;
+                if (*rit != T(0))
+                    *it = clipped(*it / *rit);
         }
 
         /** \brief inplace div operation (scalar) */
@@ -1091,7 +1108,7 @@ namespace vcl::vect {
             requires vcl::concepts::is_numeric<T>
         inline void div(const T value)
         {
-            if (value != 0)
+            if (value != T(0))
                 for (auto ptr = this->begin(); ptr != end(); )
                     *ptr++ = clipped(*ptr / value);
         }
@@ -1114,7 +1131,7 @@ namespace vcl::vect {
         {
             TScalar* ptr = rhs.begin();
             for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.end(); it++, ptr++)
-                if (*ptr != T(0))
+                if (*ptr != TScalar(0))
                     *it = clipped(*it / *ptr);
         }
 
@@ -1136,7 +1153,7 @@ namespace vcl::vect {
         {
             TScalar* ptr = rhs.begin();
             for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.end(); it++, ptr++)
-                if (*ptr != T(0))
+                if (*ptr != TScalar(0))
                     *it = clipped(*it / *ptr);
         }
 

@@ -42,17 +42,32 @@ namespace vcl::utils {
     class OffsetsT;
 
     // Specializations
-    /** \brief The class of 2D offsets with unsigned short components (16 bits). */
-    export typedef OffsetsT<unsigned short> Offsets_s;
+    /** \brief The class of 2D dimensions with short components (16 bits). */
+    export using Offsets_s = OffsetsT<short>;
 
-    /** \brief The class of 2D offsets with unsigned long int components (32 bits). */
-    export typedef OffsetsT<unsigned long> Offsets_i;
+    /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
+    export using Offsets_us = OffsetsT<unsigned short>;
 
-    /** \brief The class of 2D offsets with float components (32 bits). */
-    export typedef OffsetsT<float> Offsets_f;
+    /** \brief The class of 2D dimensions with long int components (32 bits). */
+    export using Offsets_i = OffsetsT<long>;
 
-    /** \brief The class of 2D offsets with double components (64 bits). */
-    export typedef OffsetsT<double> Offsets_d;
+    /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
+    export using Offsets_ui = OffsetsT<unsigned long>;
+
+    /** \brief The class of 2D dimensions with long long components (64 bits). */
+    export using Offsets_li = OffsetsT<long long>;
+
+    /** \brief The class of 2D dimensions with unsigned long long components (64 bits). */
+    export using Offsets_uli = OffsetsT<unsigned long long>;
+
+    /** \brief The class of 2D dimensions with float components (64 bits). */
+    export using Offsets_f = OffsetsT<float>;
+
+    /** \brief The class of 2D dimensions with double components (64 bits). */
+    export using Offsets_d = OffsetsT<double>;
+
+    /** \brief The class of 2D dimensions with long double components (128 bits). */
+    export using Offsets_ld = OffsetsT<long double>;
 
 
     //=======================================================================

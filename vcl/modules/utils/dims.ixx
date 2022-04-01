@@ -44,16 +44,22 @@ namespace vcl::utils {
 
     // Specializations
     /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
-    export typedef DimsT<unsigned short> Dims_us;
+    export using Dims_us = DimsT<unsigned short>;
 
     /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
-    export typedef DimsT<unsigned long> Dims_ui;
+    export using Dims_ui = DimsT<unsigned long>;
 
-    /** \brief The class of 2D dimensions with float components (32 bits). */
-    export typedef DimsT<float> Dims_f;
+    /** \brief The class of 2D dimensions with unsigned long long components (32 bits). */
+    export using Dims_uli = DimsT<unsigned long long>;
+
+    /** \brief The class of 2D dimensions with float components (64 bits). */
+    export using Dims_f = DimsT<float>;
 
     /** \brief The class of 2D dimensions with double components (64 bits). */
-    export typedef DimsT<double> Dims_d;
+    export using Dims_d = DimsT<double>;
+
+    /** \brief The class of 2D dimensions with long double components (128 bits). */
+    export using Dims_ld = DimsT<long double>;
 
 
     //=======================================================================

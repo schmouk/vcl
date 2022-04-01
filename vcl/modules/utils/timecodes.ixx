@@ -46,9 +46,9 @@ namespace vcl::utils {
     export template<const unsigned short FPS> class Timecode;
 
     // Specializations
-    export typedef Timecode<24> Timecode24fps; //!< 24 frames per second timecode (cinema)
-    export typedef Timecode<25> Timecode25fps; //!< 25 frames per second timecode (TV - DVB)
-    export typedef Timecode<30> Timecode30fps; //!< ~30 frames per second timecode (TV - ATSC/ISDB)
+    export using Timecode24fps = Timecode<24>; //!< 24 frames per second timecode (cinema)
+    export using Timecode25fps = Timecode<25>; //!< 25 frames per second timecode (TV - DVB)
+    export using Timecode30fps = Timecode<30>; //!< ~30 frames per second timecode (TV - ATSC/ISDB)
 
         
     // not to be used out of this module scope

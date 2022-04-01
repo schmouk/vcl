@@ -62,6 +62,12 @@ namespace vcl::vect {
     /** \brief The class of 2D vectors with unsigned long int components (32 bits). */
     export using Vect2ui = Vect2<unsigned long>;
 
+    /** \brief The class of 2D vectors with long long components (64 bits). */
+    export using Vect2li = Vect2<long long>;
+
+    /** \brief The class of 2D vectors with unsigned long long components (64 bits). */
+    export using Vect2uli = Vect2<unsigned long long>;
+
     /** \brief The class of 2D vectors with float components (32 bits). */
     export using Vect2f = Vect2<float>;
 

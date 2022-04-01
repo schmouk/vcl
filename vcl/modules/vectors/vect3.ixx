@@ -43,26 +43,38 @@ namespace vcl::vect {
         requires vcl::concepts::is_numeric<TScalar>
     class Vect3;
 
-    /** \brief The class of 3D vectors with double components (64 bits). */
-    export typedef Vect3<double> Vect3d;
-
-    /** \brief The class of 3D vectors with float components (32 bits). */
-    export typedef Vect3<float> Vect3f;
+    /** \brief The class of 3D vectors with 8bits signed components (8 bits). */
+    export using Vect3c = Vect3<char>;
 
     /** \brief The class of 3D vectors with bytes components (8 bits). */
-    export typedef Vect3<unsigned char> Vect3b;
+    export using Vect3b = Vect3<unsigned char>;
 
     /** \brief The class of 3D vectors with short components (16 bits). */
-    export typedef Vect3<short> Vect3s;
+    export using Vect3s = Vect3<short>;
 
     /** \brief The class of 3D vectors with unsigned short components (16 bits). */
-    export typedef Vect3<unsigned short> Vect3us;
+    export using Vect3us = Vect3<unsigned short>;
 
     /** \brief The class of 3D vectors with long int components (32 bits). */
-    export typedef Vect3<long> Vect3i;
+    export using Vect3i = Vect3<long>;
 
     /** \brief The class of 3D vectors with unsigned long int components (32 bits). */
-    export typedef Vect3<unsigned long> Vect3ui;
+    export using Vect3ui = Vect3<unsigned long>;
+
+    /** \brief The class of 3D vectors with long long components (64 bits). */
+    export using Vect3li = Vect3<long long>;
+
+    /** \brief The class of 3D vectors with unsigned long long components (64 bits). */
+    export using Vect3uli = Vect3<unsigned long long>;
+
+    /** \brief The class of 3D vectors with float components (32 bits). */
+    export using Vect3f = Vect3<float>;
+
+    /** \brief The class of 3D vectors with double components (64 bits). */
+    export using Vect3d = Vect3<double>;
+
+    /** \brief The class of 3D vectors with long double components (128 bits). */
+    export using Vect3ld = Vect3<long double>;
 
 
     //-----------------------------------------------------------------------

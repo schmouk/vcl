@@ -137,7 +137,6 @@ namespace vcl::vect {
         inline void fill(const T scalar_value)
         {
             const TScalar val = clipped(scalar_value);
-            //for (auto it = begin(); it != end(); *it++ = val);
             for_each([val](TScalar& c){ c = val; });
         }
 

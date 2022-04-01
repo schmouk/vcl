@@ -43,26 +43,38 @@ namespace vcl::vect {
         requires vcl::concepts::is_numeric<TScalar>
     class Vect4;
 
-    /** \brief The class of 4D vectors with double components (64 bits). */
-    export typedef Vect4<double> Vect4d;
-
-    /** \brief The class of 4D vectors with float components (32 bits). */
-    export typedef Vect4<float> Vect4f;
+    /** \brief The class of 4D vectors with 8bits signed components (8 bits). */
+    export using Vect4c = Vect4<char>;
 
     /** \brief The class of 4D vectors with bytes components (8 bits). */
-    export typedef Vect4<unsigned char> Vect4b;
+    export using Vect4b = Vect4<unsigned char>;
 
     /** \brief The class of 4D vectors with short components (16 bits). */
-    export typedef Vect4<short> Vect4s;
+    export using Vect4s = Vect4<short>;
 
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-    export typedef Vect4<unsigned short> Vect4us;
+    export using Vect4us = Vect4<unsigned short>;
+
+    /** \brief The class of 3D vectors with long int components (32 bits). */
+    export using Vect4i = Vect4<long>;
 
     /** \brief The class of 4D vectors with long int components (32 bits). */
-    export typedef Vect4<long> Vect4i;
+    export using Vect4ui = Vect4<unsigned long>;
 
-    /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
-    export typedef Vect4<unsigned long> Vect4ui;
+    /** \brief The class of 4D vectors with unsigned long int components (64 bits). */
+    export using Vect4li = Vect4<long long>;
+
+    /** \brief The class of 3D vectors with unsigned long long components (64 bits). */
+    export using Vect4uli = Vect4<unsigned long long>;
+
+    /** \brief The class of 4D vectors with float components (32 bits). */
+    export using Vect4f = Vect4<float>;
+
+    /** \brief The class of 4D vectors with double components (64 bits). */
+    export using Vect4d = Vect4<double>;
+
+    /** \brief The class of 4D vectors with long double components (128 bits). */
+    export using Vect4ld = Vect4<long double>;
 
 
     //-----------------------------------------------------------------------

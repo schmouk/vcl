@@ -115,6 +115,15 @@ namespace vcl::vect {
             copy(vect);
         }
 
+        /** \brief Constructor (const std::pair&).
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline Vector<TScalar, Ksize>(const std::pair<T, U>& pair)
+            : MyBaseType()
+        {
+            copy(pair);
+        }
 
         //---  Destructor   -------------------------------------------------
         virtual inline ~Vector<TScalar, Ksize>()
@@ -158,7 +167,7 @@ namespace vcl::vect {
 
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
-                if (*ptr++ != *pot++)
+                if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
         }
@@ -174,7 +183,7 @@ namespace vcl::vect {
 
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
-                if (*ptr++ != *pot++)
+                if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
         }
@@ -190,7 +199,7 @@ namespace vcl::vect {
 
             const TScalar* rit = rhs.cbegin();
             for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
-                if (*lit++ != *rit++)
+                if (*lit++ != T(*rit++))
                     return false;
             return true;
         }
@@ -205,7 +214,7 @@ namespace vcl::vect {
 
             const T* pot = other.cbegin();
             for (TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
-                if (*ptr++ != *pot++)
+                if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
         }
@@ -220,7 +229,37 @@ namespace vcl::vect {
 
             const TScalar* rit = rhs.cbegin();
             for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
-                if (*lit++ != *rit++)
+                if (*lit++ != T(*rit++))
+                    return false;
+            return true;
+        }
+
+        /** \brief operator == (std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        bool operator == (const std::pair<T, U>& other)
+        {
+            if (2 != Ksize)
+                return false;
+
+            const T* pot = other.cbegin();
+            for (TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
+                if (*ptr++ != TScalar(*pot++))
+                    return false;
+            return true;
+        }
+
+        /** \brief operator == (std::vector, vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend bool operator == (const std::pair<T, U>& lhs, const MyType& rhs)
+        {
+            if (2 != Ksize)
+                return false;
+
+            const TScalar* rit = rhs.cbegin();
+            for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
+                if (*lit++ != T(*rit++))
                     return false;
             return true;
         }
@@ -261,6 +300,22 @@ namespace vcl::vect {
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         friend inline bool operator != (const std::vector<T>& lhs, const MyType& rhs)
+        {
+            return !(rhs == lhs);
+        }
+
+        /** \brief operator == (std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline bool operator != (const std::pair<T, U>& other)
+        {
+            return !(*this == other);
+        }
+
+        /** \brief operator == (std::vector, vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        friend inline bool operator != (const std::pair<T, U>& lhs, const MyType& rhs)
         {
             return !(rhs == lhs);
         }
@@ -319,6 +374,26 @@ namespace vcl::vect {
                 *p_lhs++ = T(*p_rhs++);
         }
 
+        /** \brief Copies a const std::pair. */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline void copy(const std::pair<T, U>& other)
+        {
+            auto ot = other.cbegin();
+            for (TScalar* ptr = begin(); ptr != this->end() && ot != other.cend(); )
+                *ptr++ = clipped(*ot++);
+        }
+
+        /** \brief Copies into a std::pair. */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        friend inline void copy(std::pair<T, U>&& lhs, MyType&& rhs)
+        {
+            TScalar p_rhs = &rhs.begin();
+            for (T* p_lhs = lhs.begin(); p_lhs != lhs.end() && p_rhs != &rhs.end() + Ksize; )
+                *p_lhs++ = T(*p_rhs++);
+        }
+
 
         //---   assignment operator   ---------------------------------------
         /** \brief assign operator with specified value */
@@ -354,6 +429,15 @@ namespace vcl::vect {
         inline MyType& operator= (const std::vector<T>& other)
         {
             copy(other);
+            return *this;
+        }
+
+        /** \brief assign operator with std::pair */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline MyType& operator= (const std::pair<T, U>& pair)
+        {
+            copy(pair);
             return *this;
         }
 
@@ -407,6 +491,24 @@ namespace vcl::vect {
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         friend inline std::vector<T>& operator+= (std::vector<T> lhs, const MyType& rhs)
+        {
+            add(lhs, rhs);
+            return lhs;
+        }
+
+        /** \brief += operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline MyType& operator+= (const std::pair<T, U>& rhs)
+        {
+            add(rhs);
+            return *this;
+        }
+
+        /** \brief += operator (std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator+= (std::pair<T, U> lhs, const MyType& rhs)
         {
             add(lhs, rhs);
             return lhs;
@@ -471,11 +573,20 @@ namespace vcl::vect {
             return lhs += rhs;
         }
 
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        friend inline MyType operator+ (const T value, MyType rhs)
+        /** \brief + operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator+ (MyType lhs, const std::pair<T, U>& rhs)
         {
-            return MyType(value) += rhs;
+            return lhs += rhs;
+        }
+
+        /** \brief + operator (const std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator+ (std::pair<T, U> lhs, MyType rhs)
+        {
+            return lhs += rhs;
         }
 
         /** \brief unary operator + */
@@ -535,6 +646,24 @@ namespace vcl::vect {
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         friend inline std::vector<T>& operator-= (std::vector<T> lhs, const MyType& rhs)
+        {
+            sub(lhs, rhs);
+            return lhs;
+        }
+
+        /** \brief -= operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& operator-= (const std::pair<T, U>& rhs)
+        {
+            sub(rhs);
+            return *this;
+        }
+
+        /** \brief -= operator (std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator-= (std::pair<T, U> lhs, const MyType& rhs)
         {
             sub(lhs, rhs);
             return lhs;
@@ -604,6 +733,22 @@ namespace vcl::vect {
             return lhs -= rhs;
         }
 
+        /** \brief - operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator- (MyType lhs, const std::pair<T, U> rhs)
+        {
+            return lhs -= rhs;
+        }
+
+        /** \brief - operator (const std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator- (std::pair<T, U> lhs, MyType rhs)
+        {
+            return lhs -= rhs;
+        }
+
         /** \brief unary operator - */
         MyType operator-()
         {
@@ -661,6 +806,24 @@ namespace vcl::vect {
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         friend inline std::vector<T>& operator*= (std::vector<T>& lhs, const MyType& rhs)
+        {
+            mul(lhs, rhs);
+            return lhs;
+        }
+
+        /** \brief *= operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& operator*= (const std::pair<T, U>& rhs)
+        {
+            mul(rhs);
+            return *this;
+        }
+
+        /** \brief *= operator (std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator*= (std::pair<T, U> lhs, const MyType& rhs)
         {
             mul(lhs, rhs);
             return lhs;
@@ -725,6 +888,21 @@ namespace vcl::vect {
             return lhs *= rhs;
         }
 
+        /** \brief * operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator* (MyType lhs, const std::pair<T, U>rhs)
+        {
+            return lhs *= rhs;
+        }
+
+        /** \brief * operator (const std::pair, vcl::vect::Vect2) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator* (std::pair<T, U> lhs, MyType rhs)
+        {
+            return lhs *= rhs;
+        }
 
         //---   operators /=   ----------------------------------------------
         /** \brief /= operator (const reference) */
@@ -781,6 +959,23 @@ namespace vcl::vect {
             return lhs;
         }
 
+        /** \brief /= operator (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& operator/= (const std::pair<T, U>& rhs)
+        {
+            div(rhs);
+            return *this;
+        }
+
+        /** \brief /= operator (std::pair, vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline std::pair<T, U>& operator/= (std::pair<T, U> lhs, const MyType& rhs)
+        {
+            div(lhs, rhs);
+            return lhs;
+        }
 
         //---   operator /   ------------------------------------------------
         /** \brief / operator (const reference).
@@ -841,9 +1036,24 @@ namespace vcl::vect {
             return lhs /= rhs;
         }
 
+        /** \brief / operator (vcl::vect::Vector, const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator/ (MyType lhs, const std::pair<T, U> rhs)
+        {
+            return lhs /= rhs;
+        }
 
-        //---   miscelaneous   ----------------------------------------------
-        /** \brief simulates an interator over vector content.
+        /** \brief / operator (const std::pair, vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator/ (const std::pair<T, U> lhs, MyType& rhs)
+        {
+            return lhs /= rhs;
+        }
+
+        //---   iterators   -------------------------------------------------
+        /** \brief simulates an iterator over vector content.
         * \sa end().
         */
         inline TScalar* begin()
@@ -851,7 +1061,7 @@ namespace vcl::vect {
             return this->val;
         }
 
-        /** \brief simulates a const interator over vector content.
+        /** \brief simulates a const iterator over vector content.
         * \sa end().
         */
         inline const TScalar* cbegin() const
@@ -859,7 +1069,7 @@ namespace vcl::vect {
             return this->val;
         }
 
-        /** \brief simulates an interator over vector content.
+        /** \brief simulates an iterator over vector content.
         * \sa begin().
         */
         inline TScalar* end()
@@ -867,7 +1077,7 @@ namespace vcl::vect {
             return this->val + Ksize;
         }
 
-        /** \brief simulates a const interator over vector content.
+        /** \brief simulates a const iterator over vector content.
         * \sa cbegin().
         */
         inline const TScalar* cend() const
@@ -875,6 +1085,7 @@ namespace vcl::vect {
             return this->val + Ksize;
         }
 
+        //---   miscelaneous   ----------------------------------------------
         /** \brief Returns the specified value clipped. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
@@ -968,6 +1179,28 @@ namespace vcl::vect {
                 *it++ += T(*rit++);
         }
 
+        /** \brief inplace add operation (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline void add(const std::pair<T, U>& rhs) noexcept
+        {
+            if (this->size() > 0)
+                (*this[0]) = this->clipped((*this[0]) + TScalar(rhs.first));
+            if (this->size() > 1)
+                (*this[1]) = this->clipped((*this[1]) + TScalar(rhs.second));
+        }
+
+        /** \brief inplace add operation (std::pair, const vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline void add(std::pair<T, U>& lhs, const MyType& rhs) noexcept
+        {
+            if (rhs.size() > 0)
+                lhs.first += T(rhs[0]);
+            if (rhs.size() > 1)
+                lhs.second += U(rhs[1]);
+        }
+
 
         //---   sub()   -----------------------------------------------------
         /** \brief inplace sub operation (const reference) */
@@ -1029,6 +1262,28 @@ namespace vcl::vect {
                 *it++ -= T(*rit++);
         }
 
+        /** \brief inplace sub operation (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline void sub(const std::pair<T, U>& rhs) noexcept
+        {
+            if (this->size() > 0)
+                (*this[0]) = this->clipped((*this[0]) - TScalar(rhs.first));
+            if (this->size() > 1)
+                (*this[1]) = this->clipped((*this[1]) - TScalar(rhs.second));
+        }
+
+        /** \brief inplace sub operation (std::pair, const vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline void sub(std::pair<T, U>& lhs, const MyType& rhs) noexcept
+        {
+            if (rhs.size() > 0)
+                lhs.first -= T(rhs[0]);
+            if (rhs.size() > 1)
+                lhs.second -= U(rhs[1]);
+        }
+
 
         //---   mul()   -----------------------------------------------------
         /** \brief inplace mul operation (const reference) */
@@ -1088,6 +1343,28 @@ namespace vcl::vect {
             auto rit = rhs.cbegin();
             for (auto it = lhs.begin(); it != this->end() && rit != rhs.cend(); )
                 *it++ *= T(*rit++);
+        }
+
+        /** \brief inplace mul operation (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline void mul(const std::pair<T, U>& rhs) noexcept
+        {
+            if (this->size() > 0)
+                (*this[0]) = this->clipped((*this[0]) * TScalar(rhs.first));
+            if (this->size() > 1)
+                (*this[1]) = this->clipped((*this[1]) * TScalar(rhs.second));
+        }
+
+        /** \brief inplace mul operation (std::pair, const vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline void mul(std::pair<T, U>& lhs, const MyType& rhs) noexcept
+        {
+            if (rhs.size() > 0)
+                lhs.first *= T(rhs[0]);
+            if (rhs.size() > 1)
+                lhs.second *= U(rhs[1]);
         }
 
 
@@ -1155,6 +1432,28 @@ namespace vcl::vect {
             for (auto it = lhs.begin(); it != lhs.end() && ptr != rhs.end(); it++, ptr++)
                 if (*ptr != TScalar(0))
                     *it = clipped(*it / *ptr);
+        }
+
+        /** \brief inplace div operation (const std::pair) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline void div(const std::pair<T, U>& rhs) noexcept
+        {
+            if (this->size() > 0 && TScalar(rhs.first) != TScalar(0))
+                (*this[0]) = this->clipped((*this[0]) * TScalar(rhs.first));
+            if (this->size() > 1 && TScalar(rhs.second) != TScalar(0))
+                (*this[1]) = this->clipped((*this[1]) * TScalar(rhs.second));
+        }
+
+        /** \brief inplace div operation (std::pair, const vcl::vect::Vector) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline void div(std::pair<T, U>& lhs, const MyType& rhs) noexcept
+        {
+            if (rhs.size() > 0 && rhs[0] != TScalar(0))
+                rhs.first /=T(rhs[0]);
+            if (rhs.size() > 1 && rhs[1] != TScalar(0))
+                rhs.second /= U(rhs[1]);
         }
 
 

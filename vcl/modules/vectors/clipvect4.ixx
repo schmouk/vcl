@@ -139,6 +139,27 @@ namespace vcl::vect {
             : MyBaseType(vect)
         {}
 
+        /** \brief Copy constructor (const std::pair&).
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect4<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
+            : MyBaseType(pair)
+        {}
+
+        /** \brief Copy constructor (const std::pair&, const std::pair&).
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline ClipVect4<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair1, const std::pair<T, U>& pair2)
+            : MyBaseType()
+        {
+            (*this)[0] = pair1.first;
+            (*this)[1] = pair1.second;
+            (*this)[2] = pair2.first;
+            (*this)[3] = pair2.second;
+        }
+
         //---  Destructor   -------------------------------------------------
         virtual inline ~ClipVect4<TScalar, Kmin, Kmax>()
         {}

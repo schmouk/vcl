@@ -131,13 +131,89 @@ namespace vcl::vect {
 
 
         //---   fill()   ----------------------------------------------------
-        /** \brief Fills vectors with a single scalar value. */
+        /** \brief Fills vectors with a single scalar value or with a multiple scalar values pattern. */
+        template<typename T, typename... Ts>
+            requires vcl::concepts::is_numeric<T>
+        void fill(const T scalar_value, Ts const... rest)
+        {
+            if (sizeof...(rest) == 0) {
+                // only one argument passed at call time
+                const TScalar val = clipped(scalar_value);
+                for_each([val](TScalar& c){ c = val; });
+            }
+            else {
+                // let's set the filling pattern
+                std::vector<TScalar> pattern;
+                _set_pattern(pattern, scalar_value, rest...);
+                // then, let's copy it as many times as needed
+                auto it = begin();
+                auto pit = pattern.begin();
+                while (it != end()) {
+                    *it++ = clipped(*pit++);
+                    if (pit == pattern.end())
+                        pit = pattern.begin();
+                }
+            }
+        }
+
+        /** \brief Fills vectors (const vcl::vect::Vector<>&).
+        */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        void fill(const vcl::vect::Vector<T, S>& pattern)
+        {
+            auto it = begin();
+            auto pit = pattern.begin();
+            while (it != end()) {
+                *it++ = clipped(*pit++);
+                if (pit == pattern.end())
+                    pit = pattern.begin();
+            }
+        }
+
+        /** \brief Fills vectors (const std::array&).
+        */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        void fill(const std::array<T, S>& pattern)
+        {
+            auto it = begin();
+            auto pit = pattern.begin();
+            while (it != end()) {
+                *it++ = clipped(*pit++);
+                if (pit == pattern.end())
+                    pit = pattern.begin();
+            }
+        }
+
+        /** \brief Fills vectors (const std::vector&).
+        */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        inline void fill(const T scalar_value)
+        void fill(const std::vector<T>& pattern)
         {
-            const TScalar val = clipped(scalar_value);
-            for_each([val](TScalar& c){ c = val; });
+            auto it = begin();
+            auto pit = pattern.begin();
+            while (it != end()) {
+                *it++ = clipped(*pit++);
+                if (pit == pattern.end())
+                    pit = pattern.begin();
+            }
+        }
+
+        /** \brief Fills vectors (const std::pair&).
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        void fill(const std::pair<T, U>& pattern)
+        {
+            auto it = begin();
+            auto pit = pattern.begin();
+            while (it != end()) {
+                *it++ = clipped(*pit++);
+                if (pit == pattern.end())
+                    pit = pattern.begin();
+            }
         }
 
 
@@ -1466,6 +1542,16 @@ namespace vcl::vect {
                 if constexpr (sizeof...(rest) > 0) {
                     _set(it, rest...);
                 }
+            }
+        }
+
+        //---   _set_pattern()   --------------------------------------------
+        /** \brief Sets a pattern vector components with a parameters pack. */
+        template<typename T, typename... Ts>
+        void _set_pattern(std::vector<TScalar>& pattern, const T& first, Ts const... rest) {
+            pattern.push_back(clipped(first));
+            if constexpr (sizeof...(rest) > 0) {
+                _append(pattern, rest...);
             }
         }
 

@@ -47,22 +47,22 @@ namespace vcl::utils {
 
     // Specializations
     /** \brief The class of 2D positions with short components (16 bits). */
-    export typedef PosT<short, -32768, 32767> Pos_s;
+    export using Pos_s = PosT<short, -32768, 32767>;
 
     /** \brief The class of 2D positions with unsigned short components (16 bits). */
-    export typedef PosT<unsigned short, 0, 65535> Pos_us;
+    export using Pos_us = PosT<unsigned short, 0, 65535>;
 
     /** \brief The class of 2D positions with long int components (32 bits). */
-    export typedef PosT<long, -2147483648, 2147483647> Pos_i;
+    export using Pos_i = PosT<long, -2147483648, 2147483647>;
 
     /** \brief The class of 2D positions with unsigned long int components (32 bits). */
-    export typedef PosT<unsigned long, 0, 4294967295> Pos_ui;
+    export using Pos_ui = PosT<unsigned long, 0, 4294967295>;
 
     /** \brief The class of 2D positions with float components (32 bits). */
-    export typedef PosT<float, 0.0f, 1.0f> Pos_f;
+    export using Pos_f = PosT<float, 0.0f, 1.0f>;
 
     /** \brief The class of 2D positions with double components (64 bits). */
-    export typedef PosT<double, 0.0, 1.0> Pos_d;
+    export using Pos_d = PosT<double, 0.0, 1.0>;
 
 
     //===================================================================

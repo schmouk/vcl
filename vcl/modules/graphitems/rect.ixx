@@ -31,8 +31,8 @@ module;
 #include <utility>
 #include <vector>
 
-#include <opencv2/core/types.hpp> // to get access to cv::Rect_<_Tp> and cv::Point_<_Tp>
 #include <opencv2/core/mat.hpp>   // to get access to cv::Mat (i.e. image container)
+#include <opencv2/core/types.hpp> // to get access to cv::Rect_<_Tp> and cv::Point_<_Tp>
 #include <opencv2/imgproc.hpp>    // to get access to OpenCV drawing functions
 
 #include "vcl_concepts.h"
@@ -182,17 +182,89 @@ namespace vcl::graphitems {
             : MyBaseType(top_left.x, top_left.y, width, height)
         {}
 
+        /** \brief Constructor (std::pair<>, std::pair<>).
+        */
+        template<typename T, typename U, typename V, typename W>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V> && vcl::concepts::is_numeric<W>
+        inline RectT<TScalar>(const std::pair<T, U>& pos_pair, const std::pair<V, W>& dims_pair)
+            : MyBaseType(TScalar(pos_pair.first), TScalar(pos_pair.second), TScalar(dims_pair.first), TScalar(dims_pair.second))
+        {}
+
 
         //---  Destructor   -------------------------------------------------
         virtual inline ~RectT<TScalar>()
         {}
 
 
+        //--- Assignment ----------------------------------------------------
+        /** \brief assign operator (const vcl::vect::Vect4<>).
+        * The vector components are: {left_x, top_y, width, height}.
+        * Notice: assignment operators with argument of type Rect are
+        *         provided per inheritance from base class cv::Rect_.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator= (vcl::graphitems::RectT<T>& other) noexcept
+        {
+            this->x = other.x;
+            this->y = other.y;
+            this->width = other.width;
+            this->height = other.height;
+            return *this;
+        }
+
+        /** \brief assign operator (const std::vector<>).
+        * The vector components must be: {left_x, top_y, width, height}.
+        * At least four components must be provided. If more than 4
+        * of them are provided, the next ones are ignored.
+        * Notice: assignment operators with argument of type Rect are
+        *         provided per inheritance from base class cv::Rect_.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator= (std::vector<T>& vect)
+        {
+            if (vect.size() < 4) {
+                throw std::invalid_argument("vectors used for assignment must contain at least 4 components.");
+            }
+            else {
+                this->x = vect[0];
+                this->y = vect[1];
+                this->width = vect[2];
+                this->height = vect[3];
+            }
+            return *this;
+        }
+
+        /** \brief assign operator (const std::array<>).
+        * The array components must be: {left_x, top_y, width, height}.
+        * At least four components must be provided. If more than 4
+        * of them are provided, the next ones are ignored.
+        * Notice: assignment operators with argument of type Rect are
+        *         provided per inheritance from base class cv::Rect_.
+        */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        MyType& operator= (std::array<T, S>& arr)
+        {
+            if (S < 4) {
+                throw std::invalid_argument("arrays used for assignment must contain at least 4 components.");
+            }
+            else {
+                this->x = arr[0];
+                this->y = arr[1];
+                this->width = arr[2];
+                this->height = arr[3];
+            }
+            return *this;
+        }
+
+
         //--- Comparisons ---------------------------------------------------
         /** \brief Equality between rectangles. */
-        inline const bool operator==(MyType& other) const
+        inline const bool operator== (MyType& other) const
         {
-            return MyBaseType::x == other.x && MyBaseType::y == other.y && MyBaseType::width == other.width && MyBaseType::height == other.height;
+            return this->x == other.x && this->y == other.y && this->width == other.width && this->height == other.height;
         }
 
         /** \brief Inequality between rectangles. */
@@ -206,65 +278,69 @@ namespace vcl::graphitems {
         /** \brief left side position accessor. */
         inline const TScalar left_x() const noexcept
         {
-            return MyBaseType::x;
+            return this->x;
         }
+
         /** \brief left side position mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline void left_x(const T& new_x) noexcept
         {
-            MyBaseType::x = TScalar(new_x);
+            this->x = TScalar(new_x);
         }
 
         /** \brief right side position accessor. */
         inline const TScalar right_x() const noexcept
         {
-            return MyBaseType::x + MyBaseType::width - 1;
+            return this->x + this->width - 1;
         }
+
         /** \brief right side position mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline void right_x(const T& new_x) noexcept
         {
-            if (new_x >= MyBaseType::x)
-                MyBaseType::width = TScalar(new_x) - MyBaseType::x + 1;
+            if (new_x >= this->x)
+                this->width = TScalar(new_x) - this->x + 1;
             else
-                MyBaseType::width = 0;
+                this->width = 0;
         }
 
         /** \brief top side position accessor. */
         inline const TScalar top_y() const noexcept
         {
-            return MyBaseType::y;
+            return this->y;
         }
+
         /** \brief top side position mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline void top_y(const T& new_y) noexcept
         {
-            MyBaseType::y = TScalar(new_y);
+            this->y = TScalar(new_y);
         }
 
         /** \brief bottom side position accessor. */
         inline const TScalar bottom_y() const noexcept
         {
-            return MyBaseType::y + MyBaseType::height - 1;
+            return this->y + this->height - 1;
         }
+
         /** \brief bottom side position mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline void bottom_y(const T& new_y) noexcept
         {
-            if (new_y >= MyBaseType::y)
-                MyBaseType::height = TScalar(new_y) - MyBaseType::y + 1;
+            if (new_y >= this->y)
+                this->height = TScalar(new_y) - this->y + 1;
             else
-                MyBaseType::height = 0;
+                this->height = 0;
         }
 
         /** \brief top-left accessor. */
         inline vcl::utils::PosT<TScalar> top_left() const noexcept
         {
-            return vcl::utils::PosT<TScalar>(MyBaseType::x, MyBaseType::y);
+            return vcl::utils::PosT<TScalar>(this->x, this->y);
         }
 
         /** \brief top-left mutator. */
@@ -272,15 +348,16 @@ namespace vcl::graphitems {
             requires vcl::concepts::is_numeric<T>
         inline void top_left(const vcl::utils::PosT<T>& new_pos) noexcept
         {
-            MyBaseType::x = TScalar(new_pos.x());
-            MyBaseType::y = TScalar(new_pos.y());
+            this->x = TScalar(new_pos.x());
+            this->y = TScalar(new_pos.y());
         }
 
         /** \brief bottom-right accessor. */
         inline vcl::utils::PosT<TScalar> bottom_right() const noexcept
         {
-            return vcl::utils::PosT<TScalar>(MyBaseType::x + MyBaseType::width - 1, MyBaseType::y + MyBaseType::height - 1);
+            return vcl::utils::PosT<TScalar>(this->x + this->width - 1, this->y + this->height - 1);
         }
+
         /** \brief bottom-right mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
@@ -293,8 +370,16 @@ namespace vcl::graphitems {
         /** \brief center accessor. */
         inline vcl::utils::PosT<TScalar> center()
         {
-            return vcl::utils::PosT<TScalar>(MyBaseType::x + MyBaseType::width  / 2,
-                                             MyBaseType::y + MyBaseType::height / 2 );
+            return vcl::utils::PosT<TScalar>(this->x + this->width  / 2,
+                                             this->y + this->height / 2 );
+        }
+
+        /** \brief center mutator. */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline void center(const vcl::utils::PosT<T>& new_pos) noexcept
+        {
+            move(new_pos - center());
         }
 
         /** \brief Dimensions accessor. */
@@ -302,6 +387,7 @@ namespace vcl::graphitems {
         {
             return vcl::utils::DimsT<TScalar>(this->width, this->height);
         }
+
         /** \brief Dimensions mutator. */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
@@ -313,14 +399,14 @@ namespace vcl::graphitems {
 
 
         //--- Casting operators ---------------------------------------------
-        /** \brief casting operator to vcl::utils::DimsT<T>.
-        * Returns the dimensions of this rectangle.
+        /** \brief casting operator to scalar type T.
+        * Returns the area of this rectangle.
         */
-        template<typename T = MYType::TScalar>
+        template<typename T>
             requires vcl::concepts::is_numeric<T>
-        inline operator vcl::utils::DimsT<T>()
+        inline operator T()
         {
-            return vcl::utils::DimsT<T>(this->width, this->height);
+            return T(this->area());
         }
 
         /** \brief casting operator to vcl::utils::PosT<T>.
@@ -333,7 +419,47 @@ namespace vcl::graphitems {
             return vcl::utils::PosT<T>(this->x, this->y);
         }
 
+        /** \brief casting operator to vcl::utils::DimsT<T>.
+        * Returns the dimensions of this rectangle.
+        */
+        template<typename T = MYType::TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline operator vcl::utils::DimsT<T>()
+        {
+            return vcl::utils::DimsT<T>(this->width, this->height);
+        }
 
+        /** \brief casting operator to vcl::vect::Vect4<T>.
+        * Returns a 4-components vcl::vect::Vect4 (left_x, top_y, width, height).
+        */
+        template<typename T = MYType::TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline operator vcl::vect::Vect4<T>()
+        {
+            return vcl::vect::Vect4<T>(this->x, this->y, this->width, this->height);
+        }
+
+        /** \brief casting operator to std::vector<T>.
+        * Returns a 4-components std::vector (left_x, top_y, width, height).
+        */
+        template<typename T = MYType::TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline operator std::vector<T>()
+        {
+            return std::vector<T>(this->x, this->y, this->width, this->height);
+        }
+
+        /** \brief casting operator to std::array<T, 4>.
+        * Returns a 4-components std::array (left_x, top_y, width, height).
+        */
+        template<typename T = MYType::TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline operator std::array<T, 4>()
+        {
+            return std::array<T, 4>(this->x, this->y, this->width, this->height);
+        }
+
+        
         //--- In place cropping ---------------------------------------------
         /** In-place cropping with 4 different margins. */
         template<typename T, typename U, typename V, typename W>
@@ -362,6 +488,245 @@ namespace vcl::graphitems {
 
 
         //--- Moving --------------------------------------------------------
+        /** \brief Moves this rectangle with specified offsets (2 scalars). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline MyType& move(const T dx, const U dy) noexcept
+        {
+            this->x += dx;
+            this->y += dy;
+            return *this;
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::utils::Offset). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move(const vcl::utils::OffsetsT<T>& offset) noexcept
+        {
+            return move(offset.dx(), offset.dy());
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move(const vcl::vect::Vector<T, Ksize>& offset)
+        {
+            if (Ksize < 2) {
+                throw std::invalid_argument("vectors used for offsets must contain at least 2 components.");
+                return *this;
+            }
+            else {
+                return move(offset[0], offset[1]);
+            }
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::vector). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move(const std::vector<T>& offset)
+        {
+            if (offset.size() < 2) {
+                throw std::invalid_argument("vectors used for offsets must contain at least 2 components.");
+                return *this;
+            }
+            else {
+                return move(offset[0], offset[1]);
+            }
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::array). */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move(const std::array<T, S>& offset)
+        {
+            if (S < 2) {
+                throw std::invalid_argument("arrays used for offsets must contain at least 2 components.");
+                return *this;
+            }
+            else {
+                return move(offset[0], offset[1]);
+            }
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::pair). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move(const std::pair<T, U>& offset) noexcept
+        {
+            return move(offset.first, offset.second);
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::utils::Offset). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator += (const vcl::utils::OffsetsT<T>& offset) noexcept
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator += (const vcl::vect::Vector<T, Ksize>& offset)
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::vector). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator += (const std::vector<T>& offset)
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::array). */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator += (const std::array<T, S>& offset)
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::pair). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator += (const std::pair<T, U>& offset) noexcept
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::graphitems::RectT, vcl::utils::Offset). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::graphitems::RectT<TScalar> rect, const vcl::utils::OffsetsT<T>& offset) noexcept
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::utils::Offset, vcl::graphitems::RectT). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::utils::OffsetsT<T>& offset, const vcl::graphitems::RectT<TScalar> rect) noexcept
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::graphitems::RectT<TScalar> rect, const vcl::vect::Vector<T, Ksize>& offset)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::vect::Vector<T, Ksize>& offset, const vcl::graphitems::RectT<TScalar> rect)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::vector). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::graphitems::RectT<TScalar> rect, const std::vector<T>& offset)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::vector). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const std::vector<T>& offset, const vcl::graphitems::RectT<TScalar> rect)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::array). */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const vcl::graphitems::RectT<TScalar> rect, const std::array<T, S>& offset)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::array). */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator + (const std::array<T, S>& offset, const vcl::graphitems::RectT<TScalar> rect)
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::pair). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator += (const vcl::graphitems::RectT<TScalar> rect, const std::pair<T, U>& offset) noexcept
+        {
+            return rect += offset;
+        }
+
+        /** \brief Moves this rectangle with specified offset (std::pair). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>
+        inline friend MyType operator += (const std::pair<T, U>& offset, const vcl::graphitems::RectT<TScalar> rect) noexcept
+        {
+            return rect += offset;
+        }
+
+
+        //--- Moving at -----------------------------------------------------
+        /** \brief Moves top-left corner of this this rectangle to specified position (2 scalars). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& move_at(const T left_x, const U top_y) noexcept
+        {
+            this->x += left_x;
+            this->y += top_y;
+            return *this;
+        }
+
+        /** \brief Moves top-left corner of this this rectangle to specified position (vcl::utils::PosT). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move_at(const vcl::utils::PosT<T>& new_pos) noexcept
+        {
+            return move_at(new_pos.x, new_pos.y);
+        }
+
+        /** \brief Moves top-left corner of this this rectangle to specified position (vcl::vect::Vector). */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move_at(const vcl::vect::Vector<T, Ksize>& new_pos)
+        {
+            return move(new_pos[0] - this->x, new_pos[1] - this->y);
+        }
+
+        /** \brief Moves top-left corner of this this rectangle to specified position (std::vector). */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move_at(const std::vector<T>& new_pos)
+        {
+            return move(new_pos[0] - this->x, new_pos[1] - this->y);
+        }
+
+        /** \brief Moves top-left corner of this this rectangle to specified position (std::array). */
+        template<typename T, const size_t S>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move_at(const std::array<T, S>& new_pos)
+        {
+            return move(new_pos[0] - this->x, new_pos[1] - this->y);
+        }
+
+        /** \brief Moves top-left corner of this this rectangle to specified position (std::pair). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& move_at(const std::pair<T, U>& new_pos) noexcept
+        {
+            return move(new_pos.first - this->x, new_pos.second - this->y);
+        }
 
 
         //--- Resizing ------------------------------------------------------
@@ -474,6 +839,77 @@ namespace vcl::graphitems {
             return *this;
         }
 
+        /** \brief Resizes this rectangle according to scaling factors (const vcl::vect::Vector&).
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& scale(const vcl::vect::Vector<T, Ksize>& vect)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(vect[0], vect[0]);
+            default:
+                return scale(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to scaling factors (const std::vector&).
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& scale(const std::vector<T>& vect)
+        {
+            switch (vect.size())
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(vect[0], vect[0]);
+            default:
+                return scale(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to scaling factors (const std::array&).
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& scale(const std::array<T, Ksize>& arr)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return scale(arr[0], arr[0]);
+            default:
+                return scale(arr[0], arr[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to a pair of scaling factors (const std::pair&).
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values raise an invalid_argument exception.
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& scale(const std::pair<T, U>& pair)
+        {
+            return scale(pair.first, pair.second);
+        }
+
         /** \brief Resizes this rectangle according to a scaling factor.
         * Factors less than 1 reduce the size of this rectangle.
         * Negative values for 'factor' raise an invalid_argument exception.
@@ -491,18 +927,9 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires vcl::concepts::is_numeric<T>
-        MyType& operator *= (const vcl::vect::Vector<T, Ksize>& vect)
+        inline MyType& operator *= (const vcl::vect::Vector<T, Ksize>& vect)
         {
-            switch (Ksize)
-            {
-            case 0:
-                throw std::invalid_argument("factors vectors cannot be empty");
-                return *this;
-            case 1:
-                return scale(vect[0], vect[0]);
-            default:
-                return scale(vect[0], vect[1]);
-            }
+            return scale(vect);
         }
 
         /** \brief Resizes this rectangle according to scaling factors.
@@ -511,18 +938,9 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        MyType& operator *= (const std::vector<T>& vect)
+        inline MyType& operator *= (const std::vector<T>& vect)
         {
-            switch (vect.size())
-            {
-            case 0:
-                throw std::invalid_argument("factors vectors cannot be empty");
-                return *this;
-            case 1:
-                return scale(vect[0], vect[0]);
-            default:
-                return scale(vect[0], vect[1]);
-            }
+            return scale(vect);
         }
 
         /** \brief Resizes this rectangle according to scaling factors.
@@ -531,18 +949,20 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires vcl::concepts::is_numeric<T>
-        MyType& operator *= (const std::array<T, Ksize>& arr)
+        inline MyType& operator *= (const std::array<T, Ksize>& arr)
         {
-            switch (Ksize)
-            {
-            case 0:
-                throw std::invalid_argument("factors vectors cannot be empty");
-                return *this;
-            case 1:
-                return scale(arr[0], arr[0]);
-            default:
-                return scale(arr[0], arr[1]);
-            }
+            return scale(arr);
+        }
+
+        /** \brief Resizes this rectangle according to two scaling factors.
+        * Factors less than 1 reduce the size of this rectangle.
+        * Negative values raise an invalid_argument exception.
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& operator *= (const std::pair<T, U>& pair)
+        {
+           return scale(pair);
         }
 
         /** \brief Resizing operator * (const TScalar) */
@@ -596,17 +1016,321 @@ namespace vcl::graphitems {
         /** \brief Resizing operator * (const std::array<>) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        friend inline MyType operator * (MyType lhs, const std::array<T, S>& arr)
+        friend inline MyType operator * (MyType lhs, const std::array<T, S>& rhs)
         {
-            return lhs *= arr;
+            return lhs *= rhs;
         }
 
         /** \brief Resizing operator * (const std::array<>, vcl::graphitems::RectT<>) */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        friend inline MyType operator * (const std::array<T, S>& arr, MyType rhs)
+        friend inline MyType operator * (const std::array<T, S>& lhs, MyType rhs)
         {
-            return rhs *= arr;
+            return rhs *= lhs;
+        }
+
+        /** \brief Resizing operator * (const std::pair<>) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        friend inline MyType operator * (MyType lhs, const std::pair<T, U>& rhs)
+        {
+            return lhs *= rhs;
+        }
+
+        /** \brief Resizing operator * (const std::pair<>, vcl::graphitems::RectT<>) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator * (const std::pair<T, U>& lhs, MyType rhs)
+        {
+            return rhs *= lhs;
+        }
+
+        /** \brief Scales this rectangle from its center (1 scalar factor).
+        * Scales this rectangle from its center as  the  origin
+        * of the scaling. As such, modifies the top-left corner 
+        * position.
+        * Values less than 1.0 shrink this rectangle.
+        * \sa \c shrink_from_center() and \c scale()
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& scale_from_center(const T& factor)
+        {
+            return scale_from_center(factor, factor);
+        }
+
+        /** \brief Scales this rectangle from its center (2 scalar factors).
+        * Scales this rectangle from its center as  the  origin
+        * of the scaling. As such, modifies the top-left corner
+        * position.
+        * Values less than 1.0 shrink this rectangle.
+        * \sa \c shrink_from_center() and \c scale()
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        MyType& scale_from_center(const T& factor_x, const U& factor_y)
+        {
+            const vcl::utils::DimsT<TScalar> prev_dims = dims();
+            scale(factor_x, factor_y);
+            return move(0.5 * (prev_dims - dims()));
+        }
+
+
+        //--- Shrinking -----------------------------------------------------
+        /** \brief Resizes this rectangle according to a reducing factor.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& shrink(const T& factor)
+        {
+            return shrink(factor, factor);
+        }
+
+        /** \brief Resizes this rectangle according to two reducing factors.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values raise an invalid_argument exception.
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        MyType& shrink(const T& factor_x, const U& factor_y)
+        {
+            if (factor_x == T(0) || factor_y == T(0))
+                throw std::invalid_argument("reducing factors cannot be zero");
+            else if (factor_x < T(0) || factor_y < T(0))
+                throw std::invalid_argument("reducing factors cannot be negative");
+            else
+            {
+                this->width = TScalar(this->width / factor_x);
+                this->height = TScalar(this->height / factor_y);
+            }
+            return *this;
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors (const vcl::vect::Vector&).
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& shrink(const vcl::vect::Vector<T, Ksize>& vect)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return shrink(vect[0], vect[0]);
+            default:
+                return shrink(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors (const std::vector&).
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        MyType& shrink(const std::vector<T>& vect)
+        {
+            switch (vect.size())
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return shrink(vect[0], vect[0]);
+            default:
+                return shrink(vect[0], vect[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors (const std::array&).
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        MyType& shrink(const std::array<T, Ksize>& arr)
+        {
+            switch (Ksize)
+            {
+            case 0:
+                throw std::invalid_argument("factors vectors cannot be empty");
+                return *this;
+            case 1:
+                return shrink(arr[0], arr[0]);
+            default:
+                return shrink(arr[0], arr[1]);
+            }
+        }
+
+        /** \brief Resizes this rectangle according to a pair of reducing factors (const std::pair&).
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values raise an invalid_argument exception.
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline MyType& shrink(const std::pair<T, U>& pair)
+        {
+            return shrink(pair.first, pair.second);
+        }
+
+        /** \brief Resizes this rectangle according to a reducing factor.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator /= (const T& factor)
+        {
+            return shrink(factor, factor);
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator /= (const vcl::vect::Vector<T, Ksize>& vect)
+        {
+            return shrink(vect);
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator /= (const std::vector<T>& vect)
+        {
+            return shrink(vect);
+        }
+
+        /** \brief Resizes this rectangle according to reducing factors.
+        * Factors less than 1 augment the size of this rectangle.
+        * Negative and null values for 'factor' raise an invalid_argument exception.
+        */
+        template<typename T, const size_t Ksize>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& operator /= (const std::array<T, Ksize>& arr)
+        {
+            return shrink(arr);
+        }
+
+        /** \brief Shrinking operator / (const TScalar) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (MyType lhs, const T value)
+        {
+            return lhs /= value;
+        }
+
+        /** \brief Shrinking operator / (const TScalar, vcl::graphitems::RectT<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (const T value, MyType rhs)
+        {
+            return rhs /= value;
+        }
+
+        /** \brief Shrinking operator / (const vcl::vect::Vector<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (MyType lhs, const vcl::vect::Vector<T, S>& vect)
+        {
+            return lhs /= vect;
+        }
+
+        /** \brief Shrinking operator / (const vcl::vect::Vector<>, vcl::graphitems::RectT<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (const vcl::vect::Vector<T, S>& vect, MyType rhs)
+        {
+            return rhs /= vect;
+        }
+
+        /** \brief Shrinking operator / (const std::vector<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (MyType lhs, const std::vector<T>& vect)
+        {
+            return lhs /= vect;
+        }
+
+        /** \brief Resizing operator / (const std::vector<>, vcl::graphitems::RectT<>) */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (const std::vector<T>& vect, MyType rhs)
+        {
+            return rhs /= vect;
+        }
+
+        /** \brief Shrinking operator / (const std::array<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (MyType lhs, const std::array<T, S>& arr)
+        {
+            return lhs /= arr;
+        }
+
+        /** \brief Shrinking operator / (const std::array<>, vcl::graphitems::RectT<>) */
+        template<typename T, size_t S>
+            requires vcl::concepts::is_numeric<T>
+        friend inline MyType operator / (const std::array<T, S>& arr, MyType rhs)
+        {
+            return rhs /= arr;
+        }
+
+        /** \brief Shrinking operator / (const std::pair<>) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator / (MyType lhs, const std::pair<T, U>& rhs)
+        {
+            return lhs /= rhs;
+        }
+
+        /** \brief Shrinking operator / (const std::pair<>, vcl::graphitems::RectT<>) */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        friend inline MyType operator / (const std::pair<T, U>& lhs, MyType rhs)
+        {
+            return rhs /= lhs;
+        }
+
+        /** \brief Shrinks this rectangle from its center (1 scalar factor).
+        * Shrinks this rectangle from its center as the  origin
+        * of the scaling. As such, modifies the top-left corner
+        * position.
+        * Values less than 1.0 augment this rectangle.
+        * \sa \c scale_from_center() and \c skrink()
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline MyType& skrink_from_center(const T& factor)
+        {
+            return skrink_from_center(factor, factor);
+        }
+
+        /** \brief Shrinks this rectangle from its center (2 scalar factors).
+        * Shrinks this rectangle from its center as the  origin
+        * of the scaling. As such, modifies the top-left corner
+        * position.
+        * Values less than 1.0 augment this rectangle.
+        * \sa \c scale_from_center() and \c skrink()
+        */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        MyType& skrink_from_center(const T& factor_x, const U& factor_y)
+        {
+            const vcl::utils::DimsT<TScalar> prev_dims = dims();
+            shrink(factor_x, factor_y);
+            return move(0.5 * (prev_dims - dims()));
         }
 
 
@@ -745,12 +1469,28 @@ namespace vcl::graphitems {
 
 
         //--- Intersection / Union / Containment ----------------------------
-        /** \brief Returns true if this rectangle contains a specified position. */
+        /** \brief Returns true if this rectangle contains a specified position (2 scalar args). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+        inline const bool contains(const T x, const U y) const noexcept
+        {
+            return this->x <= x && x <= right_x() && this->y <= y && y <= bottom_y();
+        }
+
+        /** \brief Returns true if this rectangle contains a specified position (1 Pos argument). */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
         inline const bool contains(vcl::utils::PosT<T>& pos) const noexcept
         {
-            return MyBaseType::x <= pos.x() && pos.x() <= right_x() && MyBaseType::y <= pos.y() && pos.y() <= bottom_y();
+            return contains(pos.x(), pos.y());
+        }
+
+        /** \brief Returns true if this rectangle contains a specified position (1 std::pair argument). */
+        template<typename T, typename U>
+            requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
+        inline const bool contains(std::pair<T, U>& pair) const noexcept
+        {
+            return contains(pair.first, pair.second);
         }
 
         /** \brief Returns true if this rectangle contains the 'other' one.
@@ -778,9 +1518,9 @@ namespace vcl::graphitems {
             requires vcl::concepts::is_numeric<T>
         inline bool does_intersect(const vcl::graphitems::RectT<T>& other) const noexcept
         {
-            return other.bottom_y() >= MyBaseType::y &&
+            return other.bottom_y() >= this->y &&
                 other.y <= bottom_y() &&
-                other.right_x() >= MyBaseType::x &&
+                other.right_x() >= this->x &&
                 other.x <= right_x();
         }
 
@@ -790,8 +1530,8 @@ namespace vcl::graphitems {
         MyType& intersection_rect(const vcl::graphitems::RectT<T>& other) noexcept
         {
             if (does_intersect(other))
-                return MyType( vcl::utils::PosT<TScalar>(vcl::utils::max(MyBaseType::x, other.x),
-                                                         vcl::utils::max(MyBaseType::y, other.y)),
+                return MyType( vcl::utils::PosT<TScalar>(vcl::utils::max(this->x, other.x),
+                                                         vcl::utils::max(this->y, other.y)),
                                vcl::utils::PosT<TScalar>(vcl::utils::min(right_x() , other.right_x()),
                                                          vcl::utils::min(bottom_y(), other.bottom_y())) );
             else
@@ -811,8 +1551,8 @@ namespace vcl::graphitems {
             if (b_strict && !does_intersect(other))
                 return *this;
             else
-                return MyType(vcl::utils::PosT<TScalar>(vcl::utils::min(MyBaseType::x, other.x),
-                                                        vcl::utils::min(MyBaseType::y, other.y)),
+                return MyType(vcl::utils::PosT<TScalar>(vcl::utils::min(this->x, other.x),
+                                                        vcl::utils::min(this->y, other.y)),
                               vcl::utils::PosT<TScalar>(vcl::utils::max(right_x(), other.right_x()),
                                                         vcl::utils::max(bottom_y(), other.bottom_y())) );
         }

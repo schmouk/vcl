@@ -58,13 +58,16 @@ namespace vcl::graphitems {
     class RectT;
 
     // Specializations
-    /** \brief The class of rectangles with integer positions and dimensions (32 bits). */
-    export typedef RectT<long> Rect;
+    /** \brief The class of rectangles with integer positions and dimensions (16 bits). */
+    export typedef RectT<short> Rect;
 
-    /** \brief The class of rectangles with float components (32 bits). */
+    /** \brief The class of rectangles with integer positions and dimensions (32 bits). */
+    export typedef RectT<long> Rect_i;
+
+    /** \brief The class of rectangles with float positions and dimensions (32 bits). */
     export typedef RectT<float> Rect_f;
 
-    /** \brief The class of rectangles with double components (64 bits). */
+    /** \brief The class of rectangles with double positions and dimensions (64 bits). */
     export typedef RectT<double> Rect_d;
 
 
@@ -126,25 +129,39 @@ namespace vcl::graphitems {
         */
         template<typename T, size_t S>
             requires vcl::concepts::is_numeric<T>
-        inline RectT<TScalar>(const std::array<T, S>& arr)
-            : MyBaseType(vcl::vect::Vect4<T>(arr))
-        {}
+        RectT<TScalar>(const std::array<T, S>& arr)
+            : MyBaseType()
+        {
+            if (S > 0)  (*this).x      = TScalar(arr[0]);
+            if (S > 1)  (*this).width  = TScalar(arr[1] - arr[0] + 1);
+            if (S > 2)  (*this).y      = TScalar(arr[2]);
+            if (S > 3)  (*this).height = TScalar(arr[3] - arr[2] + 1);
+        }
 
         /** \brief Copy constructor (const std::vector&).
         * Notice: order of coordinates in vector: left, right, top, bottom.
         */
         template<typename T>
             requires vcl::concepts::is_numeric<T>
-        inline RectT<TScalar>(const std::vector<T>& vect)
-            : MyBaseType(vcl::vect::Vect4<T>(vect))
-        {}
+        RectT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType()
+        {
+            const size_t S = vect.size();
+            if (S > 0)  (*this).x      = TScalar(vect[0]);
+            if (S > 1)  (*this).width  = TScalar(vect[1] - vect[0] + 1);
+            if (S > 2)  (*this).y      = TScalar(vect[2]);
+            if (S > 3)  (*this).height = TScalar(vect[3] - vect[2] + 1);
+        }
 
         /** \brief Constructor (4 scalar positions & dimensions).
         */
         template<typename T, typename U, typename V, typename W>
             requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V> && vcl::concepts::is_numeric<W>
         inline RectT<TScalar>(const T left_x, const U right_x, const V top_y, const W bottom_y)
-            : MyBaseType(left_x, top_y, right_x - left_x + 1, bottom_y - top_y + 1)
+            : MyBaseType(TScalar(left_x),
+                         TScalar(top_y),
+                         TScalar(right_x) - TScalar(left_x) + TScalar(1),
+                         TScalar(bottom_y) - TScalar(top_y) + TScalar(1))
         {}
 
         /** \brief Constructor (2 scalar positions + dimensions).
@@ -152,7 +169,7 @@ namespace vcl::graphitems {
         template<typename T, typename U, typename V>
             requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V>
         inline RectT<TScalar>(const T left_x, const U top_y, const vcl::utils::DimsT<V>& dims)
-            : MyBaseType(left_x, top_y, dims.width, dims.height)
+            : MyBaseType(TScalar(left_x), TScalar(top_y), TScalar(dims.width), TScalar(dims.height))
         {}
 
         /** \brief Constructor (top left position + dimensions).
@@ -161,7 +178,7 @@ namespace vcl::graphitems {
             requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
         inline RectT<TScalar>(const vcl::utils::PosT<T>& top_left,
                               const vcl::utils::DimsT<U>& dims)
-            : MyBaseType(top_left.x, top_left.y, dims.width, dims.height)
+            : MyBaseType(TScalar(top_left.x), TScalar(top_left.y), TScalar(dims.width), TScalar(dims.height))
         {}
 
         /** \brief Constructor (2 opposite corners positions).
@@ -170,7 +187,10 @@ namespace vcl::graphitems {
             requires vcl::concepts::is_numeric<T>&& vcl::concepts::is_numeric<U>
         inline RectT<TScalar>(const vcl::utils::PosT<T>& top_left,
                               const vcl::utils::PosT<U>& bottom_right)
-            : MyBaseType(top_left.x, top_left.y, bottom_right.x - top_left.x + 1, bottom_right.y - top_left.y + 1)
+            : MyBaseType(TScalar(top_left.x),
+                         TScalar(top_left.y),
+                         TScalar(bottom_right.x) - TScalar(top_left.x) + TScalar(1),
+                         TScalar(bottom_right.y) - TScalar(top_left.y) + TScalar(1))
         {}
 
         /** \brief Constructor (top left position + width + height).
@@ -179,7 +199,7 @@ namespace vcl::graphitems {
             requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V>
         inline RectT<TScalar>(const vcl::utils::PosT<T>& top_left,
                               const U width, const V height)
-            : MyBaseType(top_left.x, top_left.y, width, height)
+            : MyBaseType(TScalar(top_left.x), TScalar(top_left.y), TScalar(width), TScalar(height))
         {}
 
         /** \brief Constructor (std::pair<>, std::pair<>).
@@ -338,9 +358,11 @@ namespace vcl::graphitems {
         }
 
         /** \brief top-left accessor. */
-        inline vcl::utils::PosT<TScalar> top_left() const noexcept
+        template<typename T = TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline vcl::utils::PosT<T>& top_left() const noexcept
         {
-            return vcl::utils::PosT<TScalar>(this->x, this->y);
+            return vcl::utils::PosT<T>(this->x, this->y);
         }
 
         /** \brief top-left mutator. */
@@ -353,9 +375,12 @@ namespace vcl::graphitems {
         }
 
         /** \brief bottom-right accessor. */
-        inline vcl::utils::PosT<TScalar> bottom_right() const noexcept
+        template<typename T = TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline vcl::utils::PosT<T> bottom_right() const noexcept
         {
-            return vcl::utils::PosT<TScalar>(this->x + this->width - 1, this->y + this->height - 1);
+            return vcl::utils::PosT<T>(this->x + this->width  - 1,
+                                       this->y + this->height - 1);
         }
 
         /** \brief bottom-right mutator. */
@@ -368,10 +393,12 @@ namespace vcl::graphitems {
         }
 
         /** \brief center accessor. */
-        inline vcl::utils::PosT<TScalar> center()
+        template<typename T = TScalar>
+            requires vcl::concepts::is_numeric<T>
+        inline vcl::utils::PosT<T> center()
         {
-            return vcl::utils::PosT<TScalar>(this->x + this->width  / 2,
-                                             this->y + this->height / 2 );
+            return vcl::utils::PosT<T>(this->x + this->width  / 2,
+                                       this->y + this->height / 2);
         }
 
         /** \brief center mutator. */
@@ -383,9 +410,11 @@ namespace vcl::graphitems {
         }
 
         /** \brief Dimensions accessor. */
-        inline vcl::utils::DimsT<TScalar>& dims()
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline vcl::utils::DimsT<T>& dims()
         {
-            return vcl::utils::DimsT<TScalar>(this->width, this->height);
+            return vcl::utils::DimsT<T>(this->width, this->height);
         }
 
         /** \brief Dimensions mutator. */
@@ -412,7 +441,7 @@ namespace vcl::graphitems {
         /** \brief casting operator to vcl::utils::PosT<T>.
         * Returns the top-left corner position of this rectangle.
         */
-        template<typename T = MYType::TScalar>
+        template<typename T = TScalar>
             requires vcl::concepts::is_numeric<T>
         inline operator vcl::utils::PosT<T>()
         {
@@ -422,7 +451,7 @@ namespace vcl::graphitems {
         /** \brief casting operator to vcl::utils::DimsT<T>.
         * Returns the dimensions of this rectangle.
         */
-        template<typename T = MYType::TScalar>
+        template<typename T = TScalar>
             requires vcl::concepts::is_numeric<T>
         inline operator vcl::utils::DimsT<T>()
         {
@@ -432,7 +461,7 @@ namespace vcl::graphitems {
         /** \brief casting operator to vcl::vect::Vect4<T>.
         * Returns a 4-components vcl::vect::Vect4 (left_x, top_y, width, height).
         */
-        template<typename T = MYType::TScalar>
+        template<typename T = TScalar>
             requires vcl::concepts::is_numeric<T>
         inline operator vcl::vect::Vect4<T>()
         {
@@ -442,7 +471,7 @@ namespace vcl::graphitems {
         /** \brief casting operator to std::vector<T>.
         * Returns a 4-components std::vector (left_x, top_y, width, height).
         */
-        template<typename T = MYType::TScalar>
+        template<typename T = TScalar>
             requires vcl::concepts::is_numeric<T>
         inline operator std::vector<T>()
         {
@@ -452,7 +481,7 @@ namespace vcl::graphitems {
         /** \brief casting operator to std::array<T, 4>.
         * Returns a 4-components std::array (left_x, top_y, width, height).
         */
-        template<typename T = MYType::TScalar>
+        template<typename T = TScalar>
             requires vcl::concepts::is_numeric<T>
         inline operator std::array<T, 4>()
         {

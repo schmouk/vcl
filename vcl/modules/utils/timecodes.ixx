@@ -30,8 +30,7 @@ module;
 #include <sstream>
 #include <stdexcept>
 #include <string>
-
-#include "vcl_concepts.h"
+#include <type_traits>
 
 export module utils.timecodes;
 
@@ -68,10 +67,10 @@ namespace vcl::utils {
     {
     public:
 
-        typedef Timecode<FPS>   MyType;     //<! wrapper to this class naming.
-        typedef unsigned char   CompT;      //!< the internal type of timecode components.
-        typedef float           FrameTime;  //!< the internal type for fractional seconds time related to timecodes.
-        typedef unsigned long   FrameIndex; //!< the internal type for frames index.
+        using MyType     = Timecode<FPS>;   //<! wrapper to this class naming.
+        using CompT      = unsigned char;   //!< the internal type of timecode components.
+        using FrameTime  = float        ;   //!< the internal type for fractional seconds time related to timecodes.
+        using FrameIndex = unsigned long;   //!< the internal type for frames index.
 
         CompT hh, mm, ss, ff;        //!< the four components of every timecode HH:MM:SS:FF.
         bool b_error;                //!< error status of this timecode.
@@ -87,8 +86,8 @@ namespace vcl::utils {
         /** \brief Constructor with a single value.
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline Timecode<FPS>(const T value)
+            requires std::is_arithmetic_v<T>
+        inline Timecode<FPS>(const T value) noexcept(false)
             : hh(0), mm(0), ss(0), ff(0), b_error(false)
         {
             prvt_set(Timecode::FrameTime(value));
@@ -98,7 +97,7 @@ namespace vcl::utils {
 
         /** \brief Constructor with four filling values.
         */
-        inline Timecode<FPS>(const CompT hr, const CompT mn, const CompT sc, const CompT fr)
+        inline Timecode<FPS>(const CompT hr, const CompT mn, const CompT sc, const CompT fr) noexcept(false)
             : hh(hr), mm(mn), ss(sc), ff(fr), b_error(false)
         {
             if (b_error)
@@ -108,7 +107,7 @@ namespace vcl::utils {
         /** \brief Copy constructor.
         */
         template<const unsigned short F>
-        inline Timecode<FPS>(const vcl::utils::Timecode<F>& other)
+        inline Timecode<FPS>(const vcl::utils::Timecode<F>& other) noexcept(false)
             : hh(0), mm(0), ss(0), ff(0), b_error(other.b_error)
         {
             if (b_error)
@@ -120,7 +119,7 @@ namespace vcl::utils {
         /** \brief Move constructor.
         */
         template<const unsigned short F>
-        inline Timecode<FPS>(vcl::utils::Timecode<F>&& other)
+        inline Timecode<FPS>(vcl::utils::Timecode<F>&& other) noexcept(false)
             : hh(0), mm(0), ss(0), ff(0), b_error(other.b_error)
         {
             if (b_error)
@@ -131,7 +130,7 @@ namespace vcl::utils {
 
         /** \brief Constructor from char*.
         */
-        inline Timecode<FPS>(const char* tc_chr)
+        inline Timecode<FPS>(const char* tc_chr) noexcept(false)
             : hh(0), mm(0), ss(0), ff(0), b_error(false)
         {
             prvt_set(std::string(tc_chr));
@@ -141,7 +140,7 @@ namespace vcl::utils {
 
         /** \brief Constructor from string.
         */
-        inline Timecode<FPS>(const std::string& tc_str)
+        inline Timecode<FPS>(const std::string& tc_str) noexcept(false)
             : hh(0), mm(0), ss(0), ff(0), b_error(false)
         {
             prvt_set(tc_str);
@@ -224,7 +223,7 @@ namespace vcl::utils {
         /* \brief operator += (const char) on frames count
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         MyType& operator += (const T offset)
         {
             prvt_set(this->frame_index() + FrameIndex(offset));
@@ -243,14 +242,14 @@ namespace vcl::utils {
 
         /** \brief + operator (const TScalar) */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         friend inline MyType operator+ (MyType lhs, const T offset)
         {
             return lhs += offset;
         }
 
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         friend inline MyType operator+ (const T offset, MyType rhs)
         {
             return rhs += offset;
@@ -270,7 +269,7 @@ namespace vcl::utils {
         /* \brief operator -= (const char) on frames count
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         MyType& operator -= (const T offset)
         {
             prvt_set(this->frame_index() - FrameIndex(offset));
@@ -289,14 +288,14 @@ namespace vcl::utils {
 
         /** \brief - operator (const TScalar) */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         friend inline MyType operator- (MyType lhs, const T offset)
         {
             return lhs -= offset;
         }
 
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         friend inline MyType operator- (const T offset, MyType rhs)
         {
             return rhs -= offset;
@@ -379,7 +378,7 @@ namespace vcl::utils {
 
         /** \brief Internally sets this timecode (const string&).
         */
-        void prvt_set(const std::string& fract_sec)
+        void prvt_set(const std::string& fract_sec) noexcept(false)
         {
             std::stringstream sstr(fract_sec);
             try {
@@ -394,7 +393,7 @@ namespace vcl::utils {
         /** \brief Internally sets this timecode (const&).
         */
         template<const unsigned short F>
-        void prvt_set(const Timecode<F>& other)
+        void prvt_set(const Timecode<F>& other) noexcept(false)
         {
             if (other.b_error)
                 throw std::invalid_argument("invalid timecode value passed as Timecode argument");

@@ -39,7 +39,7 @@ namespace vcl::utils {
     export template<typename T, typename U>
     inline auto max(const T& a, const U& b)
     {
-        return (a > b) ? a : b;
+        return (a >= b) ? a : b;
     }
 
     /** \brief Returns the min of two objects.
@@ -49,7 +49,7 @@ namespace vcl::utils {
     export template<typename T, typename U>
     inline auto min(const T& a, const U& b)
     {
-        return (a < b) ? a : b;
+        return (a <= b) ? a : b;
         // notice: "return vcl::utils::max(b, a);" would fit also...
     }
 }

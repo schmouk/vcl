@@ -25,7 +25,8 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include "vcl_concepts.h"
+#include <limits>
+#include <type_traits>
 
 export module utils.offsets;
 
@@ -38,10 +39,16 @@ namespace vcl::utils {
     //=======================================================================
     // Forward declaration
     export template<typename TScalar>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     class OffsetsT;
 
     // Specializations
+    /** \brief The class of 2D dimensions with char components (8 bits). */
+    export using Offsets_c = OffsetsT<char>;
+
+    /** \brief The class of 2D dimensions with unsigned char components (16 bits). */
+    export using Offsets_b = OffsetsT<unsigned char>;
+
     /** \brief The class of 2D dimensions with short components (16 bits). */
     export using Offsets_s = OffsetsT<short>;
 
@@ -73,12 +80,12 @@ namespace vcl::utils {
     //=======================================================================
     /** \brief The generic class for 2D offsets. */
     template<typename TScalar>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     class OffsetsT : public vcl::vect::Vect2<TScalar>
     {
     public:
-        typedef vcl::vect::Vect2<TScalar>     MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::utils::OffsetsT<TScalar> MyType;     //!< wrapper to this class naming.
+        using MyBaseType = vcl::vect::Vect2<TScalar>;       //!< wrapper to the inherited class naming.
+        using MyType     = vcl::utils::OffsetsT<TScalar>;   //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -90,7 +97,7 @@ namespace vcl::utils {
         /** \brief Constructor with value.
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline OffsetsT<TScalar>(const T value)
             : MyBaseType(value)
         {}
@@ -98,7 +105,7 @@ namespace vcl::utils {
         /** \brief Constructor with values.
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline OffsetsT<TScalar>(const T dx, const U dy)
             : MyBaseType(dx, dy)
         {}
@@ -112,7 +119,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline OffsetsT<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -120,7 +127,7 @@ namespace vcl::utils {
         /** \brief Move constructor (&&).
         */
         template<typename T, const size_t S>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline OffsetsT<TScalar>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
@@ -128,7 +135,7 @@ namespace vcl::utils {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline OffsetsT<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
@@ -145,32 +152,46 @@ namespace vcl::utils {
         {}
 
         //---  Accessors/Mutators   -----------------------------------------
-        /** \brief component dx mutator */
-        template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline TScalar dx(const T new_dx)
-        {
-            return (*this)[0] = new_dx;
-        }
-
         /** \brief component dx accessor */
         inline const TScalar dx() const
         {
             return (*this)[0];
         }
 
-        /** \brief component dy mutator */
+        /** \brief component dx mutator */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline TScalar dy(const T new_dy)
+            requires std::is_arithmetic_v<T>
+        inline TScalar dx(const T new_dx)
         {
-            return (*this)[1] = new_dy;
+            TScalar dx;
+            if (new_dx <= std::numeric_limits<TScalar>::min())
+                dx = std::numeric_limits<TScalar>::min();
+            else if (new_dx >= std::numeric_limits<TScalar>::max())
+                dx = std::numeric_limits<TScalar>::max();
+            else
+                dx = TScalar(new_dx);
+            return (*this)[0] = dx;
         }
 
         /** \brief component dy accessor */
         inline const TScalar dy() const
         {
             return (*this)[1];
+        }
+
+        /** \brief component dy mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar dy(const T new_dy)
+        {
+            TScalar dy;
+            if (new_dy <= std::numeric_limits<TScalar>::min())
+                dy = std::numeric_limits<TScalar>::min();
+            else if (new_dy >= std::numeric_limits<TScalar>::max())
+                dy = std::numeric_limits<TScalar>::max();
+            else
+                dy = TScalar(new_dy);
+            return (*this)[1] = dy;
         }
     };
 

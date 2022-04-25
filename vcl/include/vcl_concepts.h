@@ -35,4 +35,7 @@ namespace vcl::concepts {
     template<typename T>
     concept is_numeric = std::is_integral_v<T> || std::is_floating_point_v<T>;
 
+    template<typename T>
+    concept is_signed = std::is_floating_point_v<T> || std::is_signed<T>;
+
 };

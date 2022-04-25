@@ -28,8 +28,8 @@ module;
 #include <array>
 #include <cstdarg>
 #include <sstream>
+#include <type_traits>
 #include <vector>
-#include "vcl_concepts.h"
 
 export module utils.ranges;
 
@@ -49,28 +49,28 @@ namespace vcl::utils {
     export bool IN_RANGE_00;
 
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     inline const bool in_range_ii(const TScalar x)
     {
         return Kmin <= x && x <= Kmax;
     }
 
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     inline const bool in_range_io(const TScalar x)
     {
         return Kmin <= x && x < Kmax;
     }
 
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     inline const bool in_range_oi(const TScalar x)
     {
         return Kmin < x && x <= Kmax;
     }
 
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     inline const bool in_range_oo(const TScalar x)
     {
         return Kmin < x && x < Kmax;

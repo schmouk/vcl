@@ -25,9 +25,8 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <limits>
+#include <type_traits>
 #include <opencv2/core/types.hpp>
-#include "vcl_concepts.h"
 
 export module utils.pos;
 
@@ -39,30 +38,43 @@ namespace vcl::utils {
 
     //===================================================================
     /** \brief class PosT: the generic class for 2-D clipped positions. */
-    export template<typename TScalar,
-                    const TScalar Kmin = std::numeric_limits<TScalar>::min,
-                    const TScalar Kmax = std::numeric_limits<TScalar>::max> 
-        requires vcl::concepts::is_numeric<TScalar>
+    export template<typename TScalar> 
+        requires std::is_arithmetic_v<TScalar>
     class PosT;
 
     // Specializations
+    /** \brief The class of 2D positions with char components (8 bits). */
+    export using Pos_c = PosT<char>;
+
+    /** \brief The class of 2D positions with unsigned char components (8 bits). */
+    export using Pos_b = PosT<unsigned char>;
+
     /** \brief The class of 2D positions with short components (16 bits). */
-    export using Pos_s = PosT<short, -32768, 32767>;
+    export using Pos_s = PosT<short>;
 
     /** \brief The class of 2D positions with unsigned short components (16 bits). */
-    export using Pos_us = PosT<unsigned short, 0, 65535>;
+    export using Pos_us = PosT<unsigned short>;
 
     /** \brief The class of 2D positions with long int components (32 bits). */
-    export using Pos_i = PosT<long, -2147483648, 2147483647>;
+    export using Pos_i = PosT<long>;
 
     /** \brief The class of 2D positions with unsigned long int components (32 bits). */
-    export using Pos_ui = PosT<unsigned long, 0, 4294967295>;
+    export using Pos_ui = PosT<unsigned long>;
+
+    /** \brief The class of 2D positions with long long int components (64 bits). */
+    export using Pos_ll = PosT<long long>;
+
+    /** \brief The class of 2D positions with unsigned long long int components (64 bits). */
+    export using Pos_ull = PosT<unsigned long long>;
 
     /** \brief The class of 2D positions with float components (32 bits). */
-    export using Pos_f = PosT<float, 0.0f, 1.0f>;
+    export using Pos_f = PosT<float>;
 
     /** \brief The class of 2D positions with double components (64 bits). */
-    export using Pos_d = PosT<double, 0.0, 1.0>;
+    export using Pos_d = PosT<double>;
+
+    /** \brief The class of 2D positions with long double components (128 bits). */
+    export using Pos_ld = PosT<long double>;
 
 
     //===================================================================
@@ -73,104 +85,109 @@ namespace vcl::utils {
     * more functionalities than cv::Point. Casting constructor and operator 
     * exist nevertheless.
     */
-    template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        requires vcl::concepts::is_numeric<TScalar>
-    class PosT : public vcl::vect::ClipVect2<TScalar, Kmin, Kmax>
+    template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    class PosT : public vcl::vect::ClipVect2<TScalar,
+                                             std::numeric_limits<TScalar>::min(),
+                                             std::numeric_limits<TScalar>::max()>
     {
     public:
-        typedef vcl::vect::ClipVect2<TScalar, Kmin, Kmax> MyBaseType; //!< wrapper to the inherited class naming.
-        typedef vcl::utils::PosT<TScalar, Kmin, Kmax>     MyType;     //!< wrapper to this class naming.
+        using MyBaseType = vcl::vect::ClipVect2<TScalar,
+                                                std::numeric_limits<TScalar>::min(),
+                                                std::numeric_limits<TScalar>::max()>;   //!< wrapper to the inherited class naming.
+        using MyType     = vcl::utils::PosT<TScalar>;                                   //!< wrapper to this class naming.
 
 
         //---   constructors   ------------------------------------------
         /** \brief Empty constructor.
         */
-        inline PosT<TScalar, Kmin, Kmax>()
+        inline PosT<TScalar>()
             : MyBaseType()
         {}
 
         /** \brief Constructor with value.
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const T value)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const T value)
             : MyBaseType(value)
         {}
 
         /** \brief Constructor with values.
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
-        inline PosT<TScalar, Kmin, Kmax>(const T x, const U y)
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline PosT<TScalar>(const T x, const U y)
             : MyBaseType(x, y)
         {}
 
         /** \brief Copy constructor (const&).
         */
-        inline PosT<TScalar, Kmin, Kmax>(const MyType& other)
+        inline PosT<TScalar>(const MyType& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
 
         /** \brief Move constructor (vcl::vect::Vector&&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(vcl::vect::Vector<T, S>&& other)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(vcl::vect::Vector<T, S>&& other)
             : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const std::array<T, S>& arr)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
 
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
         /** \brief Copy constructor (const cv::Point_&).
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
-        inline PosT<TScalar, Kmin, Kmax>(const cv::Point_<T>& pt)
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const cv::Point_<T>& pt)
             : MyBaseType(TScalar(pt.x), TScalar(pt.y))
         {}
 
         //---  Destructor   ---------------------------------------------
-        virtual inline ~PosT<TScalar, Kmin, Kmax>()
+        virtual inline ~PosT<TScalar>()
         {}
 
         //---   Casting operator   --------------------------------------
         /** \brief cast operator to cv::Point_<_Tp> */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline operator cv::Point_<T>& ()
         {
             return cv::Point_<T>(T(this->x()), T(this->y()));
         }
 
         //---   origin   ------------------------------------------------
-        /* \brief returns the origin position (short).
+        /* \brief returns the origin position (0, 0).
         */
         static inline MyType origin()
         {
             return MyType();
         }
+
     };
 
 }

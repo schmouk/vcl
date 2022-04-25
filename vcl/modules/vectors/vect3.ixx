@@ -26,8 +26,8 @@ SOFTWARE.
 module;
 
 #include <array>
+#include <type_traits>
 #include <vector>
-#include "vcl_concepts.h"
 
 export module vectors.vect3;
 
@@ -40,7 +40,7 @@ namespace vcl::vect {
     //-----------------------------------------------------------------------
     // Forward declaration and Specializations
     export template<typename TScalar>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     class Vect3;
 
     /** \brief The class of 3D vectors with 8bits signed components (8 bits). */
@@ -83,12 +83,12 @@ namespace vcl::vect {
     * \sa its specializations Vect3d, Vect3f, Vect3b, Vect3s, Vect3us, Vect3i, and Vect3ui.
     */
     template<typename TScalar>
-        requires vcl::concepts::is_numeric<TScalar>
+        requires std::is_arithmetic_v<TScalar>
     class Vect3 : public vcl::vect::Vector<TScalar, 3>
     {
     public:
-        typedef vcl::vect::Vector<TScalar, 3> MyBaseType; //<! wrapper to the inherited class naming.
-        typedef vcl::vect::Vect3<TScalar>     MyType;     //<! wrapper to this class naming.
+        using MyBaseType = vcl::vect::Vector<TScalar, 3>;   //<! wrapper to the inherited class naming.
+        using MyType     = vcl::vect::Vect3<TScalar>    ;   //<! wrapper to this class naming.
 
 
         //---   constructors   ----------------------------------------------
@@ -101,7 +101,7 @@ namespace vcl::vect {
         /** \brief Filling constructor (single scalar).
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline Vect3<TScalar>(const T value)
             : MyBaseType(value)
         {}
@@ -109,8 +109,8 @@ namespace vcl::vect {
         /** \brief Constructor with values.
         */
         template<typename T, typename U, typename V>
-            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U> && vcl::concepts::is_numeric<V>
-        inline Vect3<TScalar>(const T x_, const U y_, const V z_ = T(0))
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V>
+        inline Vect3<TScalar>(const T x_, const U y_, const V z_ = V(0))
             : MyBaseType()
         {
             x(x_);
@@ -121,7 +121,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const vcl::vect::Vector&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline Vect3<TScalar>(const vcl::vect::Vector<T, S>& other)
             : MyBaseType(other)
         {}
@@ -129,7 +129,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline Vect3<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
@@ -137,7 +137,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline Vect3<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
@@ -145,7 +145,7 @@ namespace vcl::vect {
         /** \brief Copy constructor (const std::pair&).
         */
         template<typename T, typename U>
-            requires vcl::concepts::is_numeric<T> && vcl::concepts::is_numeric<U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline Vect3<TScalar>(const std::pair<T, U>& pair)
             : MyBaseType(pair)
         {}
@@ -163,7 +163,7 @@ namespace vcl::vect {
 
         /** \brief component x mutator */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline TScalar x(const T new_x)
         {
             return (*this)[0] = this->clipped(new_x);
@@ -177,7 +177,7 @@ namespace vcl::vect {
 
         /** \brief component y mutator */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline TScalar y(const T new_y)
         {
             return (*this)[1] = this->clipped(new_y);
@@ -191,7 +191,7 @@ namespace vcl::vect {
 
         /** \brief component z mutator */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline TScalar z(const T new_z)
         {
             return (*this)[2] = this->clipped(new_z);

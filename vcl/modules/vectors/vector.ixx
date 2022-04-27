@@ -99,16 +99,6 @@ namespace vcl::vect {
             copy(&other);
         }
 
-        /** \brief Constructor (const std::array&).
-        */
-        template<typename T, size_t S>
-            requires std::is_arithmetic_v<T>
-        explicit inline Vector<TScalar, Ksize>(const std::array<T, S>& arr)
-            : MyBaseType()
-        {
-            copy(arr);
-        }
-
         /** \brief Constructor (const std::vector&).
         */
         template<typename T>
@@ -117,6 +107,16 @@ namespace vcl::vect {
             : MyBaseType()
         {
             copy(vect);
+        }
+
+        /** \brief Constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        explicit inline Vector<TScalar, Ksize>(const std::array<T, S>& arr)
+            : MyBaseType()
+        {
+            copy(arr);
         }
 
         /** \brief Constructor (const std::pair&).
@@ -317,31 +317,23 @@ namespace vcl::vect {
         /** \brief operator == (std::pair) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        bool operator == (const std::pair<T, U>& other)
+        inline bool operator == (const std::pair<T, U>& other)
         {
             if (2 != Ksize)
                 return false;
-
-            const T* pot = other.cbegin();
-            for (TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
-                if (*ptr++ != TScalar(*pot++))
-                    return false;
-            return true;
+            else
+                return (*this)[0] == TScalar(other.first) && (*this)[1] == TScalar(other.second);
         }
 
         /** \brief operator == (std::vector, vcl::vect::Vector) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        friend bool operator == (const std::pair<T, U>& lhs, const MyType& rhs)
+        friend inline bool operator == (const std::pair<T, U>& lhs, const MyType& rhs)
         {
             if (2 != Ksize)
                 return false;
-
-            const TScalar* rit = rhs.cbegin();
-            for (auto lit = lhs.cbegin(); lit != lhs->cend() && rit != rhs.cend(); )
-                if (*lit++ != T(*rit++))
-                    return false;
-            return true;
+            else
+                return rhs[0] == TScalar(lhs.first) && rhs[1] == TScalar(lhs.second);
         }
 
         /** \brief operator != (vcl::vect::Vector) */
@@ -459,19 +451,21 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline void copy(const std::pair<T, U>& other)
         {
-            auto ot = other.cbegin();
-            for (TScalar* ptr = begin(); ptr != this->end() && ot != other.cend(); )
-                *ptr++ = clipped(*ot++);
+            if (Ksize > 0)
+                (*this)[0] = TScalar(other.first);
+            if (Ksize > 1)
+                (*this)[1] = TScalar(other.second);
         }
 
         /** \brief Copies into a std::pair. */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        friend inline void copy(std::pair<T, U>&& lhs, MyType&& rhs)
+        friend inline void copy(std::pair<T, U>& lhs, MyType& rhs)
         {
-            TScalar p_rhs = &rhs.begin();
-            for (T* p_lhs = lhs.begin(); p_lhs != lhs.end() && p_rhs != &rhs.end() + Ksize; )
-                *p_lhs++ = T(*p_rhs++);
+            if (Ksize > 0)
+                rhs[0] = TScalar(lhs.first);
+            if (Ksize > 1)
+                rhs[1] = TScalar(lhs.second);
         }
 
 

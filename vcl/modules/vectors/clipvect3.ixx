@@ -128,6 +128,13 @@ namespace vcl::vect {
             : MyBaseType(other)
         {}
 
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline ClipVect3<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
 
         /** \brief Copy constructor (const std::array&).
         */
@@ -135,14 +142,6 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline ClipVect3<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
-        {}
-
-        /** \brief Copy constructor (const std::vector&).
-        */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline ClipVect3<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
-            : MyBaseType(vect)
         {}
 
         /** \brief Copy constructor (const std::pair&).

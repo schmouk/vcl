@@ -132,6 +132,13 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline OffsetsT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
@@ -140,11 +147,12 @@ namespace vcl::utils {
             : MyBaseType(arr)
         {}
 
-        /** \brief Copy constructor (const std::vector&).
+        /** \brief Copy constructor (const std::pair&).
         */
-        template<typename T>
-        inline OffsetsT<TScalar>(const std::vector<T>& vect)
-            : MyBaseType(vect)
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline OffsetsT<TScalar>(const std::pair<T, U>& pair)
+            : MyBaseType(pair)
         {}
 
         //---  Destructor   -------------------------------------------------

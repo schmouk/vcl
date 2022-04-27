@@ -127,6 +127,14 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
@@ -135,12 +143,12 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const std::vector&).
+        /** \brief Copy constructor (const std::pair&).
         */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline DimsT<TScalar>(const std::vector<T>& vect)
-            : MyBaseType(vect)
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline DimsT<TScalar>(const std::pair<T, U>& other)
+            : MyBaseType(other)
         {}
 
         /** \brief Copy constructor (const cv::Size_&).

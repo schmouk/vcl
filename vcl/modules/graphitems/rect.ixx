@@ -61,7 +61,8 @@ namespace vcl::graphitems {
 
     // Specializations
     /** \brief The class of rectangles with integer positions and dimensions (16 bits). */
-    export using Rect = RectT<short>;
+    export using Rect_s = RectT<short>;
+    export using Rect = Rect_s;
 
     /** \brief The class of rectangles with integer positions and dimensions (32 bits). */
     export using Rect_i = RectT<long>;
@@ -115,7 +116,7 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline explicit RectT<TScalar>(const vcl::vect::Vect4<T>& vect)
+        inline explicit RectT<TScalar>(const vcl::vect::Vect4T<T>& vect)
             : MyBaseType(TScalar(vect[0]),
                          TScalar(vect[2]),
                          TScalar(vect[1] - vect[0] + 1),
@@ -241,14 +242,14 @@ namespace vcl::graphitems {
             return *this;
         }
 
-        /** \brief assign operator (const vcl::vect::Vect4<>).
+        /** \brief assign operator (const vcl::vect::Vect4T<>).
         * The vector components are: {left_x, top_y, width, height}.
         * Notice: assignment operators with argument of type Rect are
         *         provided per inheritance from base class cv::Rect_.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& operator= (vcl::vect::Vect4<T>& other) noexcept
+        MyType& operator= (vcl::vect::Vect4T<T>& other) noexcept
         {
             this->x = TScalar(other.x());
             this->y = TScalar(other.y());
@@ -563,14 +564,14 @@ namespace vcl::graphitems {
             return vcl::utils::DimsT<T>(this->width, this->height);
         }
 
-        /** \brief casting operator to vcl::vect::Vect4<T>.
-        * Returns a 4-components vcl::vect::Vect4 (left_x, top_y, width, height).
+        /** \brief casting operator to vcl::vect::Vect4T<T>.
+        * Returns a 4-components vcl::vect::Vect4T (left_x, top_y, width, height).
         */
         template<typename T = TScalar>
             requires std::is_arithmetic_v<T>
-        inline operator vcl::vect::Vect4<T>()
+        inline operator vcl::vect::Vect4T<T>()
         {
-            return vcl::vect::Vect4<T>(this->x, this->y, this->width, this->height);
+            return vcl::vect::Vect4T<T>(this->x, this->y, this->width, this->height);
         }
 
         /** \brief casting operator to std::vector<T>.
@@ -646,10 +647,10 @@ namespace vcl::graphitems {
             return move(offset.dx(), offset.dy());
         }
 
-        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        /** \brief Moves this rectangle with specified offset (vcl::vect::VectorT). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const vcl::vect::Vector<T, Ksize>& offset) noexcept(false)
+        inline MyType& move(const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
         {
             if (Ksize < 2) {
                 throw std::invalid_argument("vectors used for offsets must contain at least 2 components.");
@@ -704,10 +705,10 @@ namespace vcl::graphitems {
             return move(offset);
         }
 
-        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        /** \brief Moves this rectangle with specified offset (vcl::vect::VectorT). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator += (const vcl::vect::Vector<T, Ksize>& offset)
+        inline MyType& operator += (const vcl::vect::VectorT<T, Ksize>& offset)
         {
             return move(offset);
         }
@@ -752,18 +753,18 @@ namespace vcl::graphitems {
             return rect += offset;
         }
 
-        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        /** \brief Moves this rectangle with specified offset (vcl::vect::VectorT). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (MyType rect, const vcl::vect::Vector<T, Ksize>& offset)
+        inline friend MyType operator + (MyType rect, const vcl::vect::VectorT<T, Ksize>& offset)
         {
             return rect += offset;
         }
 
-        /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
+        /** \brief Moves this rectangle with specified offset (vcl::vect::VectorT). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (const vcl::vect::Vector<T, Ksize>& offset, MyType rect)
+        inline friend MyType operator + (const vcl::vect::VectorT<T, Ksize>& offset, MyType rect)
         {
             return rect += offset;
         }
@@ -836,10 +837,10 @@ namespace vcl::graphitems {
             return move_at(TScalar(new_pos.x()), TScalar(new_pos.y()));
         }
 
-        /** \brief Moves top-left corner of this this rectangle to specified position (vcl::vect::Vector). */
+        /** \brief Moves top-left corner of this this rectangle to specified position (vcl::vect::VectorT). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& move_at(const vcl::vect::Vector<T, Ksize>& new_pos)
+        inline MyType& move_at(const vcl::vect::VectorT<T, Ksize>& new_pos)
         {
             return Ksize >= 2 ? move_at(TScalar(new_pos[0]), TScalar(new_pos[1])) : *this;
         }
@@ -912,12 +913,12 @@ namespace vcl::graphitems {
             return resize(incr.dx(), incr.dy());
         }
 
-        /** \brief Resizes this rectangle (1 vcl::vectors::Vect2<> argument).
+        /** \brief Resizes this rectangle (1 vcl::vectors::Vect2T<> argument).
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& resize(const vcl::vect::Vect2<T>& incr) noexcept
+        inline MyType& resize(const vcl::vect::Vect2T<T>& incr) noexcept
         {
             return resize(incr.x(), incr.y());
         }
@@ -989,13 +990,13 @@ namespace vcl::graphitems {
             return *this;
         }
 
-        /** \brief Resizes this rectangle according to scaling factors (const vcl::vect::Vector&).
+        /** \brief Resizes this rectangle according to scaling factors (const vcl::vect::VectorT&).
         * Factors less than 1 reduce the size of this rectangle.
         * Negative values for 'factor' raise an invalid_argument exception.
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        MyType& scale(const vcl::vect::Vector<T, Ksize>& vect) noexcept(false)
+        MyType& scale(const vcl::vect::VectorT<T, Ksize>& vect) noexcept(false)
         {
             switch (Ksize)
             {
@@ -1077,7 +1078,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator *= (const vcl::vect::Vector<T, Ksize>& vect)
+        inline MyType& operator *= (const vcl::vect::VectorT<T, Ksize>& vect)
         {
             return scale(vect);
         }
@@ -1131,18 +1132,18 @@ namespace vcl::graphitems {
             return rhs *= value;
         }
 
-        /** \brief Resizing operator * (const vcl::vect::Vector<>) */
+        /** \brief Resizing operator * (const vcl::vect::VectorT<>) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator * (MyType lhs, const vcl::vect::Vector<T, S>& vect)
+        friend inline MyType operator * (MyType lhs, const vcl::vect::VectorT<T, S>& vect)
         {
             return lhs *= vect;
         }
 
-        /** \brief Resizing operator * (const vcl::vect::Vector<>, vcl::graphitems::RectT<>) */
+        /** \brief Resizing operator * (const vcl::vect::VectorT<>, vcl::graphitems::RectT<>) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator * (const vcl::vect::Vector<T, S>& vect, MyType rhs)
+        friend inline MyType operator * (const vcl::vect::VectorT<T, S>& vect, MyType rhs)
         {
             return rhs *= vect;
         }
@@ -1234,7 +1235,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        MyType& scale_from_center(const vcl::vect::Vector<T, S>& vect)
+        MyType& scale_from_center(const vcl::vect::VectorT<T, S>& vect)
         {
             switch (vect.size())
             {
@@ -1341,13 +1342,13 @@ namespace vcl::graphitems {
             return *this;
         }
 
-        /** \brief Resizes this rectangle according to reducing factors (const vcl::vect::Vector&).
+        /** \brief Resizes this rectangle according to reducing factors (const vcl::vect::VectorT&).
         * Factors less than 1 augment the size of this rectangle.
         * Negative and null values for 'factor' raise an invalid_argument exception.
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        MyType& shrink(const vcl::vect::Vector<T, Ksize>& vect)
+        MyType& shrink(const vcl::vect::VectorT<T, Ksize>& vect)
         {
             switch (Ksize)
             {
@@ -1429,7 +1430,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator /= (const vcl::vect::Vector<T, Ksize>& vect)
+        inline MyType& operator /= (const vcl::vect::VectorT<T, Ksize>& vect)
         {
             return shrink(vect);
         }
@@ -1475,10 +1476,10 @@ namespace vcl::graphitems {
             return lhs /= value;
         }
 
-        /** \brief Shrinking operator / (const vcl::vect::Vector<>) */
+        /** \brief Shrinking operator / (const vcl::vect::VectorT<>) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator / (MyType lhs, const vcl::vect::Vector<T, S>& vect)
+        friend inline MyType operator / (MyType lhs, const vcl::vect::VectorT<T, S>& vect)
         {
             return lhs /= vect;
         }
@@ -1546,7 +1547,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        MyType& shrink_from_center(const vcl::vect::Vector<T, S>& vect)
+        MyType& shrink_from_center(const vcl::vect::VectorT<T, S>& vect)
         {
             switch (vect.size())
             {
@@ -1666,13 +1667,13 @@ namespace vcl::graphitems {
             return inset(incr.dx(), incr.dy());
         }
 
-        /** \brief Reduces the dimensions of this rectangle (1 vcl::vectors::Vect2<> argument).
+        /** \brief Reduces the dimensions of this rectangle (1 vcl::vectors::Vect2T<> argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& inset(const vcl::vect::Vect2<T>& vect) noexcept
+        inline MyType& inset(const vcl::vect::Vect2T<T>& vect) noexcept
         {
             return inset(vect.x(), vect.y());
         }
@@ -1749,13 +1750,13 @@ namespace vcl::graphitems {
             return outset(incr.width(), incr.height());
         }
 
-        /** \brief Augments the dimensions of this rectangle (1 vcl::vectors::Vect2<> argument).
+        /** \brief Augments the dimensions of this rectangle (1 vcl::vectors::Vect2T<> argument).
         * Negative values for argument 'incr' decrease the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& outset(const vcl::vect::Vect2<T>& incr) noexcept
+        inline MyType& outset(const vcl::vect::Vect2T<T>& incr) noexcept
         {
             return outset(incr.x(), incr.y());
         }
@@ -1818,10 +1819,10 @@ namespace vcl::graphitems {
             return contains(TScalar(pos.x()), TScalar(pos.y()));
         }
 
-        /** \brief Returns true if this rectangle contains a specified position (1 vcl::vect::Vect2 argument). */
+        /** \brief Returns true if this rectangle contains a specified position (1 vcl::vect::Vect2T argument). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const bool contains(const vcl::vect::Vect2<T>& pos) const noexcept
+        inline const bool contains(const vcl::vect::Vect2T<T>& pos) const noexcept
         {
             return contains(TScalar(pos.x()), TScalar(pos.y()));
         }

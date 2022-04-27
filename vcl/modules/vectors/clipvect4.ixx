@@ -43,37 +43,38 @@ namespace vcl::vect {
     // Forward declaration and Specializations
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         requires std::is_arithmetic_v<TScalar>
-    class ClipVect4;
+    class ClipVect4T;
 
     /** \brief The class of 4D vectors with signed 8-bits components (8 bits). */
-    export using ClipVect4c = ClipVect4<char, std::numeric_limits<char>::min(), std::numeric_limits<char>::max()>;
+    export using ClipVect4c = ClipVect4T<char, std::numeric_limits<char>::min(), std::numeric_limits<char>::max()>;
 
     /** \brief The class of 4D vectors with bytes components (8 bits). */
-    export using ClipVect4b = ClipVect4<unsigned char, std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max()>;
+    export using ClipVect4b = ClipVect4T<unsigned char, std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max()>;
 
     /** \brief The class of 4D vectors with short components (16 bits). */
-    export using ClipVect4s = ClipVect4<short, std::numeric_limits<short>::min(), std::numeric_limits<short>::max()>;
+    export using ClipVect4s = ClipVect4T<short, std::numeric_limits<short>::min(), std::numeric_limits<short>::max()>;
+    export using ClipVect4 = ClipVect4s;
 
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-    export using ClipVect4us = ClipVect4<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
+    export using ClipVect4us = ClipVect4T<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
 
     /** \brief The class of 4D vectors with long int components (32 bits). */
-    export using ClipVect4i = ClipVect4<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
+    export using ClipVect4i = ClipVect4T<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
 
     /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
-    export using ClipVect4ui = ClipVect4<unsigned long, std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max()>;
+    export using ClipVect4ui = ClipVect4T<unsigned long, std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max()>;
 
     /** \brief The class of 4D vectors with long int components (32 bits). */
-    export using ClipVect4ll = ClipVect4<long long, std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()>;
+    export using ClipVect4ll = ClipVect4T<long long, std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()>;
 
     /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
-    export using ClipVect4ull = ClipVect4<unsigned long long, std::numeric_limits<unsigned long long>::min(), std::numeric_limits<unsigned long long>::max()>;
+    export using ClipVect4ull = ClipVect4T<unsigned long long, std::numeric_limits<unsigned long long>::min(), std::numeric_limits<unsigned long long>::max()>;
 
     /** \brief The class of 4D vectors with float components (32 bits). */
-    export using ClipVect4f = ClipVect4<float, 0.0f, 1.0f>;
+    export using ClipVect4f = ClipVect4T<float, 0.0f, 1.0f>;
 
     /** \brief The class of 4D vectors with double components (64 bits). */
-    export using ClipVect4d = ClipVect4<double, 0.0, 1.0>;
+    export using ClipVect4d = ClipVect4T<double, 0.0, 1.0>;
 
 
     //=======================================================================
@@ -83,15 +84,15 @@ namespace vcl::vect {
     */
     template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         requires std::is_arithmetic_v<TScalar>
-    class ClipVect4 : public vcl::vect::Vect4<TScalar>
+    class ClipVect4T : public vcl::vect::Vect4T<TScalar>
     {
     public:
-        using MyBaseType =  vcl::vect::Vect4<TScalar>                ;  //!< wrapper to the inherited class naming..
-        using MyType     =  vcl::vect::ClipVect4<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
+        using MyBaseType =  vcl::vect::Vect4T<TScalar>                ;  //!< wrapper to the inherited class naming..
+        using MyType     =  vcl::vect::ClipVect4T<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
              //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
         */
-        inline ClipVect4<TScalar, Kmin, Kmax>()
+        inline ClipVect4T<TScalar, Kmin, Kmax>()
             : MyBaseType()
         {
             this->fill(this->clipped(TScalar(0)));
@@ -101,7 +102,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const T value)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType()
         {
             this->fill<T>(this->clipped(value));
@@ -111,7 +112,7 @@ namespace vcl::vect {
         */
         template<typename T, typename U, typename V, typename W>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V> && std::is_arithmetic_v<W>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const T x_, const U y_, const V z_ = V(0), const W w_ = W(0))
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const T x_, const U y_, const V z_ = V(0), const W w_ = W(0))
             : MyBaseType()
         {
             x(x_);
@@ -120,11 +121,11 @@ namespace vcl::vect {
             w(w_);
         }
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -132,7 +133,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
@@ -140,7 +141,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -148,7 +149,7 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
             : MyBaseType(pair)
         {}
 
@@ -156,7 +157,7 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline ClipVect4<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair1, const std::pair<T, U>& pair2)
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair1, const std::pair<T, U>& pair2)
             : MyBaseType()
         {
             (*this)[0] = TScalar(pair1.first);
@@ -166,7 +167,7 @@ namespace vcl::vect {
         }
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~ClipVect4<TScalar, Kmin, Kmax>()
+        virtual inline ~ClipVect4T<TScalar, Kmin, Kmax>()
         {}
 
         //---   Components accessors / mutators   --------------------------------------

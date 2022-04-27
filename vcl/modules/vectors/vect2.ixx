@@ -42,40 +42,41 @@ namespace vcl::vect {
     // Forward declaration and Specializations
     export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    class Vect2;
+    class Vect2T;
 
     /** \brief The class of 2D vectors with 8bits signed components (8 bits). */
-    export using Vect2c = Vect2<char>;
+    export using Vect2c = Vect2T<char>;
 
     /** \brief The class of 2D vectors with bytes components (8 bits). */
-    export using Vect2b = Vect2<unsigned char>;
+    export using Vect2b = Vect2T<unsigned char>;
 
     /** \brief The class of 2D vectors with short components (16 bits). */
-    export using Vect2s = Vect2<short>;
+    export using Vect2s = Vect2T<short>;
+    export using Vect2 = Vect2s;
 
     /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    export using Vect2us = Vect2<unsigned short>;
+    export using Vect2us = Vect2T<unsigned short>;
 
     /** \brief The class of 2D vectors with long int components (32 bits). */
-    export using Vect2i = Vect2<long>;
+    export using Vect2i = Vect2T<long>;
 
     /** \brief The class of 2D vectors with unsigned long int components (32 bits). */
-    export using Vect2ui = Vect2<unsigned long>;
+    export using Vect2ui = Vect2T<unsigned long>;
 
     /** \brief The class of 2D vectors with long long components (64 bits). */
-    export using Vect2li = Vect2<long long>;
+    export using Vect2li = Vect2T<long long>;
 
     /** \brief The class of 2D vectors with unsigned long long components (64 bits). */
-    export using Vect2uli = Vect2<unsigned long long>;
+    export using Vect2uli = Vect2T<unsigned long long>;
 
     /** \brief The class of 2D vectors with float components (32 bits). */
-    export using Vect2f = Vect2<float>;
+    export using Vect2f = Vect2T<float>;
 
     /** \brief The class of 2D vectors with double components (64 bits). */
-    export using Vect2d = Vect2<double>;
+    export using Vect2d = Vect2T<double>;
 
     /** \brief The class of 2D vectors with long double components (128 bits). */
-    export using Vect2ld = Vect2<long double>;
+    export using Vect2ld = Vect2T<long double>;
 
 
     //-----------------------------------------------------------------------
@@ -85,16 +86,16 @@ namespace vcl::vect {
     */
     template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    class Vect2 : public vcl::vect::Vector<TScalar, 2>
+    class Vect2T : public vcl::vect::VectorT<TScalar, 2>
     {
     public:
-        using MyBaseType = vcl::vect::Vector<TScalar, 2> ;  //<! wrapper to the inherited class naming.
-        using MyType     = vcl::vect::Vect2<TScalar>     ;  //<! wrapper to this class naming.
+        using MyBaseType = vcl::vect::VectorT<TScalar, 2> ;  //<! wrapper to the inherited class naming.
+        using MyType     = vcl::vect::Vect2T<TScalar>     ;  //<! wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor (components default to 0).
         */
-        inline Vect2<TScalar>()
+        inline Vect2T<TScalar>()
             : MyBaseType()
         {}
 
@@ -102,7 +103,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vect2<TScalar>(const T value)
+        inline Vect2T<TScalar>(const T value)
             : MyBaseType()
         {
             this->fill(this->clipped(value));
@@ -112,26 +113,26 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline Vect2<TScalar>(const T x_, const U y_)
+        inline Vect2T<TScalar>(const T x_, const U y_)
             : MyBaseType()
         {
             x(x_);
             y(y_);
         }
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline Vect2<TScalar>(const vcl::vect::Vector<T, S>& other)
+        inline Vect2T<TScalar>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Move constructor (vcl::vect::Vector&&).
+        /** \brief Move constructor (vcl::vect::VectorT&&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline Vect2<TScalar>(vcl::vect::Vector<T, S>&& other)
+        inline Vect2T<TScalar>(vcl::vect::VectorT<T, S>&& other)
             : MyBaseType(other)
         {}
 
@@ -139,7 +140,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vect2<TScalar>(const std::vector<T>& vect)
+        inline Vect2T<TScalar>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
@@ -147,7 +148,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline Vect2<TScalar>(const std::array<T, S>& arr)
+        inline Vect2T<TScalar>(const std::array<T, S>& arr)
             : MyBaseType(arr)
         {}
 
@@ -155,12 +156,12 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline Vect2<TScalar>(const std::pair<T, U>& pair)
+        inline Vect2T<TScalar>(const std::pair<T, U>& pair)
             : MyBaseType(pair)
         {}
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~Vect2<TScalar>()
+        virtual inline ~Vect2T<TScalar>()
         {}
 
         //---   Components accessors / mutators   --------------------------------------

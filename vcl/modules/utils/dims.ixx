@@ -54,7 +54,7 @@ namespace vcl::utils {
     export using Dims_ui = DimsT<unsigned long>;
 
     /** \brief The class of 2D dimensions with unsigned long long components (32 bits). */
-    export using Dims_uli = DimsT<unsigned long long>;
+    export using Dims_ull = DimsT<unsigned long long>;
 
     /** \brief The class of 2D dimensions with float components (64 bits). */
     export using Dims_f = DimsT<float>;
@@ -76,10 +76,10 @@ namespace vcl::utils {
     */
     template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    class DimsT : public vcl::vect::Vect2<TScalar>
+    class DimsT : public vcl::vect::Vect2T<TScalar>
     {
     public:
-        using MyBaseType = vcl::vect::Vect2<TScalar> ; //!< wrapper to the inherited class naming.
+        using MyBaseType = vcl::vect::Vect2T<TScalar> ; //!< wrapper to the inherited class naming.
         using MyType     = vcl::utils::DimsT<TScalar>; //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
@@ -111,19 +111,19 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline DimsT<TScalar>(const vcl::vect::Vector<T, S>& other)
+        inline DimsT<TScalar>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Move constructor (vcl::vect::Vector&&).
+        /** \brief Move constructor (vcl::vect::VectorT&&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline DimsT<TScalar>(vcl::vect::Vector<T, S>&& other)
+        inline DimsT<TScalar>(vcl::vect::VectorT<T, S>&& other)
             : MyBaseType(other)
         {}
 

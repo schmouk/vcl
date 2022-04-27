@@ -51,6 +51,7 @@ namespace vcl::utils {
 
     /** \brief The class of 2D positions with short components (16 bits). */
     export using Pos_s = PosT<short>;
+    export using Pos = Pos_s;
 
     /** \brief The class of 2D positions with unsigned short components (16 bits). */
     export using Pos_us = PosT<unsigned short>;
@@ -87,14 +88,14 @@ namespace vcl::utils {
     */
     template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    class PosT : public vcl::vect::ClipVect2<TScalar,
-                                             std::numeric_limits<TScalar>::min(),
-                                             std::numeric_limits<TScalar>::max()>
+    class PosT : public vcl::vect::ClipVect2T<TScalar,
+                                              std::numeric_limits<TScalar>::min(),
+                                              std::numeric_limits<TScalar>::max()>
     {
     public:
-        using MyBaseType = vcl::vect::ClipVect2<TScalar,
-                                                std::numeric_limits<TScalar>::min(),
-                                                std::numeric_limits<TScalar>::max()>;   //!< wrapper to the inherited class naming.
+        using MyBaseType = vcl::vect::ClipVect2T<TScalar,
+                                                 std::numeric_limits<TScalar>::min(),
+                                                 std::numeric_limits<TScalar>::max()>;  //!< wrapper to the inherited class naming.
         using MyType     = vcl::utils::PosT<TScalar>;                                   //!< wrapper to this class naming.
 
 
@@ -127,19 +128,19 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline PosT<TScalar>(const vcl::vect::Vector<T, S>& other)
+        inline PosT<TScalar>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
-        /** \brief Move constructor (vcl::vect::Vector&&).
+        /** \brief Move constructor (vcl::vect::VectorT&&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline PosT<TScalar>(vcl::vect::Vector<T, S>&& other)
+        inline PosT<TScalar>(vcl::vect::VectorT<T, S>&& other)
             : MyBaseType(other)
         {}
 

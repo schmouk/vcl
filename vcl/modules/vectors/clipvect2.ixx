@@ -46,37 +46,38 @@ namespace vcl::vect {
     // Forward declaration and Specializations
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> 
         requires std::is_arithmetic_v<TScalar>
-    class ClipVect2;
+    class ClipVect2T;
 
     /** \brief The class of 2D vectors with signed 8-bits components (8 bits). */
-    export using ClipVect2c = ClipVect2<char, std::numeric_limits<char>::min(), std::numeric_limits<char>::max()>;
+    export using ClipVect2c = ClipVect2T<char, std::numeric_limits<char>::min(), std::numeric_limits<char>::max()>;
 
     /** \brief The class of 2D vectors with bytes components (8 bits). */
-    export using ClipVect2b = ClipVect2<unsigned char, std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max()>;
+    export using ClipVect2b = ClipVect2T<unsigned char, std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max()>;
 
     /** \brief The class of 2D vectors with short components (16 bits). */
-    export using ClipVect2s = ClipVect2<short, std::numeric_limits<short>::min(), std::numeric_limits<short>::max()>;
+    export using ClipVect2s = ClipVect2T<short, std::numeric_limits<short>::min(), std::numeric_limits<short>::max()>;
+    export using ClipVect2 = ClipVect2s;
 
     /** \brief The class of 2D vectors with unsigned short components (16 bits). */
-    export using ClipVect2us = ClipVect2<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
+    export using ClipVect2us = ClipVect2T<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
 
     /** \brief The class of 2D vectors with long int components (32 bits). */
-    export using ClipVect2i = ClipVect2<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
+    export using ClipVect2i = ClipVect2T<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
 
     /** \brief The class of 2D vectors with unsigned long int components (32 bits). */
-    export using ClipVect2ui = ClipVect2<unsigned long, std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max()>;
+    export using ClipVect2ui = ClipVect2T<unsigned long, std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max()>;
 
     /** \brief The class of 2D vectors with long int components (32 bits). */
-    export using ClipVect2ll = ClipVect2<long long, std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()>;
+    export using ClipVect2ll = ClipVect2T<long long, std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()>;
 
     /** \brief The class of 2D vectors with unsigned long int components (32 bits). */
-    export using ClipVect2ull = ClipVect2<unsigned long long, std::numeric_limits<unsigned long long>::min(), std::numeric_limits<unsigned long long>::max()>;
+    export using ClipVect2ull = ClipVect2T<unsigned long long, std::numeric_limits<unsigned long long>::min(), std::numeric_limits<unsigned long long>::max()>;
 
     /** \brief The class of 2D vectors with float components (32 bits). */
-    export using ClipVect2f = ClipVect2<float, 0.0f, 1.0f>;
+    export using ClipVect2f = ClipVect2T<float, 0.0f, 1.0f>;
 
     /** \brief The class of 2D vectors with double components (64 bits). */
-    export using ClipVect2d = ClipVect2<double, 0.0, 1.0>;
+    export using ClipVect2d = ClipVect2T<double, 0.0, 1.0>;
 
 
     //=======================================================================
@@ -86,16 +87,16 @@ namespace vcl::vect {
     */
     template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         requires std::is_arithmetic_v<TScalar>
-    class ClipVect2 : public vcl::vect::Vect2<TScalar>
+    class ClipVect2T : public vcl::vect::Vect2T<TScalar>
     {
     public:
-        using MyBaseType =  vcl::vect::Vect2<TScalar>                ;  //!< wrapper to the inherited class naming.
-        using MyType     =  vcl::vect::ClipVect2<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
+        using MyBaseType =  vcl::vect::Vect2T<TScalar>                ;  //!< wrapper to the inherited class naming.
+        using MyType     =  vcl::vect::ClipVect2T<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
         */
-        inline ClipVect2<TScalar, Kmin, Kmax>()
+        inline ClipVect2T<TScalar, Kmin, Kmax>()
             : MyBaseType()
         {
             //this->fill(this->clipped(TScalar(0)));
@@ -105,7 +106,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const T value)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType()
         {
             this->fill<T>(this->clipped(value));
@@ -115,18 +116,18 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const T x_, const U y_)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const T x_, const U y_)
             : MyBaseType()
         {
             x(x_);
             y(y_);
         }
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const vcl::vect::Vector<T, S>& other)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -134,7 +135,7 @@ namespace vcl::vect {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
             : MyBaseType(vect)
         {}
 
@@ -142,7 +143,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -150,12 +151,12 @@ namespace vcl::vect {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline ClipVect2<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
             : MyBaseType(pair)
         {}
 
         //---  Destructor   -------------------------------------------------
-        virtual inline ~ClipVect2<TScalar, Kmin, Kmax>()
+        virtual inline ~ClipVect2T<TScalar, Kmin, Kmax>()
         {}
 
         //---   Components accessors / mutators   --------------------------------------

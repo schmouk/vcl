@@ -336,7 +336,7 @@ namespace vcl::utils {
         inline bool operator == (const vcl::utils::Timecode<F>& rhs)
         {
             constexpr FrameTime EPS = 1e-4f;
-            return vcl::utils::in_range_ii<FrameTime, -EPS, EPS>(this->frame_s() - rhs.frame_s());
+            return vcl::utils::in_range_ii<FrameTime>(this->frame_s() - rhs.frame_s(), -EPS, EPS);
         }
 
         /** operator != */

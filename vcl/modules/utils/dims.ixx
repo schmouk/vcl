@@ -48,6 +48,7 @@ namespace vcl::utils {
 
     /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
     export using Dims_us = DimsT<unsigned short>;
+    export using Dims = Dims_us;
 
     /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
     export using Dims_ui = DimsT<unsigned long>;

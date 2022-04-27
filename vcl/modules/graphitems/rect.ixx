@@ -25,6 +25,8 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <iostream>
+
 #include <array>
 #include <sstream>
 #include <stdexcept>
@@ -43,6 +45,7 @@ import utils.colors;
 import utils.dims;
 import utils.offsets;
 import utils.pos;
+import utils.ranges;
 import vectors.vect2;
 import vectors.vect4;
 
@@ -91,10 +94,10 @@ namespace vcl::graphitems {
     public:
         using MyBaseType = cv::Rect_<TScalar>;              //!< wrapper to the inherited cv::Rect_ class naming.
         using MyType     = vcl::graphitems::RectT<TScalar>; //!< wrapper to this class naming.
-        using PosType    = vcl::utils::PosT<TScalar>;       //!< wrapper to this class specialized PosT type.
-        using DimsType   = vcl::utils::DimsT<TScalar> ;     //!< wrapper to this class specialized DimsT type.
+        using MyPosType  = vcl::utils::PosT<TScalar>;       //!< wrapper to this class specialized PosT type.
+        using MyDimsType = vcl::utils::DimsT<TScalar> ;     //!< wrapper to this class specialized DimsT type.
 
-        //---   constructors   ----------------------------------------------
+        //---   Constructors   ----------------------------------------------
         /** \brief Empty constructor.
         */
         inline RectT<TScalar>()
@@ -206,12 +209,12 @@ namespace vcl::graphitems {
         {}
 
 
-        //---  Destructor   -------------------------------------------------
+        //---   Destructor   ------------------------------------------------
         virtual inline ~RectT<TScalar>()
         {}
 
 
-        //--- Assignment ----------------------------------------------------
+        //---   Assignment   ------------------------------------------------
         /** \brief Copy assign operator (const vcl::graphitems::RectT<>&).
         */
         template<typename T>
@@ -263,7 +266,7 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& operator= (std::vector<T>& vect)
+        MyType& operator= (std::vector<T>& vect) noexcept(false)
         {
             if (vect.size() < 4) {
                 throw std::invalid_argument("vectors used for assignment must contain at least 4 components.");
@@ -286,7 +289,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        MyType& operator= (std::array<T, S>& arr)
+        MyType& operator= (std::array<T, S>& arr) noexcept(false)
         {
             if (S < 4) {
                 throw std::invalid_argument("arrays used for assignment must contain at least 4 components.");
@@ -301,11 +304,11 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Comparisons ---------------------------------------------------
+        //---   Comparisons   -----------------------------------------------
         /** \brief Equality between rectangles. */
-        template<typename T>
+        template<typename T = TScalar>
             requires std::is_arithmetic_v<T>
-        inline const bool operator== (vcl::graphitems::RectT<T>& other) const
+        inline const bool operator== (const vcl::graphitems::RectT<T>& other) const
         {
             return this->x == TScalar(other.x) &&
                    this->y == TScalar(other.y) &&
@@ -316,13 +319,13 @@ namespace vcl::graphitems {
         /** \brief Inequality between rectangles. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const bool operator != (vcl::graphitems::RectT<T>& other) const
+        inline const bool operator != (const vcl::graphitems::RectT<T>& other) const
         {
             return !(*this == other);
         }
 
 
-        //--- Accessors / Mutators ------------------------------------------
+        //---   Accessors / Mutators   --------------------------------------
         /** \brief left side position accessor. */
         inline const TScalar left_x() const noexcept
         {
@@ -419,7 +422,16 @@ namespace vcl::graphitems {
                                        this->y + this->height - 1);
         }
 
-        /** \brief bottom-right mutator. */
+        /** \brief bottom-right mutator (2 scalars). */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline void bottom_right(const T new_x, const U new_y) noexcept
+        {
+            right_x(new_x);
+            bottom_y(new_y);
+        }
+
+        /** \brief bottom-right mutator (1 PosT). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline void bottom_right(const vcl::utils::PosT<T>& new_pos) noexcept
@@ -471,7 +483,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Casting operators ---------------------------------------------
+        //---   Casting operators   -----------------------------------------
         /** \brief casting operator to scalar type T.
         * Returns the area of this rectangle.
         */
@@ -588,18 +600,14 @@ namespace vcl::graphitems {
         }
 
         
-        //--- In place cropping ---------------------------------------------
+        //---   In place cropping   -----------------------------------------
         /** In-place cropping with 4 different margins. */
         template<typename T, typename U, typename V, typename W>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V> && std::is_arithmetic_v<W>
-        MyType& crop(const T& left_margin, const U& right_margin, const V& top_margin, const W& bottom_margin) noexcept
+        inline MyType& crop(const T& left_margin, const U& right_margin, const V& top_margin, const W& bottom_margin) noexcept
         {
             move(left_margin, top_margin);
-            auto left_m = std::is_unsigned_v<T> ? (long long)left_margin : left_margin;
-            auto right_m = std::is_unsigned_v<U> ? (long long)right_margin : right_margin;
-            auto top_m = std::is_unsigned_v<V> ? (long long)top_margin : top_margin;
-            auto bottom_m = std::is_unsigned_v<W> ? (long long)bottom_margin : bottom_margin;
-            return resize(-(left_m + right_m), -(top_m + bottom_m));
+            return resize(-(long long)(left_margin + right_margin), -(long long)(top_margin + bottom_margin));
         }
 
         /** In-place cropping with X- and Y- margins. */
@@ -619,7 +627,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Moving --------------------------------------------------------
+        //---   Moving   ----------------------------------------------------
         /** \brief Moves this rectangle with specified offsets (2 scalars). */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
@@ -641,7 +649,7 @@ namespace vcl::graphitems {
         /** \brief Moves this rectangle with specified offset (vcl::vect::Vector). */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const vcl::vect::Vector<T, Ksize>& offset)
+        inline MyType& move(const vcl::vect::Vector<T, Ksize>& offset) noexcept(false)
         {
             if (Ksize < 2) {
                 throw std::invalid_argument("vectors used for offsets must contain at least 2 components.");
@@ -655,7 +663,7 @@ namespace vcl::graphitems {
         /** \brief Moves this rectangle with specified offset (std::vector). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const std::vector<T>& offset)
+        inline MyType& move(const std::vector<T>& offset) noexcept(false)
         {
             if (offset.size() < 2) {
                 throw std::invalid_argument("vectors used for offsets must contain at least 2 components.");
@@ -669,7 +677,7 @@ namespace vcl::graphitems {
         /** \brief Moves this rectangle with specified offset (std::array). */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const std::array<T, S>& offset)
+        inline MyType& move(const std::array<T, S>& offset) noexcept(false)
         {
             if (S < 2) {
                 throw std::invalid_argument("arrays used for offsets must contain at least 2 components.");
@@ -809,7 +817,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Moving at -----------------------------------------------------
+        //---   Moving at   -------------------------------------------------
         /** \brief Moves top-left corner of this this rectangle to specified position (2 scalars). */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
@@ -861,7 +869,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Resizing ------------------------------------------------------
+        //---   Resizing   --------------------------------------------------
         /** \brief Resizes this rectangle (1 scalar parameter).
         * Negative values for argument 'incr' decreases the size of the rectangle.
         */
@@ -951,7 +959,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Scaling -------------------------------------------------------
+        //---   Scaling   ---------------------------------------------------
         /** \brief Resizes this rectangle according to a scaling factor.
         * Factors less than 1 reduce the size of this rectangle.
         * Negative values for 'factor' raise an invalid_argument exception.
@@ -969,7 +977,7 @@ namespace vcl::graphitems {
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        MyType& scale(const T& factor_x, const U& factor_y)
+        MyType& scale(const T& factor_x, const U& factor_y) noexcept(false)
         {
             if (factor_x < T(0) || factor_y < U(0))
                 throw std::invalid_argument("scaling factors cannot be negative");
@@ -987,7 +995,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        MyType& scale(const vcl::vect::Vector<T, Ksize>& vect)
+        MyType& scale(const vcl::vect::Vector<T, Ksize>& vect) noexcept(false)
         {
             switch (Ksize)
             {
@@ -1007,7 +1015,7 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& scale(const std::vector<T>& vect)
+        MyType& scale(const std::vector<T>& vect) noexcept(false)
         {
             switch (vect.size())
             {
@@ -1027,7 +1035,7 @@ namespace vcl::graphitems {
         */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        MyType& scale(const std::array<T, Ksize>& arr)
+        MyType& scale(const std::array<T, Ksize>& arr) noexcept(false)
         {
             switch (Ksize)
             {
@@ -1301,7 +1309,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Shrinking -----------------------------------------------------
+        //---   Shrinking   -------------------------------------------------
         /** \brief Resizes this rectangle according to a reducing factor.
         * Factors less than 1 augment the size of this rectangle.
         * Negative and null values for 'factor' raise an invalid_argument exception.
@@ -1613,8 +1621,9 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Inset / Outset ------------------------------------------------
+        //---   Inset / Outset   --------------------------------------------
         /** \brief Reduces the dimensions of this rectangle (1 scalar argument).
+        * Negative values for argument 'incr' augment the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
@@ -1625,6 +1634,7 @@ namespace vcl::graphitems {
         }
 
         /** \brief Reduces the dimensions of this rectangle (2 scalar arguments).
+        * Negative values for argument 'incr' augment the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, typename U>
@@ -1636,6 +1646,7 @@ namespace vcl::graphitems {
 
         /** \brief Reduces the dimensions of this rectangle (1 Dims argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1646,6 +1657,7 @@ namespace vcl::graphitems {
 
         /** \brief Reduces the dimensions of this rectangle (1 Offsets argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1656,6 +1668,7 @@ namespace vcl::graphitems {
 
         /** \brief Reduces the dimensions of this rectangle (1 vcl::vectors::Vect2<> argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1666,6 +1679,7 @@ namespace vcl::graphitems {
 
         /** \brief Reduces the dimensions of this rectangle (1 std::vector argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1679,6 +1693,7 @@ namespace vcl::graphitems {
 
         /** \brief Reduces the dimensions of this rectangle (1 std::array argument).
         * Negative values for argument 'incr' augment the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
@@ -1691,6 +1706,7 @@ namespace vcl::graphitems {
         }
 
         /** \brief Reduces the dimensions of this rectangle (1 std::pair argument).
+        * Negative values for argument 'incr' augment the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, typename U>
@@ -1701,6 +1717,7 @@ namespace vcl::graphitems {
         }
 
         /** \brief Augments the dimensions of this rectangle (1 scalar argument).
+        * Negative values for argument 'incr' decrease the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
@@ -1711,19 +1728,19 @@ namespace vcl::graphitems {
         }
 
         /** \brief Augments the dimensions of this rectangle (2 scalar arguments).
+        * Negative values for argument 'incr' decrease the size of the rectangle.
         * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
         inline MyType& outset(const T& offset_x, const U& offset_y) noexcept
         {
-            auto x_offset = std::is_unsigned_v<T> ? (long long)offset_x : offset_x;
-            auto y_offset = std::is_unsigned_v<U> ? (long long)offset_y : offset_y;
-            return crop(-x_offset, -y_offset);
+            return crop(-(long long)offset_x, -(long long)offset_y);
         }
 
         /** \brief Augments the dimensions of this rectangle (1 Dims argument).
         * Negative values for argument 'incr' decrease the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1734,16 +1751,18 @@ namespace vcl::graphitems {
 
         /** \brief Augments the dimensions of this rectangle (1 vcl::vectors::Vect2<> argument).
         * Negative values for argument 'incr' decrease the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline MyType& outset(const vcl::vect::Vect2<T>& incr) noexcept
         {
-            return outset(incr.x, incr.y);
+            return outset(incr.x(), incr.y());
         }
 
         /** \brief Augments the dimensions of this rectangle (1 std::vector argument).
         * Negative values for argument 'incr' decrease the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -1757,6 +1776,7 @@ namespace vcl::graphitems {
 
         /** \brief Augments the dimensions of this rectangle (1 std::array argument).
         * Negative values for argument 'incr' decrease the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
@@ -1768,6 +1788,17 @@ namespace vcl::graphitems {
                 return outset(incr[0], incr[0]);
         }
 
+        /** \brief Augments the dimensions of this rectangle (1 std::pair argument).
+        * Negative values for argument 'pair' decrease the size of the rectangle.
+        * Also, modifies accordingly the position of this rectangle.
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline MyType& outset(const std::pair<T, U>& pair) noexcept
+        {
+            return outset(pair.first, pair.second);
+        }
+
 
         //--- Intersection / Union / Containment ----------------------------
         /** \brief Returns true if this rectangle contains a specified position (2 scalar args). */
@@ -1775,21 +1806,52 @@ namespace vcl::graphitems {
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline const bool contains(const T x, const U y) const noexcept
         {
-            return this->x <= x && x <= right_x() && this->y <= y && y <= bottom_y();
+            return vcl::utils::in_range(TScalar(x), left_x(), right_x()) &&
+                   vcl::utils::in_range(TScalar(y), top_y(), bottom_y());
         }
 
         /** \brief Returns true if this rectangle contains a specified position (1 Pos argument). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const bool contains(vcl::utils::PosT<T>& pos) const noexcept
+        inline const bool contains(const vcl::utils::PosT<T>& pos) const noexcept
         {
-            return contains(pos.x(), pos.y());
+            return contains(TScalar(pos.x()), TScalar(pos.y()));
+        }
+
+        /** \brief Returns true if this rectangle contains a specified position (1 vcl::vect::Vect2 argument). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const bool contains(const vcl::vect::Vect2<T>& pos) const noexcept
+        {
+            return contains(TScalar(pos.x()), TScalar(pos.y()));
+        }
+
+        /** \brief Returns true if this rectangle contains a specified position (1 std::vector argument). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const bool contains(const std::vector<T>& pos) const noexcept(false)
+        {
+            if (pos.size() < 2)
+                throw std::invalid_argument("vectors used for containment testing must contain at least 2 components.");
+            else
+                return contains(TScalar(pos[0]), TScalar(pos[1]));
+        }
+
+        /** \brief Returns true if this rectangle contains a specified position (1 std::array argument). */
+        template<typename T, const size_t S>
+            requires std::is_arithmetic_v<T>
+        inline const bool contains(const std::array<T, S>& pos) const noexcept(false)
+        {
+            if (S < 2)
+                throw std::invalid_argument("arrays used for containment testing must contain at least 2 components.");
+            else
+                return contains(TScalar(pos[0]), TScalar(pos[1]));
         }
 
         /** \brief Returns true if this rectangle contains a specified position (1 std::pair argument). */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline const bool contains(std::pair<T, U>& pair) const noexcept
+        inline const bool contains(const std::pair<T, U>& pair) const noexcept
         {
             return contains(pair.first, pair.second);
         }
@@ -1799,7 +1861,7 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const bool contains(vcl::graphitems::RectT<T>& other) const noexcept
+        inline const bool contains(const vcl::graphitems::RectT<T>& other) const noexcept
         {
             return does_embed(other);
         }
@@ -1809,15 +1871,15 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const bool does_embed(vcl::graphitems::RectT<T>& other) const noexcept
+        inline const bool does_embed(const vcl::graphitems::RectT<T>& other) const noexcept
         {
-            return intersection(other) == other;
+            return intersection_rect(other) == other;
         }
 
         /** \brief Returns true if this rectangle intersects with the 'other' one. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline bool does_intersect(const vcl::graphitems::RectT<T>& other) const noexcept
+        inline const bool does_intersect(const vcl::graphitems::RectT<T>& other) const noexcept
         {
             return other.bottom_y() >= this->y &&
                 other.y <= bottom_y() &&
@@ -1828,15 +1890,32 @@ namespace vcl::graphitems {
         /** \brief Returns the intersection of this rectangle with the 'other' one. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& intersection_rect(const vcl::graphitems::RectT<T>& other) noexcept
+        MyType intersection_rect(const vcl::graphitems::RectT<T>& other) const noexcept
         {
             if (does_intersect(other))
-                return MyType( vcl::utils::PosT<TScalar>(vcl::utils::max(this->x, other.x),
-                                                         vcl::utils::max(this->y, other.y)),
-                               vcl::utils::PosT<TScalar>(vcl::utils::min(right_x() , other.right_x()),
-                                                         vcl::utils::min(bottom_y(), other.bottom_y())) );
+                return MyType(MyPosType(vcl::utils::max(this->x, other.x),
+                                        vcl::utils::max(this->y, other.y)),
+                              MyPosType(vcl::utils::min(right_x() , other.right_x()),
+                                        vcl::utils::min(bottom_y(), other.bottom_y())) );
             else
-                return MyType(0, 0, vcl::utils::DimsT(0, 0));
+                return MyType(0, 0, MyDimsType(0, 0));
+        }
+
+        /** \brief Returns the intersection of a rectangle with an 'other' one. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline MyType& operator &= (const vcl::graphitems::RectT<T>& other) noexcept
+        {
+            return *this = intersection_rect(other);
+        }
+
+        /** \brief Evaluates the intersection rectangle with its intersection with the 'other' one. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline MyType operator & (const vcl::graphitems::RectT<T> other) const noexcept
+        {
+            MyType res = *this;
+            return res &= other;
         }
 
         /** \brief Returns the union of this rectangle with the 'other' one.
@@ -1847,25 +1926,15 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& union_rect(const vcl::graphitems::RectT<T>& other, const bool b_strict = true) noexcept
+        MyType union_rect(const vcl::graphitems::RectT<T>& other, const bool b_strict = true) const noexcept
         {
             if (b_strict && !does_intersect(other))
                 return *this;
             else
-                return MyType(vcl::utils::PosT<TScalar>(vcl::utils::min(this->x, other.x),
-                                                        vcl::utils::min(this->y, other.y)),
-                              vcl::utils::PosT<TScalar>(vcl::utils::max(right_x(), other.right_x()),
-                                                        vcl::utils::max(bottom_y(), other.bottom_y())) );
-        }
-
-        /** \brief Wrapper to the non-strict union of two rectangles. 
-        * \sa union_rect().
-        */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline MyType& operator + (const vcl::graphitems::RectT<T>& other) noexcept
-        {
-            return union_rect(other, false);
+                return MyType(MyPosType(vcl::utils::min(this->x, other.x),
+                                        vcl::utils::min(this->y, other.y)),
+                              MyPosType(vcl::utils::max(right_x(), other.right_x()),
+                                        vcl::utils::max(bottom_y(), other.bottom_y())) );
         }
 
         /** \brief In-place non-strict union of this rectangle with an 'other' one. */
@@ -1874,6 +1943,36 @@ namespace vcl::graphitems {
         inline MyType& operator += (const vcl::graphitems::RectT<T>& other) noexcept
         {
             return *this = union_rect(other, false);
+        }
+
+        /** \brief Wrapper to the non-strict union of two rectangles.
+        * \sa union_rect().
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline MyType operator + (const vcl::graphitems::RectT<T>& other) noexcept
+        {
+            MyType res = *this;
+            return res += other;
+        }
+
+        /** \brief In-place strict union of this rectangle with an 'other' one. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline MyType& operator |= (const vcl::graphitems::RectT<T>& other) noexcept
+        {
+            return *this = union_rect(other, true);
+        }
+
+        /** \brief Wrapper to the strict union of two rectangles.
+        * \sa union_rect().
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline MyType operator | (const vcl::graphitems::RectT<T>& other) noexcept
+        {
+            MyType res = *this;
+            return res |= other;
         }
 
         /** \brief Returns true if this rectangle is fully embedded in the 'other' one or if it equals it. */
@@ -1909,7 +2008,7 @@ namespace vcl::graphitems {
         }
 
 
-        //--- Drawing -------------------------------------------------------
+        //---   Drawing   ---------------------------------------------------
         /** \brief Draws this rectangle contours in a specified frame (whole arguments provided). */
         inline void draw(cv::Mat&                 frame,
                          const vcl::utils::Color& border_color,

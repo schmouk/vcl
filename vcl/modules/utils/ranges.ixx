@@ -48,32 +48,44 @@ namespace vcl::utils {
     export bool IN_RANGE_10;
     export bool IN_RANGE_00;
 
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+
+    export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    inline const bool in_range_ii(const TScalar x)
+    inline const bool in_range_ii(const TScalar x, const TScalar Kmin, const TScalar Kmax)
     {
         return Kmin <= x && x <= Kmax;
     }
 
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+
+    export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    inline const bool in_range_io(const TScalar x)
+    inline const bool in_range_io(const TScalar x, const TScalar Kmin, const TScalar Kmax)
     {
         return Kmin <= x && x < Kmax;
     }
 
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+
+    export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    inline const bool in_range_oi(const TScalar x)
+    inline const bool in_range_oi(const TScalar x, const TScalar Kmin, const TScalar Kmax)
     {
         return Kmin < x && x <= Kmax;
     }
 
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
+
+    export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    inline const bool in_range_oo(const TScalar x)
+    inline const bool in_range_oo(const TScalar x, const TScalar Kmin, const TScalar Kmax)
     {
         return Kmin < x && x < Kmax;
+    }
+
+
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return in_range_ii(x, Kmin, Kmax);
     }
 
 }

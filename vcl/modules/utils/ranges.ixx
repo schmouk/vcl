@@ -28,49 +28,64 @@ module;
 #include <array>
 #include <cstdarg>
 #include <sstream>
+#include <type_traits>
 #include <vector>
 
 export module utils.ranges;
 
 
 //===========================================================================
-namespace vcl {
-    namespace utils {
+namespace vcl::utils {
 
 //---------------------------------------------------------------------------
-#define IN_RANGE(x,a,b) ((a) <= (x) && (x) <= (b))
-#define IN_RANGE_01(x,a,b) ((a) < (x) && (x) <= (b))
-#define IN_RANGE_10(x,a,b) ((a) <= (x) && (x) < (b))
-#define IN_RANGE_00(x,a,b) ((a) < (x) && (x) < (b))
+#define IN_RANGE(x,a,b)    ((a) <= (x) && (x) <= (b))
+#define IN_RANGE_01(x,a,b) ((a) <  (x) && (x) <= (b))
+#define IN_RANGE_10(x,a,b) ((a) <= (x) && (x) <  (b))
+#define IN_RANGE_00(x,a,b) ((a) <  (x) && (x) <  (b))
 
-        export bool IN_RANGE;
-        export bool IN_RANGE_01;
-        export bool IN_RANGE_10;
-        export bool IN_RANGE_00;
+    export bool IN_RANGE;
+    export bool IN_RANGE_01;
+    export bool IN_RANGE_10;
+    export bool IN_RANGE_00;
 
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline const bool in_range_ii(const TScalar x)
-        {
-            return Kmin <= x && x <= Kmax;
-        }
 
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-            inline const bool in_range_io(const TScalar x)
-        {
-            return Kmin <= x && x < Kmax;
-        }
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range_ii(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return Kmin <= x && x <= Kmax;
+    }
 
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline const bool in_range_oi(const TScalar x)
-        {
-            return Kmin < x && x <= Kmax;
-        }
 
-        export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
-        inline const bool in_range_oo(const TScalar x)
-        {
-            return Kmin < x && x < Kmax;
-        }
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range_io(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return Kmin <= x && x < Kmax;
+    }
 
-    } // end of namespace utils
-} // end of namespace vcl
+
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range_oi(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return Kmin < x && x <= Kmax;
+    }
+
+
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range_oo(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return Kmin < x && x < Kmax;
+    }
+
+
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    inline const bool in_range(const TScalar x, const TScalar Kmin, const TScalar Kmax)
+    {
+        return in_range_ii(x, Kmin, Kmax);
+    }
+
+}

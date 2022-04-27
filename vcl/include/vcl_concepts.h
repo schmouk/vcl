@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,17 +23,19 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-//===========================================================================
-module;
-
-#include <stdexcept>
-
-export module utils.exceptions;
-
 
 //===========================================================================
-namespace vcl::except {
+#include <type_traits>
+//#include <concepts>
 
-    //===================================================================
+//===========================================================================
+namespace vcl::concepts {
+    
+    //-----------------------------------------------------------------------
+    template<typename T>
+    concept is_numeric = std::is_integral_v<T> || std::is_floating_point_v<T>;
 
-} // end of namespace vcl
+    template<typename T>
+    concept is_signed = std::is_floating_point_v<T> || std::is_signed<T>;
+
+};

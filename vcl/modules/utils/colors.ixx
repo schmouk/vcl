@@ -25,14 +25,51 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <stdexcept>
+#include <opencv2/core/types.hpp>
 
-export module utils.exceptions;
+#include "vcl_concepts.h"
+
+export module utils.colors;
 
 
 //===========================================================================
-namespace vcl::except {
+namespace vcl::utils {
 
     //===================================================================
+    /** \brief class Color: the base class for all colors.
+    * 
+    * This class is abstract: operator '=(const Color<T>)' is set to
+    * be abstract.
+    */
+    export class Color
+    {
+    public:
+        //---   constructors   ------------------------------------------
+        /** \brief Empty constructor. */
+        inline Color() = default;
 
-} // end of namespace vcl
+        /** \brief Copy constructor. */
+        inline Color(const Color& clr) = default;
+
+        /** \brief Move constructor. */
+        inline Color(Color&& clr) = default;
+
+
+        //--- Destructor ----------------------------------------------------
+        /** \brief Destructor. */
+        inline ~Color() = default;
+
+
+        //--- Assignment ----------------------------------------------------
+        /** \brief Copy assignment. */
+        inline Color& operator=(Color& other) = default;
+
+        /** \brief Assignment by value.
+        * This method MUST BE overridden in inheriting classes.
+        */
+        template<typename T>
+            requires vcl::concepts::is_numeric<T>
+        inline Color& operator=(const T& value) = delete;
+    };
+
+}

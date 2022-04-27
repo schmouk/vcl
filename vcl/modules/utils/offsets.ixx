@@ -51,6 +51,7 @@ namespace vcl::utils {
 
     /** \brief The class of 2D dimensions with short components (16 bits). */
     export using Offsets_s = OffsetsT<short>;
+    export using Offsets = Offsets_s;
 
     /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
     export using Offsets_us = OffsetsT<unsigned short>;
@@ -62,10 +63,10 @@ namespace vcl::utils {
     export using Offsets_ui = OffsetsT<unsigned long>;
 
     /** \brief The class of 2D dimensions with long long components (64 bits). */
-    export using Offsets_li = OffsetsT<long long>;
+    export using Offsets_ll = OffsetsT<long long>;
 
     /** \brief The class of 2D dimensions with unsigned long long components (64 bits). */
-    export using Offsets_uli = OffsetsT<unsigned long long>;
+    export using Offsets_ull = OffsetsT<unsigned long long>;
 
     /** \brief The class of 2D dimensions with float components (64 bits). */
     export using Offsets_f = OffsetsT<float>;
@@ -81,10 +82,10 @@ namespace vcl::utils {
     /** \brief The generic class for 2D offsets. */
     template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
-    class OffsetsT : public vcl::vect::Vect2<TScalar>
+    class OffsetsT : public vcl::vect::Vect2T<TScalar>
     {
     public:
-        using MyBaseType = vcl::vect::Vect2<TScalar>;       //!< wrapper to the inherited class naming.
+        using MyBaseType = vcl::vect::Vect2T<TScalar>;      //!< wrapper to the inherited class naming.
         using MyType     = vcl::utils::OffsetsT<TScalar>;   //!< wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
@@ -116,11 +117,11 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
-        /** \brief Copy constructor (const vcl::vect::Vector&).
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline OffsetsT<TScalar>(const vcl::vect::Vector<T, S>& other)
+        inline OffsetsT<TScalar>(const vcl::vect::VectorT<T, S>& other)
             : MyBaseType(other)
         {}
 
@@ -128,8 +129,15 @@ namespace vcl::utils {
         */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline OffsetsT<TScalar>(vcl::vect::Vector<T, S>&& other)
+        inline OffsetsT<TScalar>(vcl::vect::VectorT<T, S>&& other)
             : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+        inline OffsetsT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
         {}
 
         /** \brief Copy constructor (const std::array&).
@@ -140,11 +148,12 @@ namespace vcl::utils {
             : MyBaseType(arr)
         {}
 
-        /** \brief Copy constructor (const std::vector&).
+        /** \brief Copy constructor (const std::pair&).
         */
-        template<typename T>
-        inline OffsetsT<TScalar>(const std::vector<T>& vect)
-            : MyBaseType(vect)
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline OffsetsT<TScalar>(const std::pair<T, U>& pair)
+            : MyBaseType(pair)
         {}
 
         //---  Destructor   -------------------------------------------------

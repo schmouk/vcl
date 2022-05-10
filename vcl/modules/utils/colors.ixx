@@ -27,8 +27,6 @@ module;
 
 #include <opencv2/core/types.hpp>
 
-#include "vcl_concepts.h"
-
 export module utils.colors;
 
 
@@ -68,7 +66,7 @@ namespace vcl::utils {
         * This method MUST BE overridden in inheriting classes.
         */
         template<typename T>
-            requires vcl::concepts::is_numeric<T>
+            requires std::is_arithmetic_v<T>
         inline Color& operator=(const T& value) = delete;
     };
 

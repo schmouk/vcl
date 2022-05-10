@@ -26,8 +26,8 @@ SOFTWARE.
 module;
 
 #include <array>
-#include <utility>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 export module vectors.vect2;
@@ -40,6 +40,7 @@ namespace vcl::vect {
 
 //-----------------------------------------------------------------------
     // Forward declaration and Specializations
+    /** \brief The generic class of 4D vectors with unclipped scalar components. */
     export template<typename TScalar>
         requires std::is_arithmetic_v<TScalar>
     class Vect2T;
@@ -106,7 +107,7 @@ namespace vcl::vect {
         inline Vect2T<TScalar>(const T value)
             : MyBaseType()
         {
-            this->fill(this->clipped(value));
+            this->fill(value);
         }
 
         /** \brief Constructor with values.
@@ -166,7 +167,13 @@ namespace vcl::vect {
 
         //---   Components accessors / mutators   --------------------------------------
         /** \brief component x accessor */
-        inline const TScalar x() const
+        inline TScalar& x()
+        {
+            return (*this)[0];
+        }
+
+        /** \brief component x accessor */
+        inline const TScalar& x() const
         {
             return (*this)[0];
         }
@@ -177,6 +184,12 @@ namespace vcl::vect {
         inline TScalar x(const T new_x)
         {
             return (*this)[0] = this->clipped(new_x);
+        }
+
+        /** \brief component x accessor */
+        inline TScalar& y()
+        {
+            return (*this)[1];
         }
 
         /** \brief component y accessor */

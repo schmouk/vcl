@@ -25,8 +25,10 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <limits>
+#include <array>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 export module utils.offsets;
 

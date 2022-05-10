@@ -29,8 +29,8 @@ module;
 
 #include <algorithm>
 #include <array>
-#include <limits>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 export module vectors.clipvect2;
@@ -44,7 +44,8 @@ namespace vcl::vect {
 
     //=======================================================================
     // Forward declaration and Specializations
-    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax> 
+    /** \brief The generic class of 2D vectors with clipped scalar components. */
+    export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         requires std::is_arithmetic_v<TScalar>
     class ClipVect2T;
 
@@ -92,15 +93,14 @@ namespace vcl::vect {
     public:
         using MyBaseType =  vcl::vect::Vect2T<TScalar>                ;  //!< wrapper to the inherited class naming.
         using MyType     =  vcl::vect::ClipVect2T<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
+        static inline size_t Ksize = 2;
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
         */
         inline ClipVect2T<TScalar, Kmin, Kmax>()
             : MyBaseType()
-        {
-            //this->fill(this->clipped(TScalar(0)));
-        }
+        {}
 
         /** \brief Constructor with value.
         */
@@ -109,7 +109,7 @@ namespace vcl::vect {
         inline ClipVect2T<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType()
         {
-            this->fill<T>(this->clipped(value));
+            this->fill(clipped(value));
         }
 
         /** \brief Constructor with values.
@@ -128,32 +128,40 @@ namespace vcl::vect {
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
         inline ClipVect2T<TScalar, Kmin, Kmax>(const vcl::vect::VectorT<T, S>& other)
-            : MyBaseType(other)
-        {}
+            : MyBaseType()
+        {
+            this->copy(other);
+        }
 
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline ClipVect2T<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
-            : MyBaseType(vect)
-        {}
+            : MyBaseType()
+        {
+            this->copy(vect);
+        }
 
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect2T<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
-            : MyBaseType(other)
-        {}
+        inline ClipVect2T<TScalar, Kmin, Kmax>(const std::array<T, S>& arr)
+            : MyBaseType()
+        {
+            this->copy(arr);
+        }
 
         /** \brief Copy constructor (const std::pair&).
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline ClipVect2T<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
-            : MyBaseType(pair)
-        {}
+            : MyBaseType()
+        {
+            this->copy(pair);
+        }
 
         //---  Destructor   -------------------------------------------------
         virtual inline ~ClipVect2T<TScalar, Kmin, Kmax>()
@@ -171,7 +179,7 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar x(const T new_x)
         {
-            return (*this)[0] = this->clipped(new_x);
+            return (*this)[0] = clipped(new_x);
         }
 
         /** \brief component y accessor */
@@ -185,8 +193,85 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar y(const T new_y)
         {
-            return (*this)[1] = this->clipped(new_y);
+            return (*this)[1] = clipped(new_y);
         }
+
+
+        //---   copy()   ----------------------------------------------------
+        /** \brief Copies a const vcl::vect::VectorT. */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline void copy(const vcl::vect::VectorT<T, S>& other)
+        {
+            if (*this != other) {
+                const T* pot = other.cbegin();
+                for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
+                    *ptr++ = clipped(*pot++);
+            }
+        }
+
+        /** \brief Copies a const std::array. */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline void copy(const std::array<T, S>& other)
+        {
+            auto ot = other.cbegin();
+            for (TScalar* ptr = this->begin(); ptr != this->end() && ot != other.cend(); )
+                *ptr++ = clipped(*ot++);
+        }
+
+        /** \brief Copies into a std::array. */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        friend inline void copy(std::array<T, S>&& lhs, MyType&& rhs)
+        {
+            TScalar p_rhs = &rhs.begin();
+            for (T* p_lhs = &lhs.begin(); p_lhs != &lhs.end() && p_rhs != &rhs.end(); )
+                *p_lhs++ = T(*p_rhs++);
+        }
+
+        /** \brief Copies a const std::vector. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void copy(const std::vector<T>& other)
+        {
+            auto ot = other.cbegin();
+            for (TScalar* ptr = this->begin(); ptr != this->end() && ot != other.cend(); )
+                *ptr++ = clipped(*ot++);
+        }
+
+        /** \brief Copies into a std::vector. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        friend inline void copy(std::vector<T>&& lhs, MyType&& rhs)
+        {
+            TScalar p_rhs = &rhs.begin();
+            for (T* p_lhs = lhs.begin(); p_lhs != lhs.end() && p_rhs != &rhs.end() + Ksize; )
+                *p_lhs++ = T(*p_rhs++);
+        }
+
+        /** \brief Copies a const std::pair. */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline void copy(const std::pair<T, U>& other)
+        {
+            if (Ksize > 0)
+                (*this)[0] = clipped(other.first);
+            if (Ksize > 1)
+                (*this)[1] = clipped(other.second);
+        }
+
+        /** \brief Copies into a std::pair. */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        friend inline void copy(std::pair<T, U>& lhs, MyType& rhs)
+        {
+            if (Ksize > 0)
+                rhs[0] = clipped(lhs.first);
+            if (Ksize > 1)
+                rhs[1] = clipped(lhs.second);
+        }
+
 
         //---   miscelaneous   ----------------------------------------------
         /** \brief Returns the specified value clipped. */

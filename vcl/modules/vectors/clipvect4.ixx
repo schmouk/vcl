@@ -28,6 +28,7 @@ module;
 #include <algorithm>
 #include <array>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 export module vectors.clipvect4;
@@ -41,6 +42,7 @@ namespace vcl::vect {
 
     //=======================================================================
     // Forward declaration and Specializations
+    /** \brief The generic class of 4D vectors with clipped scalar components. */
     export template<typename TScalar, const TScalar Kmin, const TScalar Kmax>
         requires std::is_arithmetic_v<TScalar>
     class ClipVect4T;
@@ -87,7 +89,7 @@ namespace vcl::vect {
     class ClipVect4T : public vcl::vect::Vect4T<TScalar>
     {
     public:
-        using MyBaseType =  vcl::vect::Vect4T<TScalar>                ;  //!< wrapper to the inherited class naming..
+        using MyBaseType =  vcl::vect::Vect4T<TScalar>                ;  //!< wrapper to the inherited class naming.
         using MyType     =  vcl::vect::ClipVect4T<TScalar, Kmin, Kmax>;  //!< wrapper to this class naming.
              //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -95,7 +97,7 @@ namespace vcl::vect {
         inline ClipVect4T<TScalar, Kmin, Kmax>()
             : MyBaseType()
         {
-            this->fill(this->clipped(TScalar(0)));
+            this->fill(clipped(TScalar(0)));
         }
 
         /** \brief Constructor with value.
@@ -105,7 +107,7 @@ namespace vcl::vect {
         inline ClipVect4T<TScalar, Kmin, Kmax>(const T value)
             : MyBaseType()
         {
-            this->fill<T>(this->clipped(value));
+            this->fill(clipped(value));
         }
 
         /** \brief Constructor with values.
@@ -126,32 +128,40 @@ namespace vcl::vect {
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
         inline ClipVect4T<TScalar, Kmin, Kmax>(const vcl::vect::VectorT<T, S>& other)
-            : MyBaseType(other)
-        {}
+            : MyBaseType()
+        {
+            this->copy(other);
+        }
 
         /** \brief Copy constructor (const std::vector&).
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline ClipVect4T<TScalar, Kmin, Kmax>(const std::vector<T>& vect)
-            : MyBaseType(vect)
-        {}
+            : MyBaseType()
+        {
+            this->copy(vect);
+        }
 
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::array<T, S>& other)
-            : MyBaseType(other)
-        {}
+        inline ClipVect4T<TScalar, Kmin, Kmax>(const std::array<T, S>& arr)
+            : MyBaseType()
+        {
+            this->copy(arr);
+        }
 
         /** \brief Copy constructor (const std::pair&).
         */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
         inline ClipVect4T<TScalar, Kmin, Kmax>(const std::pair<T, U>& pair)
-            : MyBaseType(pair)
-        {}
+            : MyBaseType()
+        {
+            this->copy(pair);
+        }
 
         /** \brief Copy constructor (const std::pair&, const std::pair&).
         */
@@ -182,7 +192,7 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar x(const T new_x)
         {
-            return (*this)[0] = this->clipped(new_x);
+            return (*this)[0] = clipped(new_x);
         }
 
         /** \brief component y accessor */
@@ -196,7 +206,7 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar y(const T new_y)
         {
-            return (*this)[1] = this->clipped(new_y);
+            return (*this)[1] = clipped(new_y);
         }
 
         /** \brief component z accessor */
@@ -210,7 +220,7 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar z(const T new_z)
         {
-            return (*this)[2] = this->clipped(new_z);
+            return (*this)[2] = clipped(new_z);
         }
 
         /** \brief component w accessor */
@@ -224,7 +234,7 @@ namespace vcl::vect {
             requires std::is_arithmetic_v<T>
         inline TScalar w(const T new_w)
         {
-            return (*this)[3] = this->clipped(new_w);
+            return (*this)[3] = clipped(new_w);
         }
 
         //---   miscelaneous   ----------------------------------------------

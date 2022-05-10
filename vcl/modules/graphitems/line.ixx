@@ -131,7 +131,7 @@ namespace vcl::graphitems {
         /** \brief Copy constructor (const&).
         */
         template<typename T>
-           requires std::is_arithmetic_v<T>
+            requires std::is_arithmetic_v<T>
         inline LineT<TScalar>(const vcl::graphitems::LineT<T>& other) noexcept
             : start(other.start), end(other.end)
         {}
@@ -158,10 +158,10 @@ namespace vcl::graphitems {
                 throw std::invalid_argument("vectors used for lines construction must contain at least 4 components.");
             }
             else {
-                start.x = TScalar(vect[0]);
-                start.y = TScalar(vect[1]);
-                end.x = TScalar(vect[2]);
-                end.y = TScalar(vect[3]);
+                start.x(vect[0]);
+                start.y(vect[1]);
+                end.x(vect[2]);
+                end.y(vect[3]);
             }
         }
 
@@ -177,14 +177,14 @@ namespace vcl::graphitems {
                 throw std::invalid_argument("arrays used for lines construction must contain at least 4 components.");
             }
             else {
-                start.x = TScalar(arr[0]);
-                start.y = TScalar(arr[1]);
-                end.x = TScalar(arr[2]);
-                end.y = TScalar(arr[3]);
+                start.x(arr[0]);
+                start.y(arr[1]);
+                end.x(arr[2]);
+                end.y(arr[3]);
             }
         }
 
-        /** \brief Constructor (4 scalar border positions).
+        /** \brief Constructor (4 scalar positions: start_x, start_y, end_x, end_y).
         */
         template<typename T, typename U, typename V, typename W>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V> && std::is_arithmetic_v<W>
@@ -251,12 +251,12 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& operator= (vcl::vect::Vect4T<T>& other) noexcept
+        MyType& operator= (vcl::vect::Vect4T<T>&& vect) noexcept
         {
-            start.x(TScalar(vect[0]));
-            start.y(TScalar(vect[1]));
-            end.x(TScalar(vect[2]));
-            end.y(TScalar(vect[3]));
+            start.x(vect[0]);
+            start.y(vect[1]);
+            end.x(vect[2]);
+            end.y(vect[3]);
             return *this;
         }
 
@@ -274,10 +274,10 @@ namespace vcl::graphitems {
                 return *this;
             }
             else {
-                start.x(TScalar(vect[0]));
-                start.y(TScalar(vect[1]));
-                end.x(TScalar(vect[2]));
-                end.y(TScalar(vect[3]));
+                start.x(vect[0]);
+                start.y(vect[1]);
+                end.x(vect[2]);
+                end.y(vect[3]);
             }
             return *this;
         }
@@ -296,10 +296,10 @@ namespace vcl::graphitems {
                 return *this;
             }
             else {
-                start.x(TScalar(arr[0]));
-                start.y(TScalar(arr[1]));
-                end.x(TScalar(arr[2]));
-                end.y(TScalar(arr[3]));
+                start.x(arr[0]);
+                start.y(arr[1]);
+                end.x(arr[2]);
+                end.y(arr[3]);
             }
             return *this;
         }

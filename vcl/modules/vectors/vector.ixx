@@ -47,14 +47,9 @@ namespace vcl::vect {
         requires std::is_arithmetic_v<TScalar>
     class VectorT : public cv::Vec<TScalar, Ksize>
     {
-    protected:
-        static inline TScalar _KMIN = std::numeric_limits<TScalar>::min();
-        static inline TScalar _KMAX = std::numeric_limits<TScalar>::max();
-
-
     public:
-        typedef cv::Vec<TScalar, Ksize>            MyBaseType; //<! wrapper to the inherited class naming.
-        typedef vcl::vect::VectorT<TScalar, Ksize> MyType;     //<! wrapper to this class naming.
+        using MyBaseType = cv::Vec<TScalar, Ksize>           ;  //<! wrapper to the inherited class naming.
+        using MyType     = vcl::vect::VectorT<TScalar, Ksize>;  //<! wrapper to this class naming.
 
         //---   constructors   ----------------------------------------------
         /** \brief Empty constructor.
@@ -239,14 +234,14 @@ namespace vcl::vect {
         /** \brief operator == (vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        bool operator == (const vcl::vect::VectorT<T, S>& other)
+        const bool operator == (const vcl::vect::VectorT<T, S>& other) const
         {
             constexpr bool same_sizes = (S == Ksize);
             if (!same_sizes)
                 return false;
 
             const T* pot = other.cbegin();
-            for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
+            for (const TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
                 if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
@@ -255,14 +250,14 @@ namespace vcl::vect {
         /** \brief operator == (std::array) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        bool operator == (const std::array<T, S>& other)
+        const bool operator == (const std::array<T, S>& other) const
         {
             constexpr bool same_sizes = (S == Ksize);
             if (!same_sizes)
                 return false;
 
             const T* pot = other.cbegin();
-            for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
+            for (const TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
                 if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
@@ -271,7 +266,7 @@ namespace vcl::vect {
         /** \brief operator == (std::array, vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend bool operator == (const std::array<T, S>& lhs, const MyType& rhs)
+        friend const bool operator == (const std::array<T, S>& lhs, const MyType& rhs)
         {
             constexpr bool same_sizes = (S == Ksize);
             if (!same_sizes)
@@ -287,13 +282,13 @@ namespace vcl::vect {
         /** \brief operator == (std::vector) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        bool operator == (const std::vector<T>& other)
+        const bool operator == (const std::vector<T>& other) const
         {
             if (other.size() != Ksize)
                 return false;
 
             const T* pot = other.cbegin();
-            for (TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
+            for (const TScalar* ptr = this->cbegin(); ptr != this->cend() && pot < other.cend(); )
                 if (*ptr++ != TScalar(*pot++))
                     return false;
             return true;
@@ -302,7 +297,7 @@ namespace vcl::vect {
         /** \brief operator == (std::vector, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend bool operator == (const std::vector<T>& lhs, const MyType& rhs)
+        friend const bool operator == (const std::vector<T>& lhs, const MyType& rhs)
         {
             if (lhs.size() != Ksize)
                 return false;
@@ -317,7 +312,7 @@ namespace vcl::vect {
         /** \brief operator == (std::pair) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline bool operator == (const std::pair<T, U>& other)
+        inline const bool operator == (const std::pair<T, U>& other) const
         {
             if (2 != Ksize)
                 return false;
@@ -328,7 +323,7 @@ namespace vcl::vect {
         /** \brief operator == (std::vector, vcl::vect::VectorT) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        friend inline bool operator == (const std::pair<T, U>& lhs, const MyType& rhs)
+        friend inline const bool operator == (const std::pair<T, U>& lhs, const MyType& rhs)
         {
             if (2 != Ksize)
                 return false;
@@ -339,7 +334,7 @@ namespace vcl::vect {
         /** \brief operator != (vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline bool operator != (const vcl::vect::VectorT<T, S>& other)
+        inline const bool operator != (const vcl::vect::VectorT<T, S>& other) const
         {
             return !(*this == other);
         }
@@ -347,7 +342,7 @@ namespace vcl::vect {
         /** \brief operator != (std::array) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        inline bool operator != (const std::array<T, S>& other)
+        inline const bool operator != (const std::array<T, S>& other) const
         {
             return !(*this == other);
         }
@@ -355,7 +350,7 @@ namespace vcl::vect {
         /** \brief operator != (std::array, vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline bool operator != (const std::array<T, S>& lhs, const MyType& rhs)
+        friend inline const bool operator != (const std::array<T, S>& lhs, const MyType& rhs)
         {
             return !(rhs == lhs);
         }
@@ -363,7 +358,7 @@ namespace vcl::vect {
         /** \brief operator != (std::vector) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline bool operator != (const std::vector<T>& other)
+        inline const bool operator != (const std::vector<T>& other) const
         {
             return !(*this == other);
         }
@@ -371,7 +366,7 @@ namespace vcl::vect {
         /** \brief operator != (std::vector, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline bool operator != (const std::vector<T>& lhs, const MyType& rhs)
+        friend inline const bool operator != (const std::vector<T>& lhs, const MyType& rhs)
         {
             return !(rhs == lhs);
         }
@@ -379,7 +374,7 @@ namespace vcl::vect {
         /** \brief operator == (std::pair) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline bool operator != (const std::pair<T, U>& other)
+        inline bool const operator != (const std::pair<T, U>& other) const
         {
             return !(*this == other);
         }
@@ -387,7 +382,7 @@ namespace vcl::vect {
         /** \brief operator == (std::vector, vcl::vect::VectorT) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        friend inline bool operator != (const std::pair<T, U>& lhs, const MyType& rhs)
+        friend inline const bool operator != (const std::pair<T, U>& lhs, const MyType& rhs)
         {
             return !(rhs == lhs);
         }
@@ -401,7 +396,7 @@ namespace vcl::vect {
         {
             if (*this != other) {
                 const T* pot = other.cbegin();
-                for (TScalar* ptr = this->begin(); ptr != this->end() && pot < other.cend(); )
+                for (TScalar* ptr = begin(); ptr != this->end() && pot < other.cend(); )
                     *ptr++ = clipped(*pot++);
             }
         }
@@ -452,9 +447,9 @@ namespace vcl::vect {
         inline void copy(const std::pair<T, U>& other)
         {
             if (Ksize > 0)
-                (*this)[0] = TScalar(other.first);
+                (*this)[0] = clipped(other.first);
             if (Ksize > 1)
-                (*this)[1] = TScalar(other.second);
+                (*this)[1] = clipped(other.second);
         }
 
         /** \brief Copies into a std::pair. */
@@ -463,9 +458,9 @@ namespace vcl::vect {
         friend inline void copy(std::pair<T, U>& lhs, MyType& rhs)
         {
             if (Ksize > 0)
-                rhs[0] = TScalar(lhs.first);
+                rhs[0] = clipped(lhs.first);
             if (Ksize > 1)
-                rhs[1] = TScalar(lhs.second);
+                rhs[1] = clipped(lhs.second);
         }
 
 
@@ -1163,7 +1158,7 @@ namespace vcl::vect {
         /** \brief Returns the specified value clipped. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline const TScalar clipped(const T value)
+        inline const TScalar clipped(const T value) const
         {
             return TScalar(value);
         }

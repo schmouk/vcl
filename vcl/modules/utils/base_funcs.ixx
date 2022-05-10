@@ -50,6 +50,5 @@ namespace vcl::utils {
     inline auto min(const T& a, const U& b)
     {
         return (a <= b) ? a : b;
-        // notice: "return vcl::utils::max(b, a);" would fit also...
     }
 }

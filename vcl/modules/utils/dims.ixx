@@ -25,7 +25,11 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <array>
 #include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <opencv2/core/types.hpp>
 
 export module utils.dims;

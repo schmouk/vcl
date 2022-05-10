@@ -25,7 +25,11 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <array>
 #include <type_traits>
+#include <utility>
+#include <vector>
+
 #include <opencv2/core/types.hpp>
 
 export module utils.pos;
@@ -144,6 +148,14 @@ namespace vcl::utils {
             : MyBaseType(other)
         {}
 
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline PosT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
         /** \brief Copy constructor (const std::array&).
         */
         template<typename T, size_t S>
@@ -152,12 +164,12 @@ namespace vcl::utils {
             : MyBaseType(arr)
         {}
 
-        /** \brief Copy constructor (const std::vector&).
+        /** \brief Copy constructor (const std::pair&).
         */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline PosT<TScalar>(const std::vector<T>& vect)
-            : MyBaseType(vect)
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline PosT<TScalar>(const std::pair<T, U>& pair)
+            : MyBaseType(pair)
         {}
 
         /** \brief Copy constructor (const cv::Point_&).

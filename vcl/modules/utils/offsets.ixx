@@ -164,7 +164,13 @@ namespace vcl::utils {
 
         //---  Accessors/Mutators   -----------------------------------------
         /** \brief component dx accessor */
-        inline const TScalar dx() const
+        inline TScalar& dx()
+        {
+            return (*this)[0];
+        }
+
+        /** \brief component dx accessor */
+        inline const TScalar& dx() const
         {
             return (*this)[0];
         }
@@ -185,7 +191,13 @@ namespace vcl::utils {
         }
 
         /** \brief component dy accessor */
-        inline const TScalar dy() const
+        inline TScalar& dy()
+        {
+            return (*this)[1];
+        }
+
+        /** \brief component dy accessor */
+        inline const TScalar& dy() const
         {
             return (*this)[1];
         }

@@ -169,7 +169,13 @@ namespace vcl::vect {
 
         //---   Components accessors / mutators   --------------------------------------
         /** \brief component x accessor */
-        inline const TScalar x() const
+        inline TScalar& x()
+        {
+            return (*this)[0];
+        }
+
+        /** \brief component x accessor */
+        inline const TScalar& x() const
         {
             return (*this)[0];
         }
@@ -183,7 +189,12 @@ namespace vcl::vect {
         }
 
         /** \brief component y accessor */
-        inline const TScalar y() const
+        inline TScalar& y()
+        {
+            return (*this)[1];
+        }
+        /** \brief component y accessor */
+        inline const TScalar& y() const
         {
             return (*this)[1];
         }

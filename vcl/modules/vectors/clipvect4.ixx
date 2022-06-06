@@ -58,7 +58,7 @@ namespace vcl::vect {
     export using ClipVect4 = ClipVect4s;
 
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-    export using ClipVect4us = ClipVect4T<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
+    export using ClipVect4us = ClipVect4T<unsigned short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
 
     /** \brief The class of 4D vectors with long int components (32 bits). */
     export using ClipVect4i = ClipVect4T<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;

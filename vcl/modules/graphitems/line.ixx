@@ -42,6 +42,7 @@ import utils.dims;
 import utils.offsets;
 import utils.pos;
 import utils.ranges;
+import vectors.clipvect4;
 import vectors.vect2;
 import vectors.vect4;
 
@@ -200,13 +201,20 @@ namespace vcl::graphitems {
             : start(start_x, start_y), end(end)
         {}
 
-
         /** \brief Constructor (1 start position + 2 scalar end position).
         */
         template<typename T, typename U, typename V>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V>
         inline explicit LineT<TScalar>(const vcl::utils::PosT<T>& start, const U end_x, const V end_y) noexcept
             : start(start), end(end_x, end_y)
+        {}
+
+        /** \brief Constructor (1 start position + 1 end position).
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline explicit LineT<TScalar>(const vcl::utils::PosT<T>& start, vcl::utils::PosT<U>& end) noexcept
+            : start(start), end(end)
         {}
 
         /** \brief Constructor (std::pair<>, std::pair<>).
@@ -314,7 +322,7 @@ namespace vcl::graphitems {
             return start == other.start && end == other.end;
         }
 
-        /** \brief Inequality between rectangles. */
+        /** \brief Inequality between lines. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline const bool operator != (const vcl::graphitems::LineT<T>& other) const noexcept
@@ -323,80 +331,50 @@ namespace vcl::graphitems {
         }
 
 
-        //---   Accessors / Mutators   --------------------------------------
-        /** \brief start.x position accessor. */
-        inline const TScalar start_x() const noexcept
-        {
-            return start.x();
-        }
-
-        /** \brief start.x position mutator. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void start_x(const T& new_start_x) noexcept
-        {
-            start.x(new_start_x);
-        }
-
-        /** \brief start.y position accessor. */
-        inline const TScalar start_y() const noexcept
-        {
-            return start.y();
-        }
-
-        /** \brief start.y position mutator. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void start_y(const T& new_start_y) noexcept
-        {
-            start.y(new_start_y);
-        }
-
-        /** \brief end.x position accessor. */
-        inline const TScalar end_x() const noexcept
-        {
-            return end.x();
-        }
-
-        /** \brief end.x position mutator. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void end_x(const T& new_end_x) noexcept
-        {
-            end.x(new_end_x);
-        }
-
-        /** \brief end.y position accessor. */
-        inline const TScalar end_y() const noexcept
-        {
-            return end.y();
-        }
-
-        /** \brief end.y position mutator. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void end_y(const T& new_end_y) noexcept
-        {
-            end.y(new_end_y);
-        }
-
-
         //---   Miscelaneous   ----------------------------------------------
         /** \brief Returns the length of this line, maybe rounded to the nearest integral value. */
-        const TScalar length() const noexcept
+        inline const double length() const noexcept
         {
-            if (std::is_integral_v<TScalar>) {
-                const long long dx = (long long)start.x - (long long)end.x;
-                const long long dy = (long long)start.y - (long long)end.y;
-                return TScalar(round(sqrt(dx * dx + dy * dy)));
-            }
-            else {
-                const TScalar dx = start.x - end.x;
-                const TScalar dy = start.y - end.y;
-                return sqrt(dx * dx + dy * dy);
-            }
+            const double dx = (double)start.x() - (double)end.x();
+            const double dy = (double)start.y() - (double)end.y();
+            return sqrt(dx * dx + dy * dy);
         }
 
+        /** \brief Sets the length of this line, maybe rounding then end point to the enarest one for integral values. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        MyType& set_length(const T& length) noexcept
+        {
+            if (start.x() == end.x()) {
+                if (start.y() <= end.y())
+                    end.y(start.y() + length);
+                else
+                    end.y(start.y() - length);
+            }
+            else if (start.y() == end.y()) {
+                if ( start.x() <= end.x())
+                    end.x(start.x() + length);
+                else
+                    end.x(start.x() - length);
+            }
+            else {
+                if (std::is_integral_v<TScalar>) {
+                    const double dx = double(end.x()) - double(start.x());
+                    const double dy = double(end.y()) - double(start.y());
+                    const double ratio = double(length) / this->length();
+                    end = MyPosType(round(dx * ratio + start.x()),
+                                    round(dy * ratio + start.y()));
+                }
+                else {
+                    const TScalar dx = end.x() - start.x();
+                    const TScalar dy = end.y() - start.y();
+                    const TScalar ratio = TScalar(length) / TScalar(this->length());
+                    end = MyPosType(round(dx * ratio) + start.x(),
+                                    round(dy * ratio) + start.y());
+                }
+            }
+            return *this;
+        }
         //---   Casting operators   -----------------------------------------
         /** \brief casting operator to vcl::vect::Vect4T<T>.
         * Returns a 4-components vcl::vect::Vect4T (start.x, start.y, nd.x, end.y).
@@ -408,6 +386,16 @@ namespace vcl::graphitems {
             return vcl::vect::Vect4T<T>(start.x(), start.y(), end.x(), end.y());
         }
 
+        /** \brief casting operator to vcl::vect::ClipVect4T<T>.
+        * Returns a 4-components vcl::vect::ClipVect4T (start.x, start.y, nd.x, end.y).
+        */
+        template<typename T = TScalar, const size_t Kmin, const size_t Kmax>
+            requires std::is_arithmetic_v<T>
+        inline operator vcl::vect::ClipVect4T<T, Kmin, Kmax>() noexcept
+        {
+            return vcl::vect::ClipVect4T<T, Kmin, Kmax>(start.x(), start.y(), end.x(), end.y());
+        }
+
         /** \brief casting operator to std::vector<T>.
         * Returns a 4-components std::vector (start.x, start.y, nd.x, end.y).
         */
@@ -415,11 +403,7 @@ namespace vcl::graphitems {
             requires std::is_arithmetic_v<T>
         operator std::vector<T>() noexcept
         {
-            std::vector<T> v;
-            v.push_back(T(start.x()));
-            v.push_back(T(start.y()));
-            v.push_back(T(end.x()));
-            v.push_back(T(end.y()));
+            std::vector<T> v{ T(start.x()), T(start.y()), T(end.x()), T(end.y()) };
             return v;
         }
 
@@ -436,99 +420,167 @@ namespace vcl::graphitems {
 
 
         //---   Moving   ----------------------------------------------------
-        /** \brief Moves this line according to specified offset (2 scalars). */
+        /** \brief Moves this line according to specified offset (2 scalars).
+        *
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-        inline MyType& move(const T dx, const U dy) noexcept
+        MyType& move(const T dx, const U dy) noexcept
         {
-            return move(MyOffsetsType(dx, dy));
+            vcl::utils::PosT<U> mem_start(start);
+            vcl::utils::PosT<U> mem_end(end);
+            start.x(start.x() + dx);
+            start.y(start.y() + dy);
+            
+            const U final_dx = (U)start.x() - mem_start.x(); // starting point coordinates may have been clipped
+            const U final_dy = (U)start.y() - mem_start.y();
+            end.x(end.x() + final_dx); // CAUTION here: ending point coordinates may be clipped as well!
+            end.y(end.y() + final_dy);
+
+            return *this;
         }
 
-        /** \brief Moves this line according to specified offset (vcl::vect::VectorT). */
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
+        MyType& move(const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
         {
             if (Ksize < 2) {
                 throw std::invalid_argument("vectors used to move lines must contain at least 2 components.");
                 return *this;
             }
             else {
-                return move(MyOffsetsType(offset));
+                return move(offset[0], offset[1]);
             }
         }
 
-        /** \brief Moves this line with specified offset (std::vector). */
+        /** \brief Moves this line with specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const std::vector<T>& offset) noexcept(false)
+        MyType& move(const std::vector<T>& offset) noexcept(false)
         {
             if (offset.size() < 2) {
                 throw std::invalid_argument("vectors used to move lines must contain at least 2 components.");
                 return *this;
             }
             else {
-                return move(MyOffsetsType(offset));
+                return move(offset[0], offset[1]);
             }
         }
 
-        /** \brief Moves this line with specified offset (std::array). */
+        /** \brief Moves this line with specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline MyType& move(const std::array<T, S>& offset) noexcept(false)
+        MyType& move(const std::array<T, S>& offset) noexcept(false)
         {
             if (S < 2) {
                 throw std::invalid_argument("arrays used to move lines must contain at least 2 components.");
                 return *this;
             }
             else {
-                return move(MyOffsetsType(offset));
+                return move(offset[0], offset[1]);
             }
         }
 
-        /** \brief Moves this line with specified offset (std::pair). */
+        /** \brief Moves this line with specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline MyType& move(const std::pair<T, U>& offset) noexcept
         {
-                return move(MyOffsetsType(offset));
+            return move(offset.first, offset.second);
         }
 
-        /** \brief Moves this line according to specified offset (vcl::utils::Offset). */
+        /** \brief Moves this line according to specified offset (vcl::utils::Offset).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline MyType& move(const vcl::utils::OffsetsT<T>& offset) noexcept
         {
-            start += offset;
-            end += offset;
-            return *this;
+            return move(offset.dx(), offset.dy());
         }
 
-        /** \brief Moves this line according to specified offset (vcl::vect::VectorT). */
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator += (const vcl::vect::VectorT<T, Ksize>& offset) noexcept
+        inline MyType& operator += (const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
         {
             return move(offset);
         }
 
-        /** \brief Moves this line according to specified offset (std::vector). */
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator += (const std::vector<T>& offset) noexcept
+        inline MyType& operator += (const std::vector<T>& offset) noexcept(false)
         {
             return move(offset);
         }
 
-        /** \brief Moves this line according to specified offset (std::array). */
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator += (const std::array<T, S>& offset) noexcept
+        inline MyType& operator += (const std::array<T, S>& offset) noexcept(false)
         {
             return move(offset);
         }
 
-        /** \brief Moves this line according to specified offset (std::pair). */
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> &&  std::is_arithmetic_v<U>
         inline MyType& operator += (const std::pair<T, U>& offset) noexcept
@@ -536,71 +588,139 @@ namespace vcl::graphitems {
             return move(offset);
         }
 
-        /** \brief Moves this line according to specified offset (vcl::vect::VectorT). */
-        template<typename T, const size_t Ksize>
-            requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (MyType line, const vcl::vect::VectorT<T, Ksize>& offset) noexcept
-        {
-            return line += offset;
-        }
-
-        /** \brief Moves this line according to specified offset (vcl::vect::VectorT). */
-        template<typename T, const size_t Ksize>
-            requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (const vcl::vect::VectorT<T, Ksize>& offset, MyType line) noexcept
-        {
-            return line += offset;
-        }
-
-        /** \brief Moves this line according to specified offset (std::vector). */
+        /** \brief Moves this line according to specified offset (vcl::utils::Offset).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (MyType line, const std::vector<T>& offset) noexcept
+        inline MyType& operator += (const vcl::utils::OffsetsT<T>& offset) noexcept
+        {
+            return move(offset);
+        }
+
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t Ksize>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator + (MyType line, const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (std::vector). */
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t Ksize>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator + (const vcl::vect::VectorT<T, Ksize>& offset, MyType line) noexcept(false)
+        {
+            return line += offset;
+        }
+
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (const std::vector<T>& offset, MyType line) noexcept
+        inline friend MyType operator + (MyType line, const std::vector<T>& offset) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (std::array). */
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator + (const std::vector<T>& offset, MyType line) noexcept(false)
+        {
+            return line += offset;
+        }
+
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (MyType line, const std::array<T, S>& offset) noexcept
+        inline friend MyType operator + (MyType line, const std::array<T, S>& offset) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (std::array). */
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
-        inline friend MyType operator + (const std::array<T, S>& offset, MyType line) noexcept
+        inline friend MyType operator + (const std::array<T, S>& offset, MyType line) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (std::pair). */
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> &&  std::is_arithmetic_v<U>
-        inline friend MyType operator + (MyType line, const std::pair<T, U>& offset) noexcept
+        inline friend MyType operator + (MyType line, const std::pair<T, U>& offset) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (std::pair). */
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
              requires std::is_arithmetic_v<T> &&  std::is_arithmetic_v<U>
-        inline friend MyType operator + (const std::pair<T, U>& offset, MyType line) noexcept
+        inline friend MyType operator + (const std::pair<T, U>& offset, MyType line) noexcept(false)
         {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (vcl::graphitems::LineT, vcl::utils::Offset). */
+        /** \brief Moves this line according to specified offset (vcl::graphitems::LineT, vcl::utils::Offset).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline friend MyType operator + (MyType line, const vcl::utils::OffsetsT<T>& offset) noexcept
@@ -608,7 +728,13 @@ namespace vcl::graphitems {
             return line += offset;
         }
 
-        /** \brief Moves this line according to specified offset (vcl::utils::Offset, vcl::graphitems::LineT). */
+        /** \brief Moves this line according to specified offset (vcl::utils::Offset, vcl::graphitems::LineT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline friend MyType operator + (const vcl::utils::OffsetsT<T>& offset, MyType line) noexcept
@@ -616,25 +742,259 @@ namespace vcl::graphitems {
             return line += offset;
         }
 
-
-        //---   Moving at   -------------------------------------------------
-        /** \brief Moves ending points of this line to specified position (2 scalars). */
-        template<typename T, typename U>
-            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline MyType& move_at(const T new_start_x, const U new_start_y) noexcept
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t Ksize>
+            requires std::is_arithmetic_v<T>
+        inline MyType& operator -= (const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
         {
-            if (std::is_integral_v<T>) {
-                const MyOffsetsType offset((long long)new_start_x - (long long)start.x,
-                                          (long long)new_start_y - (long long)start.y);
-                return move(offset);
+            return move(-offset);
+        }
+
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        MyType& operator -= (const std::vector<T>& offset) noexcept(false)
+        {
+            try {
+                return move(-offset[0], -offset[1]);
             }
-            else {
-                const MyOffsetsType offset(new_start_x - start.x, new_start_y - start.y);
+            catch(...) {
                 return move(offset);
             }
         }
 
-        /** \brief Moves ending points of this line to specified position (vcl::utils::PosT). */
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t S>
+            requires std::is_arithmetic_v<T>
+        inline MyType& operator -= (const std::array<T, S>& offset) noexcept(false)
+        {
+            try {
+                return move(-offset[0], -offset[1]);
+            }
+            catch (...) {
+                return move(offset);
+            }
+        }
+
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline MyType& operator -= (const std::pair<T, U>& offset) noexcept
+        {
+            return move(-offset.first, -offset.second);
+        }
+
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t Ksize>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (MyType line, const vcl::vect::VectorT<T, Ksize>& offset) noexcept(false)
+        {
+            return line -= offset;
+        }
+
+        /** \brief Moves this line according to specified offset (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t Ksize>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (const vcl::vect::VectorT<T, Ksize>& offset, MyType line) noexcept(false)
+        {
+            return MyType(offset[0] - line.start.x(),
+                          offset[1] - line.start.y(),
+                          offset[0] - line.end.x(),
+                          offset[1] - line.end.y());
+        }
+
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (MyType line, const std::vector<T>& offset) noexcept(false)
+        {
+            return line -= offset;
+        }
+
+        /** \brief Moves this line according to specified offset (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (const std::vector<T>& offset, MyType line) noexcept(false)
+        {
+            return MyType(offset[0] - line.start.x(),
+                          offset[1] - line.start.y(),
+                          offset[0] - line.end.x(),
+                          offset[1] - line.end.y());
+        }
+
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t S>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (MyType line, const std::array<T, S>& offset) noexcept(false)
+        {
+            return line -= offset;
+        }
+
+        /** \brief Moves this line according to specified offset (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, const size_t S>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (const std::array<T, S>& offset, MyType line) noexcept(false)
+        {
+            return MyType(offset[0] - line.start.x(),
+                          offset[1] - line.start.y(),
+                          offset[0] - line.end.x(),
+                          offset[1] - line.end.y());
+        }
+
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline friend MyType operator - (MyType line, const std::pair<T, U>& offset) noexcept
+        {
+            return line -= offset;
+        }
+
+        /** \brief Moves this line according to specified offset (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline friend MyType operator - (const std::pair<T, U>& offset, MyType line) noexcept
+        {
+            return MyType(offset.first - line.start.x(),
+                          offset.second - line.start.y(),
+                          offset.first - line.end.x(),
+                          offset.second - line.end.y());
+        }
+
+        /** \brief Moves this line according to specified offset (vcl::graphitems::LineT, vcl::utils::Offset).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (MyType line, const vcl::utils::OffsetsT<T>& offset) noexcept
+        {
+            return line -= offset;
+        }
+
+        /** \brief Moves this line according to specified offset (vcl::utils::Offset, vcl::graphitems::LineT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend MyType operator - (const vcl::utils::OffsetsT<T>& offset, MyType line) noexcept
+        {
+            return MyType(offset[0] - line.start.x(),
+                          offset[1] - line.start.y(),
+                          offset[0] - line.end.x(),
+                          offset[1] - line.end.y());
+        }
+
+
+        //---   Moving at   -------------------------------------------------
+        /** \brief Moves ending points of this line to specified position of start point (2 scalars).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        MyType& move_at(const T new_start_x, const U new_start_y) noexcept
+        {
+            if (std::is_integral_v<T> && std::is_integral_v<U>) {
+                using IntermediateType = long long;
+                const vcl::utils::OffsetsT<IntermediateType> offset((IntermediateType)new_start_x - (IntermediateType)start.x(),
+                                                                    (IntermediateType)new_start_y - (IntermediateType)start.y());
+                return move(offset);
+            }
+            else {
+                const MyOffsetsType offset(new_start_x - start.x(), new_start_y - start.y());
+                return move(offset);
+            }
+        }
+
+        /** \brief Moves ending points of this line to specified position of start point (vcl::utils::PosT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline MyType& move_at(const vcl::utils::PosT<T>& new_pos) noexcept
@@ -642,7 +1002,13 @@ namespace vcl::graphitems {
             return move_at(new_pos.x(), new_pos.y());
         }
 
-        /** \brief Moves ending points of this line to specified position (vcl::vect::VectorT). */
+        /** \brief Moves ending points of this line to specified position of start point (vcl::vect::VectorT).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t Ksize>
             requires std::is_arithmetic_v<T>
         inline MyType& move_at(const vcl::vect::VectorT<T, Ksize>& new_pos) noexcept(false)
@@ -655,7 +1021,13 @@ namespace vcl::graphitems {
                 return move_at(new_pos[0], new_pos[1]);
         }
 
-        /** \brief Moves ending points of this line to specified position (std::vector). */
+        /** \brief Moves ending points of this line to specified position of start point (std::vector).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline MyType& move_at(const std::vector<T>& new_pos)
@@ -668,7 +1040,13 @@ namespace vcl::graphitems {
                 return move_at(new_pos[0], new_pos[1]);
         }
 
-        /** \brief Moves ending points of this line to specified position (std::array). */
+        /** \brief Moves ending points of this line to specified position of start point (std::array).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, const size_t S>
             requires std::is_arithmetic_v<T>
         inline MyType& move_at(const std::array<T, S>& new_pos)
@@ -681,7 +1059,13 @@ namespace vcl::graphitems {
                     return move_at(new_pos[0], new_pos[1]);
             }
 
-        /** \brief Moves ending points of this line to specified position (std::pair). */
+        /** \brief Moves ending points of this line to specified position of start point (std::pair).
+        * 
+        * CAUTION: coordinates of ending points may be clipped here. This will
+        * have  no  incidence on this line length when start-point coordinates 
+        * are clipped,  but it may have an incidence on line length when  end-
+        * point coordinates are clipped.
+        */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
         inline MyType& move_at(const std::pair<T, U>& new_pos) noexcept
@@ -691,40 +1075,24 @@ namespace vcl::graphitems {
 
 
         //---   Resizing   --------------------------------------------------
-        /** \brief Resizes this line (1 scalar parameter).
+        /** \brief Resizes this line with 'incr' units (1 scalar parameter).
         * Negative values for argument 'incr' decrease the length of the line.
+        * \sa scale().
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
         MyType& resize(const T& incr) noexcept
         {
-            if (start.x() == end.x()) {
-                end += MyOffsetsType(0, incr);
-            }
-            else if (start.y() == end.y()) {
-                end += MyOffsetsType(incr, 0);
-            }
-            else {
-                if (std::is_integral_v<TScalar>) {
-                    const double dx = double(start.x()) - double(end.x());
-                    const double dy = double(start.y()) - double(end.y());
-                    const double new_length = double(length() + incr);
-                    end = MyPosType(round(dx * new_length / dy + start.x()),
-                                    round(dy * new_length / dx + start.y()));
-                }
-                else {
-                    const TScalar dx = start.x() - end.x();
-                    const TScalar dy = start.y() - end.y();
-                    const TScalar new_length = length() + incr;
-                    end = MyPosType(round(dx * new_length / dy) + start.x(),
-                                    round(dy * new_length / dx) + start.y());
-                }
-            }
+            const double kLength = length();
+            const double coeff = double(kLength + incr) / kLength;
+            end = MyPosType(round(coeff * (end.x() - start.x()) + start.x()),
+                            round(coeff * (end.y() - start.y()) + start.y()));
             return *this;
         }
 
-        /** \brief Resizes this line (operator +=, 1 scalar parameter).
+        /** \brief Resizes this line with 'incr' units (operator +=, 1 scalar parameter).
         * Negative values for argument 'incr' decrease the length of the line.
+        * \sa scaling operator *=
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -733,8 +1101,9 @@ namespace vcl::graphitems {
             return resize(incr);
         }
 
-        /** \brief Resizes this line (operator -=, 1 scalar parameter).
+        /** \brief Resizes this line with 'incr' negative units (operator -=, 1 scalar parameter).
         * Negative values for argument 'incr' increase the length of the line.
+        * \sa scaling operator /=
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -743,8 +1112,9 @@ namespace vcl::graphitems {
             return resize(-incr);
         }
 
-        /** \brief Resizes this line (operator +, 1 line + 1 scalar parameter).
+        /** \brief Resizes this line with 'incr' units (operator +, 1 line + 1 scalar parameter).
         * Negative values for argument 'incr' decrease the length of the line.
+        * \sa scaling operator *
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -753,8 +1123,9 @@ namespace vcl::graphitems {
             return line += incr;
         }
 
-        /** \brief Resizes this line (operator +, 1 scalar parameter + 1 line).
+        /** \brief Resizes this line with 'incr' units (operator +, 1 scalar parameter + 1 line).
         * Negative values for argument 'incr' decrease the length of the line.
+        * \sa scaling operator *
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -763,22 +1134,13 @@ namespace vcl::graphitems {
             return line += incr;
         }
 
-        /** \brief Resizes this line (operator +, 1 line + 1 scalar parameter).
+        /** \brief Resizes this line with 'incr' negative units (operator +, 1 line + 1 scalar parameter).
         * Negative values for argument 'incr' increase the length of the line.
+        * \sa scaling operator /
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline MyType& operator- (MyType line, const T& incr) noexcept
-        {
-            return line -= incr;
-        }
-
-        /** \brief Resizes this line (operator +, 1 scalar parameter + 1 line).
-        * Negative values for argument 'incr' increase the length of the line.
-        */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline MyType& operator+ (const T& incr, MyType line) noexcept
         {
             return line -= incr;
         }

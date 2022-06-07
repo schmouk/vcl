@@ -343,8 +343,9 @@ namespace vcl::graphitems {
         /** \brief Sets the length of this line, maybe rounding then end point to the enarest one for integral values. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& set_length(const T& length) noexcept
+        MyType& set_length(const T& new_length) noexcept(false)
         {
+            /*
             if (start.x() == end.x()) {
                 if (start.y() <= end.y())
                     end.y(start.y() + length);
@@ -374,7 +375,21 @@ namespace vcl::graphitems {
                 }
             }
             return *this;
+            */
+            assert(new_length >= T(0));
+            try {
+                const double coeff = double(new_length) / length();
+                end = MyPosType(round(coeff * (end.x() - start.x()) + start.x()),
+                                round(coeff * (end.y() - start.y()) + start.y()));
+            }
+            catch (...) {
+                // no resizing of line when line is 0-length, since we don't know in 
+                // what direction in the plane the line resizing should take place
+            }
+            return *this;
         }
+            
+            
         //---   Casting operators   -----------------------------------------
         /** \brief casting operator to vcl::vect::Vect4T<T>.
         * Returns a 4-components vcl::vect::Vect4T (start.x, start.y, nd.x, end.y).
@@ -1081,13 +1096,16 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        MyType& resize(const T& incr) noexcept
+        inline MyType& resize(const T& incr) noexcept
         {
+            /*
             const double kLength = length();
             const double coeff = double(kLength + incr) / kLength;
             end = MyPosType(round(coeff * (end.x() - start.x()) + start.x()),
                             round(coeff * (end.y() - start.y()) + start.y()));
             return *this;
+            */
+            return set_length(length() + incr);
         }
 
         /** \brief Resizes this line with 'incr' units (operator +=, 1 scalar parameter).
@@ -1152,8 +1170,9 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& scale(const T& factor) noexcept
+        inline MyType& scale(const T& factor) noexcept(false)
         {
+            assert(factor >= T(0));
             return resize(length() * (factor - 1));
         }
 
@@ -1162,7 +1181,7 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& operator *= (const T& factor) noexcept
+        inline MyType& operator *= (const T& factor) noexcept(false)
         {
             return scale(factor);
         }
@@ -1170,7 +1189,7 @@ namespace vcl::graphitems {
         /** \brief Resizing operator * (const TScalar) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator * (MyType line, const T factor) noexcept
+        friend inline MyType operator * (MyType line, const T factor) noexcept(false)
         {
             return line *= factor;
         }
@@ -1178,7 +1197,7 @@ namespace vcl::graphitems {
         /** \brief Resizing operator * (const TScalar, vcl::graphitems::LineT<>) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator * (const T factor, MyType line) noexcept
+        friend inline MyType operator * (const T factor, MyType line) noexcept(false)
         {
             return line *= factor;
         }
@@ -1192,10 +1211,10 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& scale_from_center(const T factor) noexcept
+        inline MyType& scale_from_center(const T factor) noexcept(false)
         {
-            const TScalar prev_length = length();
-            scale(factor);
+            const double prev_length = length();
+            scale(factor);  // notice: modifies the returned value of length()
             return move(0.5 * (prev_length - length()));
         }
 
@@ -1206,8 +1225,9 @@ namespace vcl::graphitems {
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& shrink(const T factor) noexcept(false)
+        MyType& shrink(const T factor) noexcept(false)
         {
+            assert(factor >= T(0));
             if (factor == T(0))
                 throw std::invalid_argument("reducing factors cannot be zero");
             else
@@ -1245,7 +1265,7 @@ namespace vcl::graphitems {
         inline MyType& shrink_from_center(const T& factor) noexcept(false)
         {
             const TScalar prev_length = length();
-            shrink(factor);
+            shrink(factor);  // notice: modifies the returned value of length()
             return move(0.5 * (prev_length - length()));
         }
 

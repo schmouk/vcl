@@ -25,6 +25,12 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#include <opencv2/core/types.hpp>
 
 export module utils.dims;
 
@@ -32,186 +38,260 @@ import vectors.vect2;
 
 
 //===========================================================================
-namespace vcl {
-    namespace utils {
+namespace vcl::utils {
 
-        //=======================================================================
-        // Forward declaration
-        export template<typename TScalar> class DimsT;
+    //=======================================================================
+    // Forward declaration
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    class DimsT;
 
-        // Specializations
-        /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
-        export typedef DimsT<unsigned short> Dims_us;
+    // Specializations
+    /** \brief The class of 2D dimensions with unsigned char components (8 bits). */
+    export using Dims_b = DimsT<unsigned char>;
 
-        /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
-        export typedef DimsT<unsigned long> Dims_ui;
+    /** \brief The class of 2D dimensions with unsigned short components (16 bits). */
+    export using Dims_us = DimsT<unsigned short>;
+    export using Dims = Dims_us;
 
-        /** \brief The class of 2D dimensions with float components (32 bits). */
-        export typedef DimsT<float> Dims_f;
+    /** \brief The class of 2D dimensions with unsigned long int components (32 bits). */
+    export using Dims_ui = DimsT<unsigned long>;
 
-        /** \brief The class of 2D dimensions with double components (64 bits). */
-        export typedef DimsT<double> Dims_d;
+    /** \brief The class of 2D dimensions with unsigned long long components (32 bits). */
+    export using Dims_ull = DimsT<unsigned long long>;
+
+    /** \brief The class of 2D dimensions with float components (64 bits). */
+    export using Dims_f = DimsT<float>;
+
+    /** \brief The class of 2D dimensions with double components (64 bits). */
+    export using Dims_d = DimsT<double>;
+
+    /** \brief The class of 2D dimensions with long double components (128 bits). */
+    export using Dims_ld = DimsT<long double>;
 
 
-        //=======================================================================
-        /** \brief The generic class for 2D dimensions.
-        *
-        * notice vcl::utils::Size does not inherit from cv::Size, but rather
-        * inherits from vcl::vect::Vect2<>.  This way, vcl::utils::Size gets
-        * more functionalities thant cv::Size.
+    //=======================================================================
+    /** \brief The generic class for 2D dimensions.
+    *
+    * Notice: vcl::utils::Size does not inherit from cv::Size,  but rather
+    * inherits from vcl::vect::Vect2<>.  This way, vcl::utils::Size  gets
+    * more functionalities than cv::Size. Casting constructor and operator 
+    * exist nevertheless.
+    */
+    template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    class DimsT : public vcl::vect::Vect2T<TScalar>
+    {
+    public:
+        using MyBaseType = vcl::vect::Vect2T<TScalar> ; //!< wrapper to the inherited class naming.
+        using MyType     = vcl::utils::DimsT<TScalar>; //!< wrapper to this class naming.
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor.
         */
-        template<typename TScalar>
-        class DimsT : public vcl::vect::Vect2<TScalar>
+        inline DimsT<TScalar>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with value.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Constructor with values.
+        */
+        template<typename W, typename H>
+            requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
+        inline DimsT<TScalar>(const W width, const H height)
+            : MyBaseType(width, height)
+        {}
+
+        /** \brief Copy constructor (const&).
+        */
+        inline DimsT<TScalar>(const MyType& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const vcl::vect::VectorT<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Move constructor (vcl::vect::VectorT&&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(vcl::vect::VectorT<T, S>&& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
+
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const std::array<T, S>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const std::pair&).
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+        inline DimsT<TScalar>(const std::pair<T, U>& other)
+            : MyBaseType(other)
+        {}
+
+        /** \brief Copy constructor (const cv::Size_&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline DimsT<TScalar>(const cv::Size_<T>& sz)
+            : MyBaseType(TScalar(sz.width), TScalar(sz.height))
+        {}
+
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~DimsT<TScalar>()
+        {}
+
+        //---   Casting operator   --------------------------------------
+        /** \brief cast operator to cv::Size_<_Tp> */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline operator cv::Size_<T>& ()
         {
-        public:
-            typedef vcl::vect::Vect2<TScalar>  MyBaseType; //!< wrapper to the inherited class naming.
-            typedef vcl::utils::DimsT<TScalar> MyType;     //!< wrapper to this class naming.
+            return cv::Size_<T>(T(this->width()), T(this->height()));
+        }
 
-            //---   constructors   ----------------------------------------------
-            /** \brief Empty constructor.
-            */
-            inline DimsT<TScalar>()
-                : MyBaseType()
-            {}
+        //---  Accessors/Mutators   -----------------------------------------
+        /** \brief component width accessor */
+        inline TScalar& width()
+        {
+            return (*this)[0];
+        }
 
-            /** \brief Constructor with value.
-            */
-            template<typename T>
-            inline DimsT<TScalar>(const T value)
-                : MyBaseType(value)
-            {}
+        /** \brief component width accessor */
+        inline const TScalar& width() const
+        {
+            return (*this)[0];
+        }
 
-            /** \brief Constructor with values.
-            */
-            template<typename T>
-            inline DimsT<TScalar>(const T width, const T height)
-                : MyBaseType(width, height)
-            {}
+        /** \brief component width mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar width(const T new_width)
+        {
+            TScalar w;
+            if (new_width <= std::numeric_limits<TScalar>::min())
+                w = std::numeric_limits<TScalar>::min();
+            else if (new_width >= std::numeric_limits<TScalar>::max())
+                w = std::numeric_limits<TScalar>::max();
+            else
+                w = TScalar(new_width);
+            return (*this)[0] = w;
+        }
 
-            /** \brief Copy constructor (const&).
-            */
-            inline DimsT<TScalar>(const MyType& other)
-                : MyBaseType()
-            {
-                this->copy(other);
-            }
+        /** \brief component height accessor */
+        inline TScalar& height()
+        {
+            return (*this)[1];
+        }
 
-            /** \brief Copy constructor (const vcl::vect::Vector&).
-            */
-            template<typename T, size_t S>
-            inline DimsT<TScalar>(const vcl::vect::Vector<T, S>& other)
-                : MyBaseType(other)
-            {}
+        /** \brief component height accessor */
+        inline const TScalar& height() const
+        {
+            return (*this)[1];
+        }
 
-            /** \brief Move constructor (vcl::vect::Vector&&).
-            */
-            template<typename T, size_t S>
-            inline DimsT<TScalar>(vcl::vect::Vector<T, S>&& other)
-                : MyBaseType(other)
-            {}
+        /** \brief component height mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar height(const T new_height)
+        {
+            TScalar h;
+            if (new_height <= std::numeric_limits<TScalar>::min())
+                h = std::numeric_limits<TScalar>::min();
+            else if (new_height >= std::numeric_limits<TScalar>::max())
+                h = std::numeric_limits<TScalar>::max();
+            else
+                h = TScalar(new_height);
+            return (*this)[1] = h;
+        }
 
-            /** \brief Copy constructor (const std::array&).
-            */
-            template<typename T, size_t S>
-            inline DimsT<TScalar>(const std::array<T, S>& other)
-                : MyBaseType(other)
-            {}
+        //---  Miscelaneous   ----------------------------------------------
+        /** \brief returns the area related to the dimensions */
+        inline const TScalar area() const
+        {
+            return width() * height();  // CAUTION: may overfloaw
+        }
 
-            /** \brief Copy constructor (const std::vector&).
-            */
-            template<typename T>
-            inline DimsT<TScalar>(const std::vector<T>& vect)
-                : MyBaseType(vect)
-            {}
+        /** \brief returns the ratio of width / height */
+        inline const double ratio_wh() const throw()
+        {
+            return double(width()) / double(height());  // CAUTION: may throw division by 0
+        }
 
-            //---  Destructor   -------------------------------------------------
-            virtual inline ~DimsT<TScalar>()
-            {}
+        //---  Comparison operators   --------------------------------------
+        /** \brief operator == */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator== (const vcl::utils::DimsT<T>& other)
+        {
+            return width() == other.width() && height() == other.height();
+        }
 
-            //---  Accessors/Mutators   -----------------------------------------
-            /** \brief component width accessor */
-            inline const TScalar width() const
-            {
-                return (*this)[0];
-            }
+        /** \brief operator != */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator!= (const vcl::utils::DimsT<T>& other)
+        {
+            return !(*this == other);
+        }
 
-            /** \brief component width mutator */
-            template<typename T>
-            inline TScalar width(const T new_width)
-            {
-                return (*this)[0] = new_width;
-            }
+        /** \brief operator < */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator< (const vcl::utils::DimsT<T>& other)
+        {
+            return area() < other.area();
+        }
 
-            /** \brief component height accessor */
-            inline const TScalar height() const
-            {
-                return (*this)[1];
-            }
+        /** \brief operator <= */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator<= (const vcl::utils::DimsT<T>& other)
+        {
+            return area() <= other.area();
+        }
 
-            /** \brief component height mutator */
-            template<typename T>
-            inline TScalar height(const T new_height)
-            {
-                return (*this)[1] = new_height;
-            }
+        /** \brief operator > */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator> (const vcl::utils::DimsT<T>& other)
+        {
+            return area() > other.area();
+        }
 
-            //---  Miscelaneous   ----------------------------------------------
-            /** \brief returns the area related to the dimensions */
-            inline const TScalar area() const
-            {
-                return width() * height();  // CAUTION: may overfloaw
-            }
+        /** \brief operator >= */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline bool operator>= (const vcl::utils::DimsT<T>& other)
+        {
+            return area() >= other.area();
+        }
+    };
 
-            /** \brief returns the ratio of width / height */
-            inline const double ratio_wh() const
-            {
-                return double(width()) / double(height());
-            }
-
-            //---  Comparison operators   --------------------------------------
-            /** \brief operator == */
-            template<typename T>
-            inline bool operator== (const vcl::utils::DimsT<T>& other)
-            {
-                return width() == other.width() && height() == other.height();
-            }
-
-            /** \brief operator != */
-            template<typename T>
-            inline bool operator!= (const vcl::utils::DimsT<T>& other)
-            {
-                return !(*this == other);
-            }
-
-            /** \brief operator < */
-            template<typename T>
-            inline bool operator< (const vcl::utils::DimsT<T>& other)
-            {
-                return area() < other.area();
-            }
-
-            /** \brief operator <= */
-            template<typename T>
-            inline bool operator<= (const vcl::utils::DimsT<T>& other)
-            {
-                return *this < other || *this == other;
-            }
-
-            /** \brief operator > */
-            template<typename T>
-            inline bool operator> (const vcl::utils::DimsT<T>& other)
-            {
-                return area() > other.area();
-            }
-
-            /** \brief operator >= */
-            template<typename T>
-            inline bool operator>= (const vcl::utils::DimsT<T>& other)
-            {
-                return area() >= other.area();
-            }
-
-        };
-
-    } // end of namespace utils
-} // end of namespace vcl
+}

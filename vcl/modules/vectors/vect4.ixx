@@ -26,6 +26,8 @@ SOFTWARE.
 module;
 
 #include <array>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 export module vectors.vect4;
@@ -34,152 +36,221 @@ import vectors.vector;
 
 
 //===========================================================================
-namespace vcl {
-    namespace vect {
+namespace vcl::vect {
         
-        //-----------------------------------------------------------------------
-        // Forward declaration and Specializations
-        export template<typename TScalar> class Vect4;
+    //-----------------------------------------------------------------------
+    // Forward declaration and Specializations
+    /** \brief The generic class of 4D vectors with unclipped scalar components. */
+    export template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    class Vect4T;
 
-        /** \brief The class of 4D vectors with double components (64 bits). */
-        export typedef Vect4<double> Vect4d;
+    /** \brief The class of 4D vectors with 8bits signed components (8 bits). */
+    export using Vect4c = Vect4T<char>;
 
-        /** \brief The class of 4D vectors with float components (32 bits). */
-        export typedef Vect4<float> Vect4f;
+    /** \brief The class of 4D vectors with bytes components (8 bits). */
+    export using Vect4b = Vect4T<unsigned char>;
 
-        /** \brief The class of 4D vectors with bytes components (8 bits). */
-        export typedef Vect4<unsigned char> Vect4b;
+    /** \brief The class of 4D vectors with short components (16 bits). */
+    export using Vect4s = Vect4T<short>;
+    export using Vect4 = Vect4s;
 
-        /** \brief The class of 4D vectors with short components (16 bits). */
-        export typedef Vect4<short> Vect4s;
+    /** \brief The class of 4D vectors with unsigned short components (16 bits). */
+    export using Vect4us = Vect4T<unsigned short>;
 
-        /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-        export typedef Vect4<unsigned short> Vect4us;
+    /** \brief The class of 3D vectors with long int components (32 bits). */
+    export using Vect4i = Vect4T<long>;
 
-        /** \brief The class of 4D vectors with long int components (32 bits). */
-        export typedef Vect4<long> Vect4i;
+    /** \brief The class of 4D vectors with long int components (32 bits). */
+    export using Vect4ui = Vect4T<unsigned long>;
 
-        /** \brief The class of 4D vectors with unsigned long int components (32 bits). */
-        export typedef Vect4<unsigned long> Vect4ui;
+    /** \brief The class of 4D vectors with unsigned long int components (64 bits). */
+    export using Vect4li = Vect4T<long long>;
+
+    /** \brief The class of 3D vectors with unsigned long long components (64 bits). */
+    export using Vect4uli = Vect4T<unsigned long long>;
+
+    /** \brief The class of 4D vectors with float components (32 bits). */
+    export using Vect4f = Vect4T<float>;
+
+    /** \brief The class of 4D vectors with double components (64 bits). */
+    export using Vect4d = Vect4T<double>;
+
+    /** \brief The class of 4D vectors with long double components (128 bits). */
+    export using Vect4ld = Vect4T<long double>;
 
 
-        //-----------------------------------------------------------------------
-        /** \brief the generic class for 4-D vectors.
-        *
-        * \sa its specializations Vect4d, Vect4f, Vect4b, Vect4s, Vect4us, Vect4i, and Vect4ui.
+    //-----------------------------------------------------------------------
+    /** \brief the generic class for 4-D vectors.
+    *
+    * \sa its specializations Vect4d, Vect4f, Vect4b, Vect4s, Vect4us, Vect4i, and Vect4ui.
+    */
+    template<typename TScalar>
+        requires std::is_arithmetic_v<TScalar>
+    class Vect4T : public vcl::vect::VectorT<TScalar, 4>
+    {
+    public:
+        using MyBaseType = vcl::vect::VectorT<TScalar, 4> ;  //<! wrapper to the inherited class naming.
+        using MyType     = vcl::vect::Vect4T<TScalar>     ;  //<! wrapper to this class naming.
+
+
+        //---   constructors   ----------------------------------------------
+        /** \brief Empty constructor (components default to 0).
         */
-        template<typename TScalar>
-        class Vect4 : public vcl::vect::Vector<TScalar, 4>
+        inline Vect4T<TScalar>()
+            : MyBaseType()
+        {}
+
+        /** \brief Constructor with a filling value.
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Vect4T<TScalar>(const T value)
+            : MyBaseType(value)
+        {}
+
+        /** \brief Constructor with values.
+        */
+        template<typename T, typename U, typename V, typename W>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V> && std::is_arithmetic_v<W>
+        inline Vect4T<TScalar>(const T x_, const U y_, const V z_ = T(0), const W w_ = W(0))
+            : MyBaseType()
         {
-        public:
-            typedef vcl::vect::Vector<TScalar, 4> MyBaseType; //<! wrapper to the inherited class naming.
-            typedef vcl::vect::Vect4<TScalar>     MyType;     //<! wrapper to this class naming.
+            x(x_);
+            y(y_);
+            z(z_);
+            w(w_);
+        }
 
+        /** \brief Copy constructor (const vcl::vect::VectorT&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline Vect4T<TScalar>(const vcl::vect::VectorT<T, S>& other)
+            : MyBaseType(other)
+        {}
 
-            //---   constructors   ----------------------------------------------
-            /** \brief Empty constructor (components default to 0).
-            */
-            inline Vect4<TScalar>()
-                : MyBaseType()
-            {}
+        /** \brief Copy constructor (const std::vector&).
+        */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Vect4T<TScalar>(const std::vector<T>& vect)
+            : MyBaseType(vect)
+        {}
 
-            /** \brief Constructor with a filling value.
-            */
-            template<typename T>
-            inline Vect4<TScalar>(const T value)
-                : MyBaseType(value)
-            {}
+        /** \brief Copy constructor (const std::array&).
+        */
+        template<typename T, size_t S>
+            requires std::is_arithmetic_v<T>
+        inline Vect4T<TScalar>(const std::array<T, S>& arr)
+            : MyBaseType(arr)
+        {}
 
-            /** \brief Constructor with values.
-            */
-            template<typename T>
-            inline Vect4<TScalar>(const T x, const T y, const T z = T(0), const T w = T(0))
-                : MyBaseType()
-            {
-                x(x());
-                y(y());
-                z(z());
-                w(w());
-            }
+        /** \brief Copy constructor (const std::pair&).
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline Vect4T<TScalar>(const std::pair<T, U>& pair)
+            : MyBaseType(pair)
+        {}
 
-            /** \brief Copy constructor (const vcl::vect::Vector&).
-            */
-            template<typename T, size_t S>
-            inline Vect4<TScalar>(const vcl::vect::Vector<T, S>& other)
-                : MyBaseType(other)
-            {}
+        /** \brief Copy constructor (const std::pair&, const std::pair&).
+        */
+        template<typename T, typename U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
+        inline Vect4T<TScalar>(const std::pair<T, U>& pair1, const std::pair<T, U>& pair2)
+            : MyBaseType()
+        {
+            (*this)[0] = pair1.first;
+            (*this)[1] = pair1.second;
+            (*this)[2] = pair2.first;
+            (*this)[3] = pair2.second;
+        }
 
-            /** \brief Copy constructor (const std::array&).
-            */
-            template<typename T, size_t S>
-            inline Vect4<TScalar>(const std::array<T, S>& arr)
-                : MyBaseType(arr)
-            {}
+        //---  Destructor   -------------------------------------------------
+        virtual inline ~Vect4T<TScalar>()
+        {}
 
-            /** \brief Copy constructor (const std::vector&).
-            */
-            template<typename T>
-            inline Vect4<TScalar>(const std::vector<T>& vect)
-                : MyBaseType(vect)
-            {}
+        //---   Components accessors / mutators   --------------------------------------
+        /** \brief component x accessor */
+        inline TScalar& x()
+        {
+            return (*this)[0];
+        }
 
-            //---  Destructor   -------------------------------------------------
-            virtual inline ~Vect4<TScalar>()
-            {}
+        /** \brief component x accessor */
+        inline const TScalar& x() const
+        {
+            return (*this)[0];
+        }
 
-            //---   Components accessors / mutators   --------------------------------------
-            /** \brief component x accessor */
-            inline const TScalar x() const
-            {
-                return (*this)[0];
-            }
+        /** \brief component x mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar x(const T new_x)
+        {
+            return (*this)[0] = this->clipped(new_x);
+        }
 
-            /** \brief component x mutator */
-            template<typename T>
-            inline TScalar x(const T new_x)
-            {
-                return (*this)[0] = this->clipped(new_x);
-            }
+        /** \brief component y accessor */
+        inline TScalar& y()
+        {
+            return (*this)[1];
+        }
 
-            /** \brief component y accessor */
-            inline const TScalar y() const
-            {
-                return (*this)[1];
-            }
+        /** \brief component y accessor */
+        inline const TScalar& y() const
+        {
+            return (*this)[1];
+        }
 
-            /** \brief component y mutator */
-            template<typename T>
-            inline TScalar y(const T new_y)
-            {
-                return (*this)[1] = this->clipped(new_y);
-            }
+        /** \brief component y mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar y(const T new_y)
+        {
+            return (*this)[1] = this->clipped(new_y);
+        }
 
-            /** \brief component z accessor */
-            inline const TScalar z() const
-            {
-                return (*this)[2];
-            }
+        /** \brief component z accessor */
+        inline TScalar& z()
+        {
+            return (*this)[2];
+        }
 
-            /** \brief component z mutator */
-            template<typename T>
-            inline TScalar z(const T new_z)
-            {
-                return (*this)[2] = this->clipped(new_z);
-            }
+        /** \brief component z accessor */
+        inline const TScalar& z() const
+        {
+            return (*this)[2];
+        }
 
-            /** \brief component w accessor */
-            inline const TScalar w() const
-            {
-                return (*this)[3];
-            }
+        /** \brief component z mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar z(const T new_z)
+        {
+            return (*this)[2] = this->clipped(new_z);
+        }
 
-            /** \brief component w mutator */
-            template<typename T>
-            inline TScalar w(const T new_w)
-            {
-                return (*this)[3] = this->clipped(new_w);
-            }
-        };
+        /** \brief component w accessor */
+        inline TScalar& w()
+        {
+            return (*this)[3];
+        }
 
-    } // end of namespace vect
-} // end of namespace vcl
+        /** \brief component w accessor */
+        inline const TScalar& w() const
+        {
+            return (*this)[3];
+        }
+
+        /** \brief component w mutator */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline TScalar w(const T new_w)
+        {
+            return (*this)[3] = this->clipped(new_w);
+        }
+    };
+
+}

@@ -196,7 +196,7 @@ namespace vcl::utils {
         //---   origin   ------------------------------------------------
         /* \brief returns the origin position (0, 0).
         */
-        static inline MyType origin()
+        static inline const MyType origin()
         {
             return MyType();
         }

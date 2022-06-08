@@ -125,7 +125,7 @@ namespace vcl::vect {
         }
 
 
-        //---  Destructor   -------------------------------------------------
+        //---   Destructor   ------------------------------------------------
         virtual inline ~VectorT<TScalar, Ksize>()
         {}
 
@@ -510,6 +510,7 @@ namespace vcl::vect {
             return *this;
         }
 
+
         //---   operator +=   -----------------------------------------------
         /** \brief += operator (reference) */
         template<typename T, size_t S>
@@ -819,9 +820,9 @@ namespace vcl::vect {
         }
 
         /** \brief unary operator - */
-        MyType operator-()
+        inline const MyType operator-() const
         {
-            return (*this * -1);
+            return (*this) * -1;
         }
 
 
@@ -904,7 +905,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator* (MyType lhs, const vcl::vect::VectorT<T, S>& rhs)
+        friend inline MyType& operator* (MyType lhs, const vcl::vect::VectorT<T, S>& rhs)
         {
             return lhs *= rhs;
         }
@@ -912,7 +913,7 @@ namespace vcl::vect {
         /** \brief * operator (vcl::vect::VectorT, const TScalar) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator* (MyType lhs, const T value)
+        friend inline MyType& operator* (MyType lhs, const T value)
         {
             return lhs *= value;
         }
@@ -920,7 +921,7 @@ namespace vcl::vect {
         /** \brief * operator (const TScalar, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator* (const T value, MyType rhs)
+        friend inline MyType& operator* (const T value, MyType rhs)
         {
             return rhs *= value;
         }
@@ -928,7 +929,7 @@ namespace vcl::vect {
         /** \brief * operator (const std::array) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator* (MyType lhs, const std::array<T, S>& rhs)
+        friend inline MyType& operator* (MyType lhs, const std::array<T, S>& rhs)
         {
             return lhs *= rhs;
         }
@@ -936,7 +937,7 @@ namespace vcl::vect {
         /** \brief * operator (const std::array, vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline std::array<T, S> operator* (std::array<T, S> lhs, MyType rhs)
+        friend inline std::array<T, S>& operator* (std::array<T, S> lhs, MyType rhs)
         {
             return lhs *= rhs;
         }
@@ -944,7 +945,7 @@ namespace vcl::vect {
         /** \brief * operator (const std::vector) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator* (MyType lhs, const std::vector<T> rhs)
+        friend inline MyType& operator* (MyType lhs, const std::vector<T> rhs)
         {
             return lhs *= rhs;
         }
@@ -952,7 +953,7 @@ namespace vcl::vect {
         /** \brief * operator (const std::vector, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline std::vector<T> operator* (std::vector<T> lhs, MyType rhs)
+        friend inline std::vector<T>& operator* (std::vector<T> lhs, MyType rhs)
         {
             return lhs *= rhs;
         }
@@ -960,7 +961,7 @@ namespace vcl::vect {
         /** \brief * operator (const std::pair) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        friend inline MyType operator* (MyType lhs, const std::pair<T, U>rhs)
+        friend inline MyType& operator* (MyType lhs, const std::pair<T, U>rhs)
         {
             return lhs *= rhs;
         }
@@ -972,6 +973,7 @@ namespace vcl::vect {
         {
             return lhs *= rhs;
         }
+
 
         //---   operators /=   ----------------------------------------------
         /** \brief /= operator (const reference) */
@@ -1052,7 +1054,7 @@ namespace vcl::vect {
         */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator/ (MyType lhs, const vcl::vect::VectorT<T, S>& rhs)
+        friend inline MyType& operator/ (MyType lhs, const vcl::vect::VectorT<T, S>& rhs)
         {
             return lhs /= rhs;
         }
@@ -1060,7 +1062,7 @@ namespace vcl::vect {
         /** \brief / operator (vcl::vect::VectorT, const TScalar) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator/ (MyType lhs, const T value)
+        friend inline MyType& operator/ (MyType lhs, const T value)
         {
             return lhs /= value;
         }
@@ -1068,7 +1070,7 @@ namespace vcl::vect {
         /** \brief / operator (const T Scalar, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator/ (const T value, MyType& rhs)
+        friend inline MyType& operator/ (const T value, MyType& rhs)
         {
             return MyType(value) /= rhs;
         }
@@ -1076,7 +1078,7 @@ namespace vcl::vect {
         /** \brief / operator (const std::array) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator/ (MyType lhs, const std::array<T, S>& rhs)
+        friend inline MyType& operator/ (MyType lhs, const std::array<T, S>& rhs)
         {
             return lhs /= rhs;
         }
@@ -1084,7 +1086,7 @@ namespace vcl::vect {
         /** \brief / operator (const std::array, vcl::vect::VectorT) */
         template<typename T, size_t S>
             requires std::is_arithmetic_v<T>
-        friend inline std::array<T, S> operator/ (std::array<T, S> lhs, MyType rhs)
+        friend inline std::array<T, S>& operator/ (std::array<T, S> lhs, MyType rhs)
         {
             return lhs /= rhs;
         }
@@ -1092,7 +1094,7 @@ namespace vcl::vect {
         /** \brief / operator (const std::vector) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType operator/ (MyType lhs, const std::vector<T> rhs)
+        friend inline MyType& operator/ (MyType lhs, const std::vector<T> rhs)
         {
             return lhs /= rhs;
         }
@@ -1100,7 +1102,7 @@ namespace vcl::vect {
         /** \brief / operator (const std::vector, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline std::vector<T> operator/ (const std::vector<T> lhs, MyType rhs)
+        friend inline std::vector<T>& operator/ (const std::vector<T> lhs, MyType rhs)
         {
             return lhs /= rhs;
         }
@@ -1108,7 +1110,7 @@ namespace vcl::vect {
         /** \brief / operator (vcl::vect::VectorT, const std::pair) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        friend inline MyType operator/ (MyType lhs, const std::pair<T, U> rhs)
+        friend inline MyType& operator/ (MyType lhs, const std::pair<T, U> rhs)
         {
             return lhs /= rhs;
         }
@@ -1116,10 +1118,11 @@ namespace vcl::vect {
         /** \brief / operator (const std::pair, vcl::vect::VectorT) */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        friend inline MyType operator/ (const std::pair<T, U> lhs, MyType& rhs)
+        friend inline MyType& operator/ (const std::pair<T, U> lhs, MyType& rhs)
         {
             return lhs /= rhs;
         }
+
 
         //---   iterators   -------------------------------------------------
         /** \brief simulates an iterator over vector content.
@@ -1153,6 +1156,7 @@ namespace vcl::vect {
         {
             return this->val + Ksize;
         }
+
 
         //---   miscelaneous   ----------------------------------------------
         /** \brief Returns the specified value clipped. */

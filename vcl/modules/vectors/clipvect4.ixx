@@ -58,7 +58,7 @@ namespace vcl::vect {
     export using ClipVect4 = ClipVect4s;
 
     /** \brief The class of 4D vectors with unsigned short components (16 bits). */
-    export using ClipVect4us = ClipVect4T<short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
+    export using ClipVect4us = ClipVect4T<unsigned short, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
 
     /** \brief The class of 4D vectors with long int components (32 bits). */
     export using ClipVect4i = ClipVect4T<long, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
@@ -182,7 +182,13 @@ namespace vcl::vect {
 
         //---   Components accessors / mutators   --------------------------------------
         /** \brief component x accessor */
-        inline const TScalar x() const
+        inline TScalar& x()
+        {
+            return (*this)[0];
+        }
+
+        /** \brief component x accessor */
+        inline const TScalar& x() const
         {
             return (*this)[0];
         }
@@ -196,7 +202,13 @@ namespace vcl::vect {
         }
 
         /** \brief component y accessor */
-        inline const TScalar y() const
+        inline TScalar& y()
+        {
+            return (*this)[1];
+        }
+
+        /** \brief component y accessor */
+        inline const TScalar& y() const
         {
             return (*this)[1];
         }
@@ -210,7 +222,13 @@ namespace vcl::vect {
         }
 
         /** \brief component z accessor */
-        inline const TScalar z() const
+        inline TScalar& z()
+        {
+            return (*this)[2];
+        }
+
+        /** \brief component z accessor */
+        inline const TScalar& z() const
         {
             return (*this)[2];
         }
@@ -224,7 +242,13 @@ namespace vcl::vect {
         }
 
         /** \brief component w accessor */
-        inline const TScalar w() const
+        inline TScalar& w()
+        {
+            return (*this)[3];
+        }
+
+        /** \brief component w accessor */
+        inline const TScalar& w() const
         {
             return (*this)[3];
         }

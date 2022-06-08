@@ -178,7 +178,13 @@ namespace vcl::utils {
 
         //---  Accessors/Mutators   -----------------------------------------
         /** \brief component width accessor */
-        inline const TScalar width() const
+        inline TScalar& width()
+        {
+            return (*this)[0];
+        }
+
+        /** \brief component width accessor */
+        inline const TScalar& width() const
         {
             return (*this)[0];
         }
@@ -199,7 +205,13 @@ namespace vcl::utils {
         }
 
         /** \brief component height accessor */
-        inline const TScalar height() const
+        inline TScalar& height()
+        {
+            return (*this)[1];
+        }
+
+        /** \brief component height accessor */
+        inline const TScalar& height() const
         {
             return (*this)[1];
         }

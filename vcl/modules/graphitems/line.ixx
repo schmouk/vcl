@@ -1186,7 +1186,7 @@ namespace vcl::graphitems {
             return scale(factor);
         }
 
-        /** \brief Resizing operator * (const TScalar) */
+        /** \brief Scaling operator * (const TScalar) */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline MyType operator * (MyType line, const T factor) noexcept(false)
@@ -1194,7 +1194,7 @@ namespace vcl::graphitems {
             return line *= factor;
         }
 
-        /** \brief Resizing operator * (const TScalar, vcl::graphitems::LineT<>) */
+        /** \brief Scaling operator * (const TScalar, vcl::graphitems::LineT<>) */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline MyType operator * (const T factor, MyType line) noexcept(false)
@@ -1207,15 +1207,18 @@ namespace vcl::graphitems {
         * of the scaling. As such, modifies the top-left corner
         * position.
         * Values less than 1.0 shrink this line.
+        * CAUTION: no checking is done to get proper clipping.
         * \sa \c shrink_from_center() and \c scale()
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& scale_from_center(const T factor) noexcept(false)
+        MyType& scale_from_center(const T factor) noexcept(false)
         {
-            const double prev_length = length();
-            scale(factor);  // notice: modifies the returned value of length()
-            return move(0.5 * (prev_length - length()));
+            const double dx = start.x() - end.x();
+            const double dy = start.y() - end.y();
+            scale(factor); // notice: modifies the returned value of length()
+            const double coeff = 0.5 * factor;
+            return move(dx * coeff, dy * coeff);
         }
 
 
@@ -1231,7 +1234,7 @@ namespace vcl::graphitems {
             if (factor == T(0))
                 throw std::invalid_argument("reducing factors cannot be zero");
             else
-                this *= 1.0 / double(factor);
+                scale(1.0 / double(factor));
             return *this;
         }
 
@@ -1258,15 +1261,18 @@ namespace vcl::graphitems {
         * of the scaling. As such, modifies the top-left corner
         * position.
         * Values less than 1.0 augment this line.
+        * CAUTION: no checking is done to get proper clipping.
         * \sa \c scale_from_center() and \c skrink()
         */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline MyType& shrink_from_center(const T& factor) noexcept(false)
+        MyType& shrink_from_center(const T factor) noexcept(false)
         {
-            const TScalar prev_length = length();
-            shrink(factor);  // notice: modifies the returned value of length()
-            return move(0.5 * (prev_length - length()));
+            const double dx = start.x() - end.x();
+            const double dy = start.y() - end.y();
+            shrink(factor); // notice: modifies the returned value of length()
+            const double coeff = 0.5 / factor;
+            return move(dx * coeff, dy * coeff);
         }
 
 
@@ -1334,12 +1340,11 @@ namespace vcl::graphitems {
             draw(frame);
         }
 
-
         /** \brief Draws this line in a specified frame (use all previous specifiers again).
-        * CAUTION: while first calling method  'draw()'  on  a  line,
-        *       color  MUST BE specified. Not doing so may lead to the not
-        *       display of the line in the frame  or  may  result  to
-        *       unpredictable color used for the display of the line.
+        * CAUTION: while first calling  method  'draw()'  on  a  line,
+        *   color  MUST BE specified. Not doing so may lead to the not
+        *   display of  the  line  in  the  frame  or  may  result  to
+        *   unpredictable color used for the display of the line.
         */
         inline void draw(cv::Mat& frame)
         {

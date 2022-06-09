@@ -165,7 +165,6 @@
     <ClCompile Include="modules\graphitems\line.ixx" />
     <ClCompile Include="modules\graphitems\rect.ixx" />
     <ClCompile Include="modules\utils\base_funcs.ixx" />
-    <ClCompile Include="modules\utils\archive\clipped.ixx" />
     <ClCompile Include="modules\utils\colors.ixx" />
     <ClCompile Include="modules\utils\perfmeters.ixx" />
     <ClCompile Include="modules\utils\dims.ixx" />
@@ -187,7 +186,6 @@
   <ItemGroup>
     <ClInclude Include="include\tests\graphitems\test_line.h" />
     <ClInclude Include="include\tests\graphitems\test_rect.h" />
-    <ClInclude Include="include\archive\vcl_concepts.h" />
     <ClInclude Include="include\tests\vectors\test_clipvect2.h" />
     <ClInclude Include="include\tests\vectors\test_clipvect3.h" />
     <ClInclude Include="include\tests\vectors\test_clipvect4.h" />

@@ -1,9 +1,5 @@
 # Project specifics
 # (VS 2022)
-*.sln
-*.vcxproj
-*.vcxproj.*
-.vs
 Debug
 Release
 x64

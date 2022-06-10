@@ -72,9 +72,6 @@
     <ClCompile Include="modules\graphitems\line.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="modules\utils\archive\clipped.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="modules\vectors\clipvector.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\tests\test_opencv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\archive\vcl_concepts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\tests\graphitems\test_rect.h">

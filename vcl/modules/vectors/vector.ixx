@@ -1070,7 +1070,7 @@ namespace vcl::vect {
         /** \brief / operator (const T Scalar, vcl::vect::VectorT) */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        friend inline MyType& operator/ (const T value, MyType& rhs)
+        friend inline MyType operator/ (const T value, MyType& rhs)
         {
             return MyType(value) /= rhs;
         }

@@ -345,42 +345,13 @@ namespace vcl::graphitems {
             requires std::is_arithmetic_v<T>
         MyType& set_length(const T& new_length) noexcept(false)
         {
-            /*
-            if (start.x() == end.x()) {
-                if (start.y() <= end.y())
-                    end.y(start.y() + length);
-                else
-                    end.y(start.y() - length);
-            }
-            else if (start.y() == end.y()) {
-                if ( start.x() <= end.x())
-                    end.x(start.x() + length);
-                else
-                    end.x(start.x() - length);
-            }
-            else {
-                if (std::is_integral_v<TScalar>) {
-                    const double dx = double(end.x()) - double(start.x());
-                    const double dy = double(end.y()) - double(start.y());
-                    const double ratio = double(length) / this->length();
-                    end = MyPosType(round(dx * ratio + start.x()),
-                                    round(dy * ratio + start.y()));
-                }
-                else {
-                    const TScalar dx = end.x() - start.x();
-                    const TScalar dy = end.y() - start.y();
-                    const TScalar ratio = TScalar(length) / TScalar(this->length());
-                    end = MyPosType(round(dx * ratio) + start.x(),
-                                    round(dy * ratio) + start.y());
-                }
-            }
-            return *this;
-            */
             assert(new_length >= T(0));
             try {
                 const double coeff = double(new_length) / length();
-                end = MyPosType(round(coeff * (end.x() - start.x()) + start.x()),
-                                round(coeff * (end.y() - start.y()) + start.y()));
+                const double sx = (double)start.x();
+                const double sy = (double)start.y();
+                end = MyPosType(round(coeff * ((double)end.x() - sx) + sx),
+                                round(coeff * ((double)end.y() - sy) + sy));
             }
             catch (...) {
                 // no resizing of line when line is 0-length, since we don't know in 
@@ -1214,8 +1185,8 @@ namespace vcl::graphitems {
             requires std::is_arithmetic_v<T>
         MyType& scale_from_center(const T factor) noexcept(false)
         {
-            const double dx = start.x() - end.x();
-            const double dy = start.y() - end.y();
+            const double dx = (double)start.x() - (double)end.x();
+            const double dy = (double)start.y() - (double)end.y();
             scale(factor); // notice: modifies the returned value of length()
             const double coeff = 0.5 * factor;
             return move(dx * coeff, dy * coeff);
@@ -1268,8 +1239,8 @@ namespace vcl::graphitems {
             requires std::is_arithmetic_v<T>
         MyType& shrink_from_center(const T factor) noexcept(false)
         {
-            const double dx = start.x() - end.x();
-            const double dy = start.y() - end.y();
+            const double dx = (double)start.x() - (double)end.x();
+            const double dy = (double)start.y() - (double)end.y();
             shrink(factor); // notice: modifies the returned value of length()
             const double coeff = 0.5 / factor;
             return move(dx * coeff, dy * coeff);

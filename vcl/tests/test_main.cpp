@@ -62,31 +62,29 @@ int main()
 
     vcl::utils::PerfMeter perfm;
 
-/** /
 #include "tests/vectors/test_vect2.h"
 #include "tests/vectors/test_vect3.h"
 #include "tests/vectors/test_vect4.h"
 #include "tests/vectors/test_clipvect2.h"
 #include "tests/vectors/test_clipvect3.h"
 #include "tests/vectors/test_clipvect4.h"
-/**/
 #include "tests/vectors/test_clipvector.h"
 
-/** /
-/#include "tests/utils/test_pos.h"
+#include "tests/utils/test_pos.h"
 #include "tests/utils/test_dims.h"
 #include "tests/utils/test_offsets.h"
 #include "tests/utils/test_timecode.h"
 #include "tests/utils/test_perfmeters.h"
 
 #include "tests/graphitems/test_rect.h"
-/**/
 
 #include "tests/graphitems/test_line.h"
 
     std::string processing_time = std::format("{:.1f} ms\n\n", perfm.get_elapsed_ms());
 
-    std::cout << "\n>>>>>>>>>>   Everything went FINE   <<<<<<<<<<\n\n";
+    std::cout << "\n  >>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<";
+    std::cout << "\n  >>>>>>>>>>   Everything went FINE   <<<<<<<<<<";
+    std::cout << "\n  >>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<\n\n";
     std::cout << "Processing time: " << processing_time;
 
     return 0;

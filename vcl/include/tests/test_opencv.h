@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,17 +23,32 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-//===========================================================================
-module;
-
-#include <stdexcept>
-
-export module utils.exceptions;
-
 
 //===========================================================================
-namespace vcl::except {
+/** \brief main for OpenCV tests. */
 
-    //===================================================================
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include <iostream>
 
-} // end of namespace vcl
+using namespace cv;
+
+int main()
+{
+    std::string image_path = samples::findFile("D:\\Philippe\\Privé\\Tarc\\Tarc-Photos\\007_5.jpg");
+    Mat img = imread(image_path, IMREAD_COLOR);
+    if (img.empty())
+    {
+        std::cout << "Could not read the image: " << image_path << std::endl;
+        return 1;
+    }
+    imshow("Display window", img);
+    int k = waitKey(0); // Wait for a keystroke in the window
+    if (k == 's')
+    {
+        imwrite("D:\\Philippe\\Privé\\Tarc\\Tarc-Photos\\007_5a.jpg", img);
+    }
+
+    return 0;
+}

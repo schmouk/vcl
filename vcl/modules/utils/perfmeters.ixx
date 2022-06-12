@@ -34,58 +34,55 @@ export module utils.perfmeters;
 
 
 //===========================================================================
-namespace vcl {
-    namespace utils {
+namespace vcl::utils {
 
-        //===================================================================
-        /** the class of time performance evaluators.
+    //===================================================================
+    /** the class of time performance evaluators.
+    */
+    export class PerfMeter
+    {
+    public:
+        /** \brief Empty constructor.
         */
-        export class PerfMeter
+        inline PerfMeter()
+            : prvt_start(std::chrono::steady_clock::now())
+        {}
+
+        /** \brief Copy constructor.
+        */
+        inline PerfMeter(const PerfMeter& other)
+            : prvt_start(other.prvt_start)
+        {}
+
+        /** \brief Move constructor.
+        */
+        inline PerfMeter(PerfMeter&& other)
+            : prvt_start(other.prvt_start)
+        {}
+
+        /** \brief internally sets the starting point.
+        */
+        inline void start()
         {
-        public:
-            /** \brief Empty constructor.
-            */
-            inline PerfMeter()
-                : prvt_start(std::chrono::steady_clock::now())
-            {}
+            prvt_start = std::chrono::steady_clock::now();
+        }
 
-            /** \brief Copy constructor.
-            */
-            inline PerfMeter(const PerfMeter& other)
-                : prvt_start(other.prvt_start)
-            {}
+        /** \brief gets measured duration in fractional milliseconds.
+        */
+        inline const double get_elapsed_ms()
+        {
+            return get_elapsed_s() * 1000.0;
+        }
 
-            /** \brief Move constructor.
-            */
-            inline PerfMeter(PerfMeter&& other)
-                : prvt_start(other.prvt_start)
-            {}
+        /** \brief gets measured duration in fractional seconds.
+        */
+        inline const double get_elapsed_s()
+        {
+            return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - prvt_start).count();
+        }
 
-            /** \brief internally sets the starting point.
-            */
-            inline void start()
-            {
-                prvt_start = std::chrono::steady_clock::now();
-            }
+    private:
+        std::chrono::steady_clock::time_point prvt_start;
+    };
 
-            /** \brief gets measured duration in fractional milliseconds.
-            */
-            inline const double get_elapsed_ms()
-            {
-                return get_elapsed_s() * 1000.0;
-            }
-
-            /** \brief gets measured duration in fractional seconds.
-            */
-            inline const double get_elapsed_s()
-            {
-                return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - prvt_start).count();
-            }
-
-        private:
-            std::chrono::steady_clock::time_point prvt_start;
-
-        };
-
-    } // end of namespace utils
-} // end of namespace vcl
+}

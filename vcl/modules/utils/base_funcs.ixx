@@ -25,14 +25,30 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <stdexcept>
+export module utils.base_funcs;
 
-export module utils.exceptions;
 
 
 //===========================================================================
-namespace vcl::except {
+namespace vcl::utils {
+    
+    /** \brief Returns the max of two objects.
+    * Notice: types T and U must be comparable, i.e. the operator '>'
+    * must have been defined between these two types.
+    */
+    export template<typename T, typename U>
+    inline auto max(const T& a, const U& b)
+    {
+        return (a >= b) ? a : b;
+    }
 
-    //===================================================================
-
-} // end of namespace vcl
+    /** \brief Returns the min of two objects.
+    * Notice: types T and U must be comparable, i.e. the operator '<'
+    * must have been defined between these two types.
+    */
+    export template<typename T, typename U>
+    inline auto min(const T& a, const U& b)
+    {
+        return (a <= b) ? a : b;
+    }
+}

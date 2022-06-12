@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,17 +23,43 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-//===========================================================================
-module;
-
-#include <stdexcept>
-
-export module utils.exceptions;
-
 
 //===========================================================================
-namespace vcl::except {
+/** \brief main for tests on class vcl::utils::Pos. */
 
-    //===================================================================
+cout << "## utils.timecode / vcl::utils::Timecode testing application..." << endl;
 
-} // end of namespace vcl
+vcl::utils::Timecode<24> t0;
+assert(string(t0) == "00:00:00:00"s);
+
+vcl::utils::Timecode25fps ta25(62);
+assert(string(ta25) == "00:01:02:00"s);
+
+vcl::utils::Timecode25fps tb25(62.601);
+assert(string(tb25) == "00:01:02:15"s);
+
+tb25 += 12;
+assert(string(tb25) == "00:01:03:02"s);
+
+vcl::utils::Timecode30fps tc30(tb25 - 12);
+assert(string(tc30) == "00:01:02:18"s);
+
+t0 = tb25 - 12;
+assert(string(t0) == "00:01:02:14"s);
+
+vcl::utils::Timecode25fps td25 = tb25 - t0;
+assert(string(td25) == "00:00:00:12"s);
+
+assert(string(td25++) == "00:00:00:12"s);
+assert(string(++td25) == "00:00:00:14"s);
+
+assert(string(--td25) == "00:00:00:13"s);
+assert(string(td25--) == "00:00:00:13"s);
+assert(string(td25) == "00:00:00:12"s);
+
+assert(td25 == tb25 - t0);
+assert(td25 < tb25);
+assert(tb25 > td25);
+assert(tb25 != td25);
+
+cout << "--- ALL TESTS PASSED ---" << endl << endl;

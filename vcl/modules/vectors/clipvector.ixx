@@ -41,6 +41,68 @@ import utils.base_funcs;
 namespace vcl::vect {
 
     //=======================================================================
+    // Forward declaration and Specializations
+    /** \brief the generic class Clipped Vectors (i.e. with clipped components). */
+    template<typename TScalar, const size_t Ksize, const TScalar Kmin, const TScalar Kmax>
+        requires std::is_arithmetic_v<TScalar>
+    class ClipVectorT;
+
+    /** \brief The class of clipped vectors with signed 8-bits components (8 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_c = ClipVectorT<char, Ksize, std::numeric_limits<char>::min(), std::numeric_limits<char>::max()>;
+
+    /** \brief The class of 4D vectors with bytes components (8 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_b = ClipVectorT<unsigned char, Ksize, std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max()>;
+
+    /** \brief The class of clipped vectors with short components (16 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_s = ClipVectorT<short, Ksize, std::numeric_limits<short>::min(), std::numeric_limits<short>::max()>;
+    
+    export
+    template<const size_t Ksize>
+    using ClipVector = ClipVector_s<Ksize>;
+
+    /** \brief The class of clipped vectors with unsigned short components (16 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_us = ClipVectorT<unsigned short, Ksize, std::numeric_limits<unsigned short>::min(), std::numeric_limits<unsigned short>::max()>;
+
+    /** \brief The class of clipped vectors with long int components (32 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_i = ClipVectorT<long, Ksize, std::numeric_limits<long>::min(), std::numeric_limits<long>::max()>;
+
+    /** \brief The class of clipped vectors with unsigned long int components (32 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_ui = ClipVectorT<unsigned long, Ksize, std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max()>;
+
+    /** \brief The class of clipped vectors with long int components (32 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_ll = ClipVectorT<long long, Ksize, std::numeric_limits<long long>::min(), std::numeric_limits<long long>::max()>;
+
+    /** \brief The class of clipped vectors with unsigned long int components (32 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_ull = ClipVectorT<unsigned long long, Ksize, std::numeric_limits<unsigned long long>::min(), std::numeric_limits<unsigned long long>::max()>;
+
+    /** \brief The class of clipped vectors with float components (32 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_f = ClipVectorT<float, Ksize, 0.0f, 1.0f>;
+
+    /** \brief The class of clipped vectors with double components (64 bits). */
+    export
+    template<const size_t Ksize>
+    using ClipVector_d = ClipVectorT<double, Ksize, 0.0, 1.0>;
+
+
+    //=======================================================================
     /** \brief the generic class Clipped Vectors.
     */
     template<typename TScalar, const size_t Ksize, const TScalar Kmin, const TScalar Kmax>

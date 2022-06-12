@@ -43,6 +43,7 @@ import vectors.vect4;
 import vectors.clipvect2;
 import vectors.clipvect3;
 import vectors.clipvect4;
+import vectors.clipvector;
 import utils.pos;
 import utils.dims;
 import utils.offsets;
@@ -61,23 +62,25 @@ int main()
 
     vcl::utils::PerfMeter perfm;
 
-/**/
+/** /
 #include "tests/vectors/test_vect2.h"
 #include "tests/vectors/test_vect3.h"
 #include "tests/vectors/test_vect4.h"
 #include "tests/vectors/test_clipvect2.h"
 #include "tests/vectors/test_clipvect3.h"
 #include "tests/vectors/test_clipvect4.h"
+/**/
+#include "tests/vectors/test_clipvector.h"
 
-#include "tests/utils/test_pos.h"
-/**
+/** /
+/#include "tests/utils/test_pos.h"
 #include "tests/utils/test_dims.h"
 #include "tests/utils/test_offsets.h"
 #include "tests/utils/test_timecode.h"
 #include "tests/utils/test_perfmeters.h"
 
 #include "tests/graphitems/test_rect.h"
-**/
+/**/
 
 #include "tests/graphitems/test_line.h"
 
